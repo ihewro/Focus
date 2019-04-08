@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:id="@+id/content"
+        android:clickable="true"
+        android:paddingBottom="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingRight="110dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/post_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="内容标题"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp">
+                <ImageView
+                    android:id="@+id/rss_icon"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_rss_feed_grey_24dp"/>
+                <TextView
+                    android:id="@+id/rss_name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/rss_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="人民一学的bilibili动态"/>
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/post_summay"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:text="@string/test_summary"/>
+            <TextView
+                android:id="@+id/post_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="下午6:31"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/post_pic"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/test"
+            android:scaleType="centerCrop"
+            />
+    </RelativeLayout>
+
+    <!-- 以下都是侧滑菜单的内容依序排列 -->
+    <Button
+        android:id="@+id/btnTop"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="#d9dee4"
+        android:text="收藏"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/btnUnRead"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:background="#ecd50a"
+        android:clickable="true"
+        android:text="标记未读"
+        android:textColor="@android:color/white"/>
+
+
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>

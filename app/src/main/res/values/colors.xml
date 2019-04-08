@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fafafa</color>
+    <color name="colorPrimaryDark">#c7c7c7</color>
+    <color name="colorAccent">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="ripple_light">#99ffffff</color>
+    <color name="ripple_dark">#40808080</color>
+
+
+    <!--页面渲染-->
+    <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
+    <color name="color_grey_dark">#f2f2f2</color>
+
+
+</resources>

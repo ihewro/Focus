@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="focus" />
+
+    <version value="1" />
+
+    <!--
+    	Define your models in the list with mapping tag, LitePal will
+    	create tables for each mapping class. The supported fields
+    	defined in models will be mapped into columns.
+    	For example:
+    	<list>
+    		<mapping class="com.test.model.Reader" />
+    		<mapping class="com.test.model.Magazine" />
+    	</list>
+    -->
+    <list>
+        <mapping class="com.ihewro.focus.bean.Feed" />
+        <mapping class="com.ihewro.focus.bean.FeedItem" />
+        <mapping class="com.ihewro.focus.bean.FeedRequire" />
+        <mapping class="com.ihewro.focus.bean.Website" />
+        <mapping class="com.ihewro.focus.bean.WebsiteCategory" />
+    </list>
+
+
+</litepal>

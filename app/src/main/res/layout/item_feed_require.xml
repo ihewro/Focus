@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <TextView
+        android:id="@+id/chinaName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="参数名称:"/>
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_below="@id/chinaName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:inputType="textMultiLine"
+        android:hint="可从歌手分享地址获取"
+        android:textSize="14sp"
+        android:textColor="#000000"/>
+</RelativeLayout>
