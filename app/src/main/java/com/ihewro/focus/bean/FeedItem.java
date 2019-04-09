@@ -28,8 +28,8 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     private String feedName;
     private String url;//文章指向的链接
 
-    private boolean read;//是否已经阅读
-    private boolean favorite;//是否收藏
+    private boolean read;//是否已经阅读,true 表示已阅读
+    private boolean favorite;//是否收藏，true 表示已收藏
 
 
     @NonNull
@@ -86,13 +86,12 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         this.summary = summary;
     }
 
-
-    public String getId() {
+    public String getIid() {
         return iid;
     }
 
-    public void setId(String id) {
-        this.iid = id;
+    public void setIid(String iid) {
+        this.iid = iid;
     }
 
     public Long getDate() {

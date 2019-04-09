@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 import com.blankj.ALog;
 import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.WelcomeActivity;
+import com.ihewro.focus.util.ImageLoaderManager;
 import com.scwang.smartrefresh.header.TaurusHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
@@ -20,6 +21,7 @@ import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -87,6 +89,14 @@ public class MyApplication extends LitePalApplication {
         mContext = this;
         initALog();
         initErrorHandle();
+
+        ImageLoaderManager.init(this);
+
+
+        Toasty.Config.getInstance()
+                .allowQueue(true) // optional (prevents several Toastys from queuing)
+                .apply(); // required
+
     }
 
 

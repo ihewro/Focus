@@ -8,6 +8,7 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 
 import org.jsoup.Jsoup;
+import org.litepal.LitePal;
 import org.litepal.exceptions.LitePalSupportException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -118,16 +119,28 @@ public class FeedParser {
 //        feed.setTotalCount(0L);
 //        feed.setUnreadCount(0L);
 
-        try{
-            //给feed下面所有feedItem设置feedName;
-            for (int i =0;i<feed.getFeedItemList().size();i++){
-                feed.getFeedItemList().get(i).setFeedName(feed.getName());
+        //给feed下面所有feedItem设置feedName;
+        for (int i =0;i<feed.getFeedItemList().size();i++){
+            feed.getFeedItemList().get(i).setFeedName(feed.getName());
+            try{
                 feed.getFeedItemList().get(i).saveThrows();//存储数据库
+            }catch (LitePalSupportException exception){
+                ALog.d("数据重复不会插入");
+
+                //此时要对feedItem进行状态字段的恢复，读取数据的状态
+                FeedItem temp = LitePal.where("iid = ?",feed.getFeedItemList().get(i).getIid()).limit(1).find(FeedItem.class).get(0);
+                feed.getFeedItemList().get(i).setRead(temp.isRead());
+                feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
             }
-            feed.setIid();
+        }
+        feed.setIid();
+
+        try {
             feed.saveThrows();//存储到数据库
+
         }catch (LitePalSupportException exception){
-            ALog.d("数据重复不会插入");
+            //此时要对feed进行状态字段的恢复，读取数据的状态，如已读的数目
+//            Feed temp = LitePal.where("iid = ?",feed.getIid()).limit(1).find(Feed.class).get(0);
         }
 
         return feed;

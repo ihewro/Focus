@@ -11,7 +11,10 @@
 
     <!--页面渲染-->
     <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
+    <color name="text_unread">#CB000000</color> <!-- 54% -->
+    <color name="text_read">#6B000000</color> <!-- 54% -->
     <color name="color_grey_dark">#f2f2f2</color>
 
+    <color name="main_grey_light">#eeeeee</color>
 
 </resources>

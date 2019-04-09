@@ -51,6 +51,7 @@ public class PicActivity extends AppCompatActivity implements View.OnClickListen
         mPhotoView.setOnLongClickListener(this);
 
         ImageLoader.getInstance().displayImage(mImageUrl, mPhotoView);
+
     }
 
     @Override

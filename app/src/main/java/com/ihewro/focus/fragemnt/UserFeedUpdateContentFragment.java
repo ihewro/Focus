@@ -10,36 +10,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
-import com.ihewro.focus.http.HttpInterface;
-import com.ihewro.focus.http.HttpUtil;
-import com.ihewro.focus.util.FeedParser;
-import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.litepal.LitePal;
+
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * 用户的最新订阅信息文章列表的碎片
@@ -111,63 +103,36 @@ public class UserFeedUpdateContentFragment extends Fragment {
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL_LIST));
-
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
-
     }
-
 
     /**
      * 获取用户的所有订阅的文章
      */
     public void requestAllData(){
-
-    }
-
-
-    public void requestData() {
-        Retrofit retrofit = HttpUtil.getRetrofit("String", "https://rsshub.app/douyin/user/93610979153/", 100, 100, 100);
-        HttpInterface request = retrofit.create(HttpInterface.class);
-        Call<String> call = request.getRSSData();
-        call.enqueue(new Callback<String>() {
+        List<Feed> feedList = LitePal.findAll(Feed.class);
+        RequestFeedListDataTask task = new RequestFeedListDataTask(feedList, new RequestFeedItemListCallback() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-
-                    assert response.body() != null;
-                    Feed feed = FeedParser.parseStr2Feed(response.body());
-                    ALog.dTag("feed233", feed);
-                    eList.clear();
-                    //feed更新到当前的时间流中。
-                    assert feed != null;
-                    eList.addAll(feed.getFeedItemList());
-                    eList = new ArrayList<>(new LinkedHashSet<>(eList));
-                    adapter.setNewData(eList);
-                    Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT);
-                } else {
-                    ALog.d("请求失败" + response.errorBody());
-                    Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT);
-
-                }
+            public void onFinish(List<FeedItem> feedList) {
                 refreshLayout.finishRefresh(true);
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                ALog.d("请求失败2" + t.toString());
-                Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT);
-                refreshLayout.finishRefresh(true);
+                eList.clear();
+                eList.addAll(feedList);
+                adapter.setNewData(eList);
+//                recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
             }
         });
+        task.run();
     }
 
     public void bindListener(){
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                requestData();
+                requestAllData();
             }
         });
+
+
     }
 
 

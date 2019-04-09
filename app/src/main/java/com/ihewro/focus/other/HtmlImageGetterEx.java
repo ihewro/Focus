@@ -109,7 +109,7 @@ public class HtmlImageGetterEx implements ImageGetter {
             try {
                 imageGetter.container.setText(imageGetter.container.getText());
             } catch (IndexOutOfBoundsException e) {
-                Toasty.info(imageGetter.container.getContext(), "content=" + imageGetter.container.getText());
+                Toasty.info(imageGetter.container.getContext(), "content=" + imageGetter.container.getText()).show();
             }
         }
 

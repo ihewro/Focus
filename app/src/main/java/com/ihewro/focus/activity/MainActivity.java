@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0;i<feedList.size();i++){
             Feed temp = feedList.get(i);
-            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withBadge(temp.getUnreadNum()+"");
+            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false);
             subItems.add(secondaryDrawerItem);
         }
     }

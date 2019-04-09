@@ -63,7 +63,7 @@ public class LinkMovementMethodEx extends LinkMovementMethod {
         try {
             return super.onTouchEvent(widget, buffer, event);
         } catch (ActivityNotFoundException e) {
-            Toasty.error(widget.getContext(),e.getMessage());
+            Toasty.error(widget.getContext(),e.getMessage()).show();
         }
 
         return false;

@@ -28,11 +28,11 @@ public class ArticleUtil {
             textView.setHtml(getContent(article), new HtmlImageGetterEx(textView, null, true));
         } catch (IndexOutOfBoundsException e) {
             Toasty.error(context,
-                    "subscription=" + article.getFeedName() + ", desc=" + article.getSummary());
+                    "subscription=" + article.getFeedName() + ", desc=" + article.getSummary()).show();
         } catch (RuntimeException e) {
             Toasty.error(context,
                     "subscription=" + article.getFeedName() + ", desc=" + article.getSummary()
-                            + ", message=" + e.getMessage());
+                            + ", message=" + e.getMessage()).show();
         }
     }
 

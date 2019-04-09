@@ -91,6 +91,7 @@ public class FeedListActivity extends AppCompatActivity {
 
     public void requestData(){
         Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl,10,10,10);
+        ALog.d("名称为" + mId);
         Call<List<Feed>> request = retrofit.create(HttpInterface.class).getFeedListByWebsite(mId);
 
         request.enqueue(new Callback<List<Feed>>() {
@@ -100,9 +101,9 @@ public class FeedListActivity extends AppCompatActivity {
                     feedList.clear();
                     feedList.addAll(response.body());
                     feedListAdapter.setNewData(feedList);
-                    Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT);
+                    Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT).show();
                 }else {
-                    Toasty.error(UIUtil.getContext(),"请求失败2" + response.errorBody(), Toast.LENGTH_SHORT);
+                    Toasty.error(UIUtil.getContext(),"请求失败2" + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
                 refreshLayout.finishRefresh(true);
             }
@@ -110,7 +111,7 @@ public class FeedListActivity extends AppCompatActivity {
             @SuppressLint("CheckResult")
             @Override
             public void onFailure(Call<List<Feed>> call, Throwable t) {
-                Toasty.error(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT);
+                Toasty.error(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
                 refreshLayout.finishRefresh(false);
             }
         });
@@ -151,41 +152,47 @@ public class FeedListActivity extends AppCompatActivity {
                             //feed更新到当前的时间流中。
                             feedRequireList.addAll(response.body());
                             //用一个弹窗显示参数列表
-                            final FeedRequireListAdapter feedRequireListAdapter = new FeedRequireListAdapter(feedRequireList);
-                            MaterialDialog requireDialog = new MaterialDialog.Builder(FeedListActivity.this)
-                                    .title("填写参数")
-                                    .adapter(feedRequireListAdapter,new LinearLayoutManager(FeedListActivity.this))
-                                    .positiveText("订阅")
-                                    .negativeText("取消")
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            Feed feed = feedList.get(position);
-                                            String url = feed.getUrl();
-                                            for (int i =0 ; i < feedRequireList.size();i++){
-                                                EditText editText = (EditText) feedRequireListAdapter.getViewByPosition(dialog.getRecyclerView(),i,R.id.input);
-                                                char split;
-                                                if (i == 0){
-                                                    split = '?';
-                                                }else {
-                                                    split = '&';
+                            if (feedRequireList.size()>0){
+                                final FeedRequireListAdapter feedRequireListAdapter = new FeedRequireListAdapter(feedRequireList);
+                                MaterialDialog requireDialog = new MaterialDialog.Builder(FeedListActivity.this)
+                                        .title("填写参数")
+                                        .adapter(feedRequireListAdapter,new LinearLayoutManager(FeedListActivity.this))
+                                        .positiveText("订阅")
+                                        .negativeText("取消")
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                Feed feed = feedList.get(position);
+                                                StringBuilder stringBuilder = new StringBuilder(feed.getUrl());
+                                                if (stringBuilder.charAt(stringBuilder.length()-1) != '/'){//末尾一定是/
+                                                    stringBuilder.append("/");
                                                 }
+                                                for (int i =0 ; i < feedRequireList.size();i++){
+                                                    EditText editText = (EditText) feedRequireListAdapter.getViewByPosition(dialog.getRecyclerView(),i,R.id.input);
+                                                    char split;
+                                                    if (i == 0){
+                                                        split = '?';
+                                                    }else {
+                                                        split = '&';
+                                                    }
 //                                                url += split+ feedRequireList.get(i).getName() +"="+ editText.getText().toString();
-                                                url += url + "/" + editText.getText().toString();
+                                                    stringBuilder.append(editText.getText().toString());
+
+                                                }
+                                                feed.setUrl(stringBuilder.toString());
+                                                feed.save();//添加新的订阅，存储到数据库中
 
                                             }
-                                            feed.setUrl(url);
-                                            feed.save();//添加新的订阅，存储到数据库中
-
-                                        }
-                                    })
-                                    .show();
-
-
-                            Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT);
+                                        })
+                                        .show();
+                            }else {//没有参数
+                                Feed feed = feedList.get(position);
+                                feed.save();
+                            }
+                            Toasty.success(UIUtil.getContext(),"订阅成功").show();
                         } else {
                             ALog.d("请求失败" + response.errorBody());
-                            Toasty.error(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT);
+                            Toasty.error(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
 
                         }
                         loading.dismiss();

@@ -31,7 +31,7 @@ public interface HttpInterface {
     @GET("?action=weblist")
     Call<List<Website>> getWebsiteListByCategory(@Query("name") String name);
 
-    @GET("?action=feedlist")
+    @GET("/?action=feedlist")
     Call<List<Feed>> getFeedListByWebsite(@Query("name") String name);
 
     @GET("?action=feedRequireList")
