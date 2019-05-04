@@ -9,6 +9,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -25,13 +26,16 @@ public interface HttpInterface {
     @GET("?")
     Call<String> getRSSData();
 
+    @GET("{with}")
+    Call<String> getRSSDataWith(@Path("with") String with);
+
     @GET("?action=webcategory")
     Call<List<WebsiteCategory>> getCategoryList();
 
     @GET("?action=weblist")
     Call<List<Website>> getWebsiteListByCategory(@Query("name") String name);
 
-    @GET("/?action=feedlist")
+    @GET("?action=feedlist")
     Call<List<Feed>> getFeedListByWebsite(@Query("name") String name);
 
     @GET("?action=feedRequireList")

@@ -63,6 +63,7 @@ public class PostDetailActivity extends AppCompatActivity {
         ArticleUtil.setContent(this, feedItem, postContent);
         postTitle.setText(feedItem.getTitle());
         postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
-
+        //将该文章标记为已读，并且通知首页修改布局
+        feedItem.setRead(true);
     }
 }

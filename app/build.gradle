@@ -102,5 +102,7 @@ dependencies {
     //图片查看器
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 
+    //数据流动
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
 }

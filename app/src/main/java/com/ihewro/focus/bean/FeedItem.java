@@ -166,4 +166,9 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return this.getDate().hashCode() + this.getTitle().hashCode();
+    }
 }

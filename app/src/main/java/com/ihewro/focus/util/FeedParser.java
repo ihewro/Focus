@@ -63,6 +63,13 @@ public class FeedParser {
     }
 
 
+    /**
+     *
+     * @param parser
+     * @return
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
     private static Feed readRssForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, RSS);
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -114,6 +121,10 @@ public class FeedParser {
                 skip(parser);
             }
         }
+
+//写在请求结束的那个地方合并旧数据
+//        feedItems.addAll(feed.getFeedItemList());//把新的数据和旧的数据合并
+//        feed.setFeedItemList(new ArrayList<>(new LinkedHashSet<>(feedItems)));
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");
 //        feed.setTotalCount(0L);
@@ -126,7 +137,6 @@ public class FeedParser {
                 feed.getFeedItemList().get(i).saveThrows();//存储数据库
             }catch (LitePalSupportException exception){
                 ALog.d("数据重复不会插入");
-
                 //此时要对feedItem进行状态字段的恢复，读取数据的状态
                 FeedItem temp = LitePal.where("iid = ?",feed.getFeedItemList().get(i).getIid()).limit(1).find(FeedItem.class).get(0);
                 feed.getFeedItemList().get(i).setRead(temp.isRead());

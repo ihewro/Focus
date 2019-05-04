@@ -131,7 +131,6 @@ public class FeedListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 //显示弹窗，填写参数进行订阅
-
                 final MaterialDialog loading = new MaterialDialog.Builder(FeedListActivity.this)
                         .title("加载参数")
                         .content("正在网络请求参数")
@@ -181,6 +180,7 @@ public class FeedListActivity extends AppCompatActivity {
                                                 }
                                                 feed.setUrl(stringBuilder.toString());
                                                 feed.save();//添加新的订阅，存储到数据库中
+                                                Toasty.success(UIUtil.getContext(),"订阅成功").show();
 
                                             }
                                         })
@@ -189,7 +189,6 @@ public class FeedListActivity extends AppCompatActivity {
                                 Feed feed = feedList.get(position);
                                 feed.save();
                             }
-                            Toasty.success(UIUtil.getContext(),"订阅成功").show();
                         } else {
                             ALog.d("请求失败" + response.errorBody());
                             Toasty.error(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();

@@ -15,7 +15,11 @@ import com.ihewro.focus.util.UIUtil;
 
 import org.litepal.LitePal;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -37,7 +41,7 @@ public class RequestFeedListDataTask {
 
 
     private List<Feed> feedList = new ArrayList<>();
-    List<FeedItem> eList = new ArrayList<FeedItem>();
+    LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
 
 
@@ -60,18 +64,36 @@ public class RequestFeedListDataTask {
         for (int i = 0; i <feedList.size() ; i++) {
             Feed temp = feedList.get(i);
             String url = temp.getUrl();
-            if (url.charAt(url.length() -1) != '/'){//保证末尾是/，否则会出错
-                url += "/";
-            }
             requestData(url);
         }
     }
 
 
-    private void requestData(final String url) {
-        Retrofit retrofit = HttpUtil.getRetrofit("String", url, 100, 100, 100);
-        HttpInterface request = retrofit.create(HttpInterface.class);
-        Call<String> call = request.getRSSData();
+    private void requestData(String url) {
+        final String originUrl = url;
+        if (url.charAt(url.length() -1) == '/'){//去掉末尾的/
+            url = url.substring(0,url.length()-1);
+        }
+
+
+
+        Call<String> call;
+        //比如https://www.dreamwings.cn/feed，with值就是feed,url最后就是根域名https://www.dreamwings.cn
+        int pos1 = url.lastIndexOf("/");
+        if (pos1 == 7 || pos1 == 6){//说明这/是协议头的,比如https://www.ihewro.com
+            url = url + "/";
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 100, 100, 100);
+            HttpInterface request = retrofit.create(HttpInterface.class);
+            call = request.getRSSData();
+        }else {
+            String with = url.substring(pos1+1);
+            url = url.substring(0,pos1) + "/";
+            ALog.d("根域名" + url + "参数" + with);
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 100, 100, 100);
+            HttpInterface request = retrofit.create(HttpInterface.class);
+            call = request.getRSSDataWith(with);
+        }
+
         call.enqueue(new Callback<String>() {
             @SuppressLint("CheckResult")
             @Override
@@ -84,16 +106,30 @@ public class RequestFeedListDataTask {
                     //feed更新到当前的时间流中。
                     if (feed!=null){
                         eList.addAll(feed.getFeedItemList());
-                        Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT).show();
+                        Toasty.success(UIUtil.getContext(),originUrl+"请求成功", Toast.LENGTH_SHORT).show();
                     }else {
-                        Toasty.success(UIUtil.getContext(),url+"解析失败", Toast.LENGTH_SHORT).show();
-
+                        Toasty.success(UIUtil.getContext(),originUrl+"解析失败", Toast.LENGTH_SHORT).show();
                     }
+                    //将本地数据库的内容合并到列表中
+                    //找到当前feed url 本地数据库的内容
+                    List<Feed> tempList = LitePal.where("url = ?" ,originUrl).find(Feed.class);
+                    if (tempList.size()>0){
+                        Feed temp = tempList.get(0);
+                        List<FeedItem> tempFeedItemList = LitePal.where("feedname = ?",temp.getName()).find(FeedItem.class);
+                        ALog.d("本地数据库信息url" + originUrl + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
+                        eList.addAll(tempFeedItemList);
+                    }
+
                 } else {
-                    ALog.d("请求失败" + response.errorBody());
+                    try {
+                        ALog.d("请求失败" + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
-                setUI();
+
+                setUI(true);
             }
 
             @SuppressLint("CheckResult")
@@ -101,16 +137,27 @@ public class RequestFeedListDataTask {
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ALog.d("请求失败2" + t.toString());
                 Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
-                setUI();
+                setUI(false);
             }
         });
     }
 
 
-    private void setUI(){
+    private void setUI(boolean flag){
         okNum++;
         if (this.okNum == num){//数据全部请求完毕，
-            callback.onFinish(eList);
+            List<FeedItem> list = new ArrayList<>(eList);
+            //对数据排序
+            Collections.sort(list, new Comparator<FeedItem>() {
+                @Override
+                public int compare(FeedItem t0, FeedItem t1) {
+                    if (t0.getDate() < t1.getDate()){
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+            callback.onFinish(list);
         }
     }
 }
