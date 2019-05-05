@@ -4,17 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.ViewPagerAdapter;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -42,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
+    @BindView(R.id.search_view)
+    MaterialSearchView searchView;
+
 
     private ViewPagerAdapter adapter;
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -62,9 +65,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
         initEmptyView();
 
         clickFeedPostsFragment();
+
+        initListener();
+    }
+
+    private void initListener() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
     }
 
     public void initEmptyView() {
@@ -72,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //初始化侧边栏
-    public void initDrawer(){
+    public void initDrawer() {
 
         ProfileDrawerItem currentUser = new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(getResources().getDrawable(R.drawable.ic_logo));
         currentUser.withSelectedTextColor(Color.BLACK);
@@ -107,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        switch (position){
+                        switch (position) {
                             case 1:
                                 //当前fragment显示所有数据
                                 break;
@@ -138,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 获取用户的订阅数据，显示在左侧边栏的drawer中
      */
-    public void refreshLeftDrawerFeedList(){
+    public void refreshLeftDrawerFeedList() {
         subItems.clear();
         List<Feed> feedList = LitePal.findAll(Feed.class);
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(false));
@@ -146,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false));
         subItems.add(new SectionDrawerItem().withName("订阅源"));
 
-        for (int i = 0;i<feedList.size();i++){
+        for (int i = 0; i < feedList.size(); i++) {
             Feed temp = feedList.get(i);
             SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false);
             subItems.add(secondaryDrawerItem);
@@ -171,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment willCloseFragment = currentFragment;//上一个要切换掉的碎片
         currentFragment = fragment;//当前要显示的碎片
 
-        if (willCloseFragment!=null){
+        if (willCloseFragment != null) {
             transaction.hide(willCloseFragment);
         }
         if (!fragment.isAdded()) { // 如果当前fragment未被添加，则添加到Fragment管理器中
@@ -179,6 +213,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             transaction.show(currentFragment).commitAllowingStateLoss();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
+        return true;
     }
 
 }

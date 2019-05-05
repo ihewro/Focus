@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.util.DataUtil;
 
 import java.util.List;
 
@@ -27,6 +28,6 @@ public class FeedListAdapter  extends BaseQuickAdapter<Feed, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, Feed item) {
         helper.setText(R.id.name,item.getName());
-        helper.setText(R.id.desc,item.getDesc());
+        helper.setText(R.id.desc, DataUtil.getOptimizedDesc(item.getDesc()));
     }
 }
