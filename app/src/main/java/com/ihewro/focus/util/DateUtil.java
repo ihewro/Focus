@@ -1,6 +1,9 @@
 package com.ihewro.focus.util;
 
+import android.annotation.SuppressLint;
+
 import com.blankj.ALog;
+import com.ihewro.focus.bean.Message;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,15 +52,45 @@ public class DateUtil {
      * @param date_str 字符串日期
      * @return
      */
-    public static long date2TimeStamp(String date_str){
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            return sdf.parse(date_str).getTime();
-        } catch (Exception e) {
-            e.printStackTrace();
+    static long date2TimeStamp(String date_str){
+
+        String[] dateFormats = {"yyyy-MM-dd","EEE, dd MMM yyyy HH:mm:ss Z"};
+
+        long timeStamp = 0L;
+
+        for (String dateFormat : dateFormats) {
+            Message message = isDateString(date_str, dateFormat);
+            if (message.isFlag()) {
+                timeStamp = Long.parseLong(message.getData());
+                ALog.d("时间戳为"+ timeStamp);
+                break;
+            }
         }
-        return 0;
+        if (timeStamp == 0L){
+            ALog.d("时间格式为|"+date_str +"|未匹配上");
+        }
+        return timeStamp;
     }
+
+
+    private static Message isDateString(String datevalue, String dateFormat) {
+        if (datevalue == null){
+            return new Message(true,new Date().getTime()+"");
+        }
+
+        datevalue = datevalue.trim();
+
+        try {
+            //java.util.Locale.ENGLISH 这个非常重要，否则解析失败
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat fmt = new SimpleDateFormat(dateFormat,java.util.Locale.ENGLISH);
+            java.util.Date dd = fmt.parse(datevalue);
+            return new Message(true,dd.getTime()+"");
+
+        } catch (Exception e) {
+            return new Message(false);
+        }
+    }
+
 
     /**
      * @see <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>

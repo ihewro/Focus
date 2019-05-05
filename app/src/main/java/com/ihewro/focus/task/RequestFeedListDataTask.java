@@ -156,6 +156,7 @@ public class RequestFeedListDataTask {
         okNum++;
         if (this.okNum == num){//数据全部请求完毕，
             //对数据排序
+            ALog.d("开始对数据排序");
             List<FeedItem> list = new ArrayList<>(eList);
             Collections.sort(list, new Comparator<FeedItem>() {
                 @Override
@@ -169,6 +170,7 @@ public class RequestFeedListDataTask {
                     }
                 }
             });
+            ALog.d("结束数据按时间排序");
             callback.onFinish(list);
         }
     }

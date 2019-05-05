@@ -158,6 +158,7 @@ public class FeedParser {
                 FeedItem temp = LitePal.where("iid = ?",feed.getFeedItemList().get(i).getIid()).limit(1).find(FeedItem.class).get(0);
                 feed.getFeedItemList().get(i).setRead(temp.isRead());
                 feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
+//                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
             }
         }
 
@@ -206,7 +207,8 @@ public class FeedParser {
             }
         }
 
-        return new FeedItem(title, DateUtil.parseRfc822(pubDate).getTime(),description,content,link, false, false);
+        ALog.d("item名称：" + title + "时间为" + pubDate);
+        return new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
     }
 
 
@@ -274,7 +276,7 @@ public class FeedParser {
         String dateStr = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, LAST_BUILD_DATE);
 
-        return DateUtil.parseRfc822(dateStr).getTime();
+        return DateUtil.date2TimeStamp(dateStr);
     }
 
     private static String readText(XmlPullParser parser) throws IOException, XmlPullParserException {

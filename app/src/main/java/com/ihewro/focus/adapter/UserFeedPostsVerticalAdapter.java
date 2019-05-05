@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.UIUtil;
 
@@ -43,7 +44,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
         helper.setText(R.id.rss_name,item.getFeedName());
-        helper.setText(R.id.post_summay,item.getSummary());
+        helper.setText(R.id.post_summay, DataUtil.getOptimizedDesc(item.getSummary()));
         helper.setText(R.id.post_time, DateUtil.getTTimeStringByInt(item.getDate()));
         bindListener(helper,item);
 

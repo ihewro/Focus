@@ -20,6 +20,7 @@ import org.litepal.crud.LitePalSupport;
 public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     @Column(unique = true)
     private String iid;//唯一id，标识
+
     private String title;//文章标题
     private Long date;//文章发布日期
     private String summary;//文章简介
@@ -55,7 +56,7 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         this.url = url;
         this.read = read;
         this.favorite = favorite;
-        this.iid = title.hashCode() + url.hashCode() + date + "";//生成唯一标识符
+        this.iid = title.hashCode() + url.hashCode() +"";//生成唯一标识符
     }
 
     public String getUrl() {
@@ -160,7 +161,7 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     public boolean equals(@android.support.annotation.Nullable Object obj) {
         FeedItem feedItem = ((FeedItem)obj);
         assert feedItem != null;
-        if (this.date.equals(feedItem.getDate()) && this.title.equals(feedItem.getTitle())){
+        if (this.url.equals(feedItem.getUrl()) && this.title.equals(feedItem.getTitle())){
             return true;
         }else {
             return false;
@@ -169,6 +170,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     @Override
     public int hashCode() {
-        return this.getDate().hashCode() + this.getTitle().hashCode();
+        return this.getUrl().hashCode() + this.getTitle().hashCode();
     }
 }
