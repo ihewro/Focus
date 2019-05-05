@@ -1,5 +1,6 @@
 package com.ihewro.focus.util;
 
+import android.util.Log;
 import android.util.Xml;
 
 import com.blankj.ALog;
@@ -38,16 +39,20 @@ public class FeedParser {
     private static final String CONTENT = "content:encoded";
     private static final String LAST_BUILD_DATE = "lastBuildDate";
 
+    private static String feedUrl;
+
 
     /**
      * 从字符串解析出feed
      * @param xmlStr
      * @return[
      */
-    public static Feed parseStr2Feed(String xmlStr) {
+    public static Feed parseStr2Feed(String xmlStr,String url) {
         if (Strings.isNullOrEmpty(xmlStr)) {
             return null;
         }
+
+        feedUrl = url;
 
         XmlPullParser parser = Xml.newPullParser();
         try {
@@ -97,6 +102,7 @@ public class FeedParser {
      */
     private static Feed readChannelForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         Feed feed = new Feed();
+        feed.setUrl(feedUrl);
         List<FeedItem> feedItems = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, CHANNEL);
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -108,12 +114,13 @@ public class FeedParser {
             if (name.equals(TITLE)) {
                 feed.setName(readTitle(parser));
             } else if (name.equals(LINK)) {
-                feed.setUrl(readLink(parser));
+                feed.setLink(readLink(parser));
             } else if (name.equals(LAST_BUILD_DATE)) {
                 feed.setTime(readLastBuildDate(parser));
             } else if (name.equals(DESC)) {
                 feed.setDesc(readDesc(parser));
             }else if (name.equals(ITEM)) {
+                //获取当前feed最新的文章列表
                 FeedItem feedItem = readItemForArticle(parser);
                 feedItems.add(feedItem);
             }
@@ -130,11 +137,21 @@ public class FeedParser {
 //        feed.setTotalCount(0L);
 //        feed.setUnreadCount(0L);
 
-        //给feed下面所有feedItem设置feedName;
+        //给feed下面所有feedItem设置feedName和feedId;
+        //获取当前feed的iid
+
+        List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
+        String feedIid = "";
+        if (tempFeeds.size() <= 0){
+            ALog.d("出现未订阅错误"+feed.getUrl());
+        }else {
+            feedIid = tempFeeds.get(0).getIid();
+        }
         for (int i =0;i<feed.getFeedItemList().size();i++){
             feed.getFeedItemList().get(i).setFeedName(feed.getName());
+            feed.getFeedItemList().get(i).setFeedId(feedIid);
             try{
-                feed.getFeedItemList().get(i).saveThrows();//存储数据库
+                feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
             }catch (LitePalSupportException exception){
                 ALog.d("数据重复不会插入");
                 //此时要对feedItem进行状态字段的恢复，读取数据的状态
@@ -142,15 +159,6 @@ public class FeedParser {
                 feed.getFeedItemList().get(i).setRead(temp.isRead());
                 feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
             }
-        }
-        feed.setIid();
-
-        try {
-            feed.saveThrows();//存储到数据库
-
-        }catch (LitePalSupportException exception){
-            //此时要对feed进行状态字段的恢复，读取数据的状态，如已读的数目
-//            Feed temp = LitePal.where("iid = ?",feed.getIid()).limit(1).find(Feed.class).get(0);
         }
 
         return feed;
@@ -176,18 +184,25 @@ public class FeedParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals(TITLE)) {
-                title = readTitle(parser);
-            } else if (name.equals(LINK)) {
-                link = readLink(parser);
-            } else if (name.equals(PUB_DATE)) {
-                pubDate = readPubDate(parser);
-            } else if (name.equals(DESC)) {
-                description = readDesc(parser);
-            } else if (name.equals(CONTENT)) {
-                content = readContent(parser);
-            } else {
-                skip(parser);
+            switch (name) {
+                case TITLE:
+                    title = readTitle(parser);
+                    break;
+                case LINK:
+                    link = readLink(parser);
+                    break;
+                case PUB_DATE:
+                    pubDate = readPubDate(parser);
+                    break;
+                case DESC:
+                    description = readDesc(parser);
+                    break;
+                case CONTENT:
+                    content = readContent(parser);
+                    break;
+                default:
+                    skip(parser);
+                    break;
             }
         }
 

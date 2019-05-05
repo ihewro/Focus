@@ -89,6 +89,9 @@ public class FeedListActivity extends AppCompatActivity {
         feedListAdapter.setEmptyView(R.layout.simple_empty_view);
     }
 
+    /**
+     * 请求一个网站的可订阅列表
+     */
     public void requestData(){
         Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl,10,10,10);
         ALog.d("名称为" + mId);
@@ -162,32 +165,27 @@ public class FeedListActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                                 Feed feed = feedList.get(position);
-                                                StringBuilder stringBuilder = new StringBuilder(feed.getUrl());
+                                                StringBuilder stringBuilder = new StringBuilder(feed.getUrl());//构建订阅的域名🌽
                                                 if (stringBuilder.charAt(stringBuilder.length()-1) != '/'){//末尾一定是/
                                                     stringBuilder.append("/");
                                                 }
                                                 for (int i =0 ; i < feedRequireList.size();i++){
                                                     EditText editText = (EditText) feedRequireListAdapter.getViewByPosition(dialog.getRecyclerView(),i,R.id.input);
-                                                    char split;
-                                                    if (i == 0){
-                                                        split = '?';
-                                                    }else {
-                                                        split = '&';
-                                                    }
-//                                                url += split+ feedRequireList.get(i).getName() +"="+ editText.getText().toString();
                                                     stringBuilder.append(editText.getText().toString());
 
                                                 }
                                                 feed.setUrl(stringBuilder.toString());
+                                                feed.setIid();//否则会出现主键重复
                                                 feed.save();//添加新的订阅，存储到数据库中
                                                 Toasty.success(UIUtil.getContext(),"订阅成功").show();
-
                                             }
                                         })
                                         .show();
                             }else {//没有参数
                                 Feed feed = feedList.get(position);
+                                feed.setIid();//否则会出现主键重复
                                 feed.save();
+                                Toasty.success(UIUtil.getContext(),"订阅成功").show();
                             }
                         } else {
                             ALog.d("请求失败" + response.errorBody());

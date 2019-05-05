@@ -24,7 +24,7 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     private Long date;//文章发布日期
     private String summary;//文章简介
     private String content;//文章内容
-    private int feedId;
+    private String feedIid;
     private String feedName;
     private String url;//文章指向的链接
 
@@ -110,12 +110,12 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         this.content = content;
     }
 
-    public int getFeedId() {
-        return feedId;
+    public String getFeedIid() {
+        return feedIid;
     }
 
-    public void setFeedId(int feedId) {
-        this.feedId = feedId;
+    public void setFeedId(String feedId) {
+        this.feedIid = feedId;
     }
 
     public boolean isRead() {

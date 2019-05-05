@@ -18,10 +18,11 @@ import java.util.List;
 public class Feed extends LitePalSupport {
 
     @Column(unique = true)
-    private String iid;
+    private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id
     private String name;
     private String desc;
     private String url;//不包括参数
+    private String link;// 订阅指向的网站
     private String websiteName;
     private String websiteCategoryName;
     private Long time;
@@ -109,6 +110,14 @@ public class Feed extends LitePalSupport {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getWebsiteName() {

@@ -101,7 +101,7 @@ public class RequestFeedListDataTask {
                 if (response.isSuccessful()) {
 
                     assert response.body() != null;
-                    Feed feed = FeedParser.parseStr2Feed(response.body());
+                    Feed feed = FeedParser.parseStr2Feed(response.body(),originUrl);
 //                    ALog.dTag("feed233", feed);
                     //feed更新到当前的时间流中。
                     if (feed!=null){
@@ -141,8 +141,12 @@ public class RequestFeedListDataTask {
         List<Feed> tempList = LitePal.where("url = ?" ,url).find(Feed.class);
         if (tempList.size()>0){
             Feed temp = tempList.get(0);
-            List<FeedItem> tempFeedItemList = LitePal.where("feedname = ?",temp.getName()).find(FeedItem.class);
+            List<FeedItem> tempFeedItemList = LitePal.where("feediid = ?",temp.getIid()).find(FeedItem.class);
             ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
+            /*for (int i =0;i<tempFeedItemList.size();i++){//暂时修复错误，后面删掉
+                tempFeedItemList.get(i).setFeedId(temp.getIid());
+                tempFeedItemList.get(i).save();
+            }*/
             eList.addAll(tempFeedItemList);
         }
     }
