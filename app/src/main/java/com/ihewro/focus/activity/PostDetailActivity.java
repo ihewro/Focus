@@ -8,12 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.htmltextview.HtmlTextView;
 import com.ihewro.focus.util.ArticleUtil;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import butterknife.BindView;
@@ -31,11 +33,13 @@ public class PostDetailActivity extends AppCompatActivity {
     @BindView(R.id.post_content)
     HtmlTextView postContent;
     private String mId;
+    private int mIndex;
 
 
-    public static void activityStart(Activity activity, String feedItemId) {
+    public static void activityStart(Activity activity, String feedItemId,int indexInList) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_STRING_FEED_ITEM_ID, feedItemId);
+        intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
         activity.startActivity(intent);
     }
 
@@ -53,7 +57,7 @@ public class PostDetailActivity extends AppCompatActivity {
         }
         Intent intent = getIntent();
         mId = intent.getStringExtra(Constants.KEY_STRING_FEED_ITEM_ID);
-
+        mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX,0);
         initData();
     }
 
@@ -65,5 +69,7 @@ public class PostDetailActivity extends AppCompatActivity {
         postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
         //将该文章标记为已读，并且通知首页修改布局
         feedItem.setRead(true);
+        feedItem.save();
+        EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_SAVED,mIndex));
     }
 }

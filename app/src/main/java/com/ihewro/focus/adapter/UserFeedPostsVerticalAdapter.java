@@ -81,7 +81,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostDetailActivity.activityStart(activity,item.getIid());
+                PostDetailActivity.activityStart(activity,item.getIid(),helper.getAdapterPosition());
             }
         });
     }

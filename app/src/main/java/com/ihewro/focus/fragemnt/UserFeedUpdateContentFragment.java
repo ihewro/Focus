@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
@@ -23,6 +24,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
@@ -75,6 +79,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         if (getArguments() != null) {
             //
         }
+        EventBus.getDefault().register(this);
     }
 
 
@@ -140,5 +145,16 @@ public class UserFeedUpdateContentFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_SAVED)) {
+            //更新已读标志
+            int indexInList = eventBusMessage.getIndex();
+            eList.get(indexInList).setRead(true);
+            adapter.notifyItemChanged(indexInList);
+        }
     }
 }
