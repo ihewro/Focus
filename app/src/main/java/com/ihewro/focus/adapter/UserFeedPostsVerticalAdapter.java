@@ -40,7 +40,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
     @Override
     protected void convert(BaseViewHolder helper, FeedItem item) {
-        ALog.d("哈哈哈哈");
+        ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
         helper.setText(R.id.rss_name,item.getFeedName());
         helper.setText(R.id.post_summay,item.getSummary());

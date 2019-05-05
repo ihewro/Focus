@@ -110,15 +110,7 @@ public class RequestFeedListDataTask {
                     }else {
                         Toasty.success(UIUtil.getContext(),originUrl+"解析失败", Toast.LENGTH_SHORT).show();
                     }
-                    //将本地数据库的内容合并到列表中
-                    //找到当前feed url 本地数据库的内容
-                    List<Feed> tempList = LitePal.where("url = ?" ,originUrl).find(Feed.class);
-                    if (tempList.size()>0){
-                        Feed temp = tempList.get(0);
-                        List<FeedItem> tempFeedItemList = LitePal.where("feedname = ?",temp.getName()).find(FeedItem.class);
-                        ALog.d("本地数据库信息url" + originUrl + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
-                        eList.addAll(tempFeedItemList);
-                    }
+
 
                 } else {
                     try {
@@ -128,7 +120,7 @@ public class RequestFeedListDataTask {
                     }
                     Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
-
+                mergeOldItems(originUrl);
                 setUI(true);
             }
 
@@ -137,24 +129,40 @@ public class RequestFeedListDataTask {
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ALog.d("请求失败2" + t.toString());
                 Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
+                mergeOldItems(originUrl);
                 setUI(false);
             }
         });
+    }
+
+    private void mergeOldItems(String url){
+        //将本地数据库的内容合并到列表中
+        //找到当前feed url 本地数据库的内容
+        List<Feed> tempList = LitePal.where("url = ?" ,url).find(Feed.class);
+        if (tempList.size()>0){
+            Feed temp = tempList.get(0);
+            List<FeedItem> tempFeedItemList = LitePal.where("feedname = ?",temp.getName()).find(FeedItem.class);
+            ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
+            eList.addAll(tempFeedItemList);
+        }
     }
 
 
     private void setUI(boolean flag){
         okNum++;
         if (this.okNum == num){//数据全部请求完毕，
-            List<FeedItem> list = new ArrayList<>(eList);
             //对数据排序
+            List<FeedItem> list = new ArrayList<>(eList);
             Collections.sort(list, new Comparator<FeedItem>() {
                 @Override
                 public int compare(FeedItem t0, FeedItem t1) {
                     if (t0.getDate() < t1.getDate()){
                         return 1;
+                    }else if (t0.getDate() > t1.getDate()){
+                        return -1;
+                    }else {
+                        return 0;
                     }
-                    return 0;
                 }
             });
             callback.onFinish(list);
