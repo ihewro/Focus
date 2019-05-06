@@ -53,6 +53,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
     RecyclerView recyclerView;
     Unbinder unbinder;
 
+    private boolean isFirstOpen = true;//首次打开
+
 
     public UserFeedUpdateContentFragment() {
     }
@@ -116,13 +118,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
      */
     public void requestAllData(){
         List<Feed> feedList = LitePal.findAll(Feed.class);
-        RequestFeedListDataTask task = new RequestFeedListDataTask(feedList, new RequestFeedItemListCallback() {
+        RequestFeedListDataTask task = new RequestFeedListDataTask(isFirstOpen,feedList, new RequestFeedItemListCallback() {
             @Override
             public void onFinish(List<FeedItem> feedList) {
                 refreshLayout.finishRefresh(true);
                 eList.clear();
                 eList.addAll(feedList);
                 adapter.setNewData(eList);
+                isFirstOpen = false;
             }
         });
         task.run();

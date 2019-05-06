@@ -48,11 +48,13 @@ public class RequestFeedListDataTask {
 
     private int num;//总共需要请求的数目
     private int okNum = 0;//已经请求的数目
+    private boolean isForce;//isForce为true的时候表明不是一开始打开页面，所以此时的刷新请求数据必须请求
 
 
-    public RequestFeedListDataTask(List<Feed> feedList, RequestFeedItemListCallback callback) {
+    public RequestFeedListDataTask(boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
         this.feedList = feedList;
         this.callback = callback;
+        this.isForce = !flag;
     }
 
 
@@ -70,7 +72,7 @@ public class RequestFeedListDataTask {
         }else {
             flag = false;
         }*/
-        if (flag){
+        if (flag && !isForce){
             this.okNum = num;
             setUI(true);
         }else {
@@ -89,9 +91,6 @@ public class RequestFeedListDataTask {
         if (url.charAt(url.length() -1) == '/'){//去掉末尾的/
             url = url.substring(0,url.length()-1);
         }
-
-
-
         Call<String> call;
         //比如https://www.dreamwings.cn/feed，with值就是feed,url最后就是根域名https://www.dreamwings.cn
         int pos1 = url.lastIndexOf("/");
@@ -108,7 +107,7 @@ public class RequestFeedListDataTask {
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSDataWith(with);
         }
-
+        Toasty.info(UIUtil.getContext(),"开始请求"+url).show();
         call.enqueue(new Callback<String>() {
             @SuppressLint("CheckResult")
             @Override

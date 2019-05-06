@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = null;
     private List<IDrawerItem> subItems = new ArrayList<>();
     private Drawer drawer;
-    List<FeedItem> searchResults = new ArrayList<>();
-    FeedSearchAdapter adapter;
-
+    private List<FeedItem> searchResults = new ArrayList<>();
+    private FeedSearchAdapter adapter;
+    private AccountHeader headerResult;
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         //初始化侧边栏
-        AccountHeader headerResult = new AccountHeaderBuilder()
+        headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(false)
                 .withHeaderBackground(R.drawable.header)
@@ -195,6 +195,12 @@ public class MainActivity extends AppCompatActivity {
 
         refreshLeftDrawerFeedList();
 
+        updateDrawer();
+
+    }
+
+
+    public void updateDrawer(){
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
                 .withAccountHeader(headerResult)
@@ -243,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
 
                 )
                 .build();
-
     }
 
 
@@ -334,7 +339,9 @@ public class MainActivity extends AppCompatActivity {
     public void refreshUI(EventMessage eventBusMessage) {
         if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED)) {
             //TODO:更新左侧边栏的feed列表
-            
+            ALog.d("收到新的订阅添加，更新！");
+            refreshLeftDrawerFeedList();
+            updateDrawer();
         }
     }
 

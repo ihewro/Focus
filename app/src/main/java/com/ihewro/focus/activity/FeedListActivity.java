@@ -22,6 +22,7 @@ import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.adapter.FeedRequireListAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.http.HttpInterface;
@@ -31,6 +32,8 @@ import com.ihewro.focus.util.UIUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FeedListActivity extends AppCompatActivity {
+public class FeedListActivity extends BaseActivity {
 
 
     @BindView(R.id.toolbar)
@@ -178,6 +181,7 @@ public class FeedListActivity extends AppCompatActivity {
                                                 feed.setIid();//否则会出现主键重复
                                                 feed.save();//添加新的订阅，存储到数据库中
                                                 Toasty.success(UIUtil.getContext(),"订阅成功").show();
+                                                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
                                             }
                                         })
                                         .show();
@@ -186,6 +190,7 @@ public class FeedListActivity extends AppCompatActivity {
                                 feed.setIid();//否则会出现主键重复
                                 feed.save();
                                 Toasty.success(UIUtil.getContext(),"订阅成功").show();
+                                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
                             }
                         } else {
                             ALog.d("请求失败" + response.errorBody());
