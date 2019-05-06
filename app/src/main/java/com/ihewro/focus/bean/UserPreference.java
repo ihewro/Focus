@@ -1,5 +1,11 @@
 package com.ihewro.focus.bean;
 
+import org.litepal.LitePal;
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
+
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -9,10 +15,13 @@ package com.ihewro.focus.bean;
  *     version: 1.0
  * </pre>
  */
-public class UserPreference {
-    private int id;//主键
-    private int is_use_internet_while_open;
+public class UserPreference extends LitePalSupport {
 
+    public static final String  USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
+    private int id;//主键
+
+    private String key;
+    private String value;
 
     public int getId() {
         return id;
@@ -22,11 +31,29 @@ public class UserPreference {
         this.id = id;
     }
 
-    public int getIs_use_internet_while_open() {
-        return is_use_internet_while_open;
+    public String getKey() {
+        return key;
     }
 
-    public void setIs_use_internet_while_open(int is_use_internet_while_open) {
-        this.is_use_internet_while_open = is_use_internet_while_open;
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public static String queryValueByKey(String key){
+        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
+        if (userPreferences.size()>0){
+            UserPreference temp = userPreferences.get(0);
+            return temp.getValue();
+        }else {
+            return null;
+        }
     }
 }

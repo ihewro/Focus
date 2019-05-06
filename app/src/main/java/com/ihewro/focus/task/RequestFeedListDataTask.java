@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.blankj.ALog;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
@@ -58,14 +59,28 @@ public class RequestFeedListDataTask {
 
     public void run(){
 
-        List<Feed> feedList = LitePal.findAll(Feed.class);
+        feedList = LitePal.findAll(Feed.class);
         this.num = feedList.size();
 
-        for (int i = 0; i <feedList.size() ; i++) {
-            Feed temp = feedList.get(i);
-            String url = temp.getUrl();
-            requestData(url);
+        //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
+        boolean flag = true;
+        String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN);
+        /*if (value != null && value.equals("1")){
+            flag = true;
+        }else {
+            flag = false;
+        }*/
+        if (flag){
+            this.okNum = num;
+            setUI(true);
+        }else {
+            for (int i = 0; i <feedList.size() ; i++) {
+                Feed temp = feedList.get(i);
+                String url = temp.getUrl();
+                requestData(url);
+            }
         }
+
     }
 
 
@@ -120,7 +135,6 @@ public class RequestFeedListDataTask {
                     }
                     Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
-                mergeOldItems(originUrl);
                 setUI(true);
             }
 
@@ -129,7 +143,6 @@ public class RequestFeedListDataTask {
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ALog.d("请求失败2" + t.toString());
                 Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
-                mergeOldItems(originUrl);
                 setUI(false);
             }
         });
@@ -154,7 +167,13 @@ public class RequestFeedListDataTask {
 
     private void setUI(boolean flag){
         okNum++;
-        if (this.okNum == num){//数据全部请求完毕，
+        if (this.okNum >= num){//数据全部请求完毕，
+            //合并旧数据
+            for (int i = 0; i < num;i++){
+                Feed temp = feedList.get(i);
+                String url = temp.getUrl();
+                mergeOldItems(url);
+            }
             //对数据排序
             ALog.d("开始对数据排序");
             List<FeedItem> list = new ArrayList<>(eList);

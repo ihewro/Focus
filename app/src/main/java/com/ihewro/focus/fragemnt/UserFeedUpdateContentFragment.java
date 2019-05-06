@@ -123,7 +123,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 eList.clear();
                 eList.addAll(feedList);
                 adapter.setNewData(eList);
-//                recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
             }
         });
         task.run();

@@ -70,6 +70,8 @@ public class PostDetailActivity extends AppCompatActivity {
         //将该文章标记为已读，并且通知首页修改布局
         feedItem.setRead(true);
         feedItem.save();
-        EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_SAVED,mIndex));
+        if (mIndex!=-1){//如果是-1表示不需要传递该修改信息
+            EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_SAVED,mIndex));
+        }
     }
 }

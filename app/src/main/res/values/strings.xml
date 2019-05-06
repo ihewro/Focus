@@ -100,4 +100,25 @@
 
 而我的妈妈也是非常强势，我觉得可能和影片中爸爸很像吧。</string>
 
+
+    <!--偏好设置-->
+    <string name="pref_key_primary_info">pref_key_primary_info</string>
+    <string name="pref_title_primary_info">基本信息</string>
+    <string name="pref_key_primary_setting">pref_key_primary_setting</string>
+    <string name="pref_title_primary_setting">基本设置</string>
+    <string name="pref_key_primary_about">pref_key_primary_about</string>
+    <string name="pref_title_primary_about">关于与帮助</string>
+    <string name="pref_key_feed_num">pref_key_feed_num</string>
+    <string name="pref_title_feed_num">订阅数目</string>
+    <string name="pref_key_use_internet_while_open">pref_key_use_internet_while_open</string>
+    <string name="pref_title_use_internet_while_open">快速启动</string>
+    <string name="pref_summary_lower_flow_mode">初次启动app时，自动获取最新数据，选择否，则先加载本地数据</string>
+    <string name="pref_key_licence">pref_key_licence</string>
+    <string name="pref_title_licence">开源许可</string>
+    <string name="pref_key_update">pref_key_update</string>
+    <string name="pref_title_update">检查更新</string>
+    <string name="pref_summary_update">1.0.0</string>
+    <string name="pref_key_about">pref_key_about</string>
+    <string name="pref_title_about">关于我们</string>
+
 </resources>

@@ -7,17 +7,28 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
+import com.blankj.ALog;
+import com.canking.minipay.Config;
+import com.canking.minipay.MiniPayUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
+import com.ihewro.focus.adapter.FeedListAdapter;
+import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.adapter.ViewPagerAdapter;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.miguelcatalan.materialsearchview.SearchAdapter;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -47,13 +58,16 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.search_view)
     MaterialSearchView searchView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
 
 
-    private ViewPagerAdapter adapter;
     private UserFeedUpdateContentFragment feedPostsFragment;
     private Fragment currentFragment = null;
     private List<IDrawerItem> subItems = new ArrayList<>();
     private Drawer drawer;
+    List<FeedItem> searchResults = new ArrayList<>();
+    FeedSearchAdapter adapter;
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -72,32 +86,49 @@ public class MainActivity extends AppCompatActivity {
         clickFeedPostsFragment();
 
         initListener();
+
+        initSearchAdapter();
+    }
+
+
+    private void initSearchAdapter(){
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        adapter = new FeedSearchAdapter(searchResults);
+        adapter.bindToRecyclerView(recyclerView);
+        adapter.setEmptyView(R.layout.simple_empty_view);
     }
 
     private void initListener() {
 
-        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
-
-        String[] suggestions = {"正太","可爱"};
-        searchView.setSuggestions(suggestions);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
+                recyclerView.setVisibility(View.GONE);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
+                //开始同步搜索
+                queryFeedItemByText(newText);
+                adapter.setNewData(searchResults);
+                recyclerView.setVisibility(View.VISIBLE);
+
+                adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                        FeedItem item = searchResults.get(position);
+                        PostDetailActivity.activityStart(MainActivity.this, item.getIid(), -1);
+
+                    }
+                });
                 return false;
             }
         });
+
 
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
@@ -108,8 +139,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearchViewClosed() {
                 //Do some magic
+                recyclerView.setVisibility(View.GONE);
             }
         });
+    }
+
+
+    /**
+     * 全文查找
+     *
+     * @param text
+     * @return
+     */
+    public String[] queryFeedItemByText(String text) {
+        List<String> list = new ArrayList<String>();
+        text = "%" + text + "%";
+        searchResults.clear();
+        searchResults = LitePal.where("title like ? or summary like ?", text, text).find(FeedItem.class);
+        for (int i = 0; i < searchResults.size(); i++) {
+            list.add(searchResults.get(i).getTitle());
+        }
+        return list.toArray(new String[0]);
+
     }
 
     public void initEmptyView() {
@@ -163,12 +214,31 @@ public class MainActivity extends AppCompatActivity {
                                 break;
 
                         }
+
+
+                        switch ((int) drawerItem.getIdentifier()) {
+                            case -1://启用分类管理
+                                FeedManageActivity.activityStart(MainActivity.this);
+                                break;
+                            case -2://应用设置界面
+                                SettingActivity.activityStart(MainActivity.this);
+                                break;
+                            case -3://捐赠支持界面
+                                MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
+                                break;
+                            case 1://TODO:表示为切换fragment显示的内容
+
+                                break;
+
+                        }
                         return false;
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10),
-                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10)
+                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withIdentifier(-1),
+                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withIdentifier(-2),
+                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withIdentifier(-3)
+
                 )
                 .build();
 
@@ -196,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < feedList.size(); i++) {
             Feed temp = feedList.get(i);
-            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false);
+            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1);
             subItems.add(secondaryDrawerItem);
         }
     }
@@ -239,13 +309,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    long startTime = 0;
+
     @Override
     public void onBackPressed() {
         //返回键关闭🔍搜索
         if (searchView.isSearchOpen()) {
             searchView.closeSearch();
         } else {
-            super.onBackPressed();
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime - startTime) >= 2000) {
+                Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                startTime = currentTime;
+            } else {
+                finish();
+            }
         }
     }
 }

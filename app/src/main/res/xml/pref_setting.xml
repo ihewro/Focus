@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="@string/pref_key_primary_info"
+        android:title="@string/pref_title_primary_info" />
+
+    <Preference
+        android:key="@string/pref_key_feed_num"
+        android:title="@string/pref_title_feed_num"
+        android:summary="20/50"/>
+
+
+    <PreferenceCategory
+        android:key="@string/pref_key_primary_setting"
+        android:title="@string/pref_title_primary_setting" />
+
+    <SwitchPreference
+        android:key="@string/pref_key_use_internet_while_open"
+        android:title="@string/pref_title_use_internet_while_open"
+        android:summary="@string/pref_summary_lower_flow_mode"/>
+
+    <PreferenceCategory
+        android:key="@string/pref_key_primary_about"
+        android:title="@string/pref_title_primary_about" />
+
+    <Preference
+        android:key="@string/pref_key_licence"
+        android:title="@string/pref_title_licence"/>
+
+    <Preference
+        android:key="@string/pref_key_update"
+        android:title="@string/pref_title_update"
+        android:summary="@string/pref_summary_update"/>
+
+    <Preference
+        android:key="@string/pref_key_about"
+        android:title="@string/pref_title_about"/>
+
+</PreferenceScreen>

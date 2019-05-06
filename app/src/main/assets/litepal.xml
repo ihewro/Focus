@@ -3,7 +3,7 @@
 
     <dbname value="focus" />
 
-    <version value="2" />
+    <version value="3" />
 
     <!--
     	Define your models in the list with mapping tag, LitePal will
@@ -19,8 +19,8 @@
         <mapping class="com.ihewro.focus.bean.Feed" />
         <mapping class="com.ihewro.focus.bean.FeedItem" />
         <mapping class="com.ihewro.focus.bean.FeedRequire" />
-        <mapping class="com.ihewro.focus.bean.Website" />
-        <mapping class="com.ihewro.focus.bean.WebsiteCategory" />
+        <mapping class="com.ihewro.focus.bean.FeedFolder" />
+        <mapping class="com.ihewro.focus.bean.UserPreference" />
     </list>
 
 

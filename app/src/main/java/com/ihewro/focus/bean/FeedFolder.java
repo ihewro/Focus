@@ -1,6 +1,7 @@
 package com.ihewro.focus.bean;
 
 import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
 
 /**
  * <pre>
@@ -11,7 +12,7 @@ import org.litepal.annotation.Column;
  *     version: 1.0
  * </pre>
  */
-public class FeedFolder {
+public class FeedFolder extends LitePalSupport {
 
     private int id;//使用int型主键
 
