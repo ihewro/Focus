@@ -61,7 +61,7 @@ public class RequestFeedListDataTask {
 
     public void run(){
 
-        feedList = LitePal.findAll(Feed.class);
+//        feedList = LitePal.findAll(Feed.class);
         this.num = feedList.size();
 
         //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据

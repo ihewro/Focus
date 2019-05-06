@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
@@ -21,17 +20,12 @@ import com.canking.minipay.Config;
 import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
-import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
-import com.ihewro.focus.adapter.ViewPagerAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
-import com.ihewro.focus.task.listener.TaskListener;
-import com.ihewro.focus.util.UIUtil;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.miguelcatalan.materialsearchview.SearchAdapter;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -43,7 +37,6 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -91,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         initEmptyView();
 
-        clickFeedPostsFragment();
+        clickFeedPostsFragment(new ArrayList<String>());
 
         initListener();
 
@@ -154,21 +147,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * 全文查找
+     * 全文搜索🔍
      *
      * @param text
      * @return
      */
-    public String[] queryFeedItemByText(String text) {
-        List<String> list = new ArrayList<String>();
+    public void queryFeedItemByText(String text) {
         text = "%" + text + "%";
         searchResults.clear();
         searchResults = LitePal.where("title like ? or summary like ?", text, text).find(FeedItem.class);
-        for (int i = 0; i < searchResults.size(); i++) {
-            list.add(searchResults.get(i).getTitle());
-        }
-        return list.toArray(new String[0]);
-
     }
 
     public void initEmptyView() {
@@ -195,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         refreshLeftDrawerFeedList();
 
+        //构造侧边栏项目
         updateDrawer();
 
     }
@@ -235,7 +223,10 @@ public class MainActivity extends AppCompatActivity {
                                 MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
                                 break;
                             case 1://TODO:表示为切换fragment显示的内容
-
+                                ALog.d("名称为"+((SecondaryDrawerItem)drawerItem).getName() + "id为" + drawerItem.getTag());
+                                ArrayList<String> list = new ArrayList<>();
+                                list.add(String.valueOf(drawerItem.getTag()));
+                                clickAndUpdateMainFragmentData(list,((SecondaryDrawerItem)drawerItem).getName().toString());
                                 break;
 
                         }
@@ -252,11 +243,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void clickFeedPostsFragment() {
+    /**
+     * 初始化主fragment
+     * @param feedIdList
+     */
+    private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
         if (feedPostsFragment == null) {
-            feedPostsFragment = new UserFeedUpdateContentFragment();
+            feedPostsFragment =  UserFeedUpdateContentFragment.newInstance(feedIdList);
         }
+        toolbar.setTitle("全部文章");
         addOrShowFragment(getSupportFragmentManager().beginTransaction(), feedPostsFragment);
+    }
+
+    /**
+     * 更新主fragment的内部数据并修改UI
+     * @param feedIdList
+     * @param title
+     */
+    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList,String title){
+        if (feedPostsFragment == null){
+            ALog.d("出现未知错误");
+        }else {
+            toolbar.setTitle(title);
+            feedPostsFragment.updateData(feedIdList);
+        }
+
     }
 
 
@@ -273,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < feedList.size(); i++) {
             Feed temp = feedList.get(i);
-            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1);
+            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1).withTag(feedList.get(i).getId());
             subItems.add(secondaryDrawerItem);
         }
     }
@@ -338,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
         if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED)) {
-            //TODO:更新左侧边栏的feed列表
             ALog.d("收到新的订阅添加，更新！");
             refreshLeftDrawerFeedList();
             updateDrawer();

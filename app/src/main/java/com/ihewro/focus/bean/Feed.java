@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class Feed extends LitePalSupport {
 
+    private int id;//真实主键
     @Column(unique = true)
     private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id
     private String name;
@@ -43,6 +44,22 @@ public class Feed extends LitePalSupport {
                 + "文章数目" + feedItemList.size()+"\n"
                 + feedItemList.toString();
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFeedFolderId() {
+        return feedFolderId;
+    }
+
+    public void setFeedFolderId(int feedFolderId) {
+        this.feedFolderId = feedFolderId;
     }
 
     public String getIid() {

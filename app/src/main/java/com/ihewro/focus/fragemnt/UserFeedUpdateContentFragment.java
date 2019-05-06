@@ -41,12 +41,11 @@ import butterknife.Unbinder;
  * 用户的最新订阅信息文章列表的碎片
  */
 public class UserFeedUpdateContentFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
     private SuspensionDecoration mDecoration;
     List<FeedItem> eList = new ArrayList<FeedItem>();
+    public static final String FEED_LIST_ID = "FEED_LIST_ID";
 
     UserFeedPostsVerticalAdapter adapter;
     @BindView(R.id.recycler_view)
@@ -54,7 +53,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     Unbinder unbinder;
 
     private boolean isFirstOpen = true;//首次打开
-
+    ArrayList<String> feedIdList = new ArrayList<>();
 
     public UserFeedUpdateContentFragment() {
     }
@@ -62,15 +61,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
     /**
      * 新建一个新的碎片
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return 返回实例
      */
-    public static UserFeedUpdateContentFragment newInstance(String param1, String param2) {
+    public static UserFeedUpdateContentFragment newInstance(ArrayList<String> feedIdList) {
         UserFeedUpdateContentFragment fragment = new UserFeedUpdateContentFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID,feedIdList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,7 +75,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //
+            feedIdList = getArguments().getStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID);
         }
         EventBus.getDefault().register(this);
     }
@@ -117,7 +113,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
      * 获取用户的所有订阅的文章
      */
     public void requestAllData(){
-        List<Feed> feedList = LitePal.findAll(Feed.class);
+        List<Feed> feedList = new ArrayList<>();
+        if (feedIdList.size() >0){
+            for (int i = 0; i < feedIdList.size(); i++) {
+                feedList.add(LitePal.find(Feed.class,Integer.parseInt(feedIdList.get(i))));
+            }
+        }else {//为空表示显示所有的feedId
+            feedList = LitePal.findAll(Feed.class);
+        }
         RequestFeedListDataTask task = new RequestFeedListDataTask(isFirstOpen,feedList, new RequestFeedItemListCallback() {
             @Override
             public void onFinish(List<FeedItem> feedList) {
@@ -158,5 +161,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
             eList.get(indexInList).setRead(true);
             adapter.notifyItemChanged(indexInList);
         }
+    }
+
+    public void updateData(ArrayList<String> feedIdList) {
+        this.feedIdList = feedIdList;
+        this.isFirstOpen = true;
+        refreshLayout.autoRefresh();
     }
 }
