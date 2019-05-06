@@ -12,6 +12,7 @@ package com.ihewro.focus.bean;
 public class EventMessage {
 
     public static final String EDIT_SAVED = "EDIT_SAVED";
+    public static final String ADD_FEED = "ADD_FEED";
     private String type;
     private String message;
     private int index;

@@ -24,9 +24,12 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.adapter.ViewPagerAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.ihewro.focus.task.listener.TaskListener;
+import com.ihewro.focus.util.UIUtil;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.miguelcatalan.materialsearchview.SearchAdapter;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -42,6 +45,9 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
@@ -80,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
+        EventBus.getDefault().register(this);
 
         initEmptyView();
 
@@ -178,17 +186,11 @@ public class MainActivity extends AppCompatActivity {
                 new SecondaryDrawerItem().withName("CollapsableItem 2").withLevel(2).withIdentifier(2001)
         );
 
+        //初始化侧边栏
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.drawable.ic_logo)
-                .addProfiles(currentUser)
-                .withTextColor(Color.BLACK)
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                })
+                .withCompactStyle(false)
+                .withHeaderBackground(R.drawable.header)
                 .build();
 
         refreshLeftDrawerFeedList();
@@ -326,4 +328,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED)) {
+            //TODO:更新左侧边栏的feed列表
+            
+        }
+    }
+
+
 }

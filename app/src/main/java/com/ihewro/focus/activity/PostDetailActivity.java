@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class PostDetailActivity extends AppCompatActivity {
+public class PostDetailActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
