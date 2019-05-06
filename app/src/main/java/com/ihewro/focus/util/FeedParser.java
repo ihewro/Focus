@@ -158,7 +158,7 @@ public class FeedParser {
                 FeedItem temp = LitePal.where("iid = ?",feed.getFeedItemList().get(i).getIid()).limit(1).find(FeedItem.class).get(0);
                 feed.getFeedItemList().get(i).setRead(temp.isRead());
                 feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
-//                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
+                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
             }
         }
 

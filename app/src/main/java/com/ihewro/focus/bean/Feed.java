@@ -26,6 +26,7 @@ public class Feed extends LitePalSupport {
     private String websiteName;
     private String websiteCategoryName;
     private Long time;
+    private int feedFolderId;//feed文件夹id
     private int totalNum;//总文章数
     private int unreadNum;//未读文章数
 

@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.ViewPagerAdapter;
@@ -74,6 +75,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initListener() {
+
+        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+
+        String[] suggestions = {"正太","可爱"};
+        searchView.setSuggestions(suggestions);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -135,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
-                .withFullscreen(true)
                 .withSelectedItem(-1)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -156,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                 })
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10),
+                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10)
+                )
                 .build();
 
     }
@@ -225,4 +239,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        //返回键关闭🔍搜索
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
