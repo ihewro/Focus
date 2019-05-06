@@ -96,6 +96,7 @@
             android:background="?android:attr/windowBackground"
             android:focusable="true">
             <RelativeLayout
+                android:id="@+id/markRead"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -111,6 +112,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/click_link"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -125,6 +127,7 @@
                     android:text="访问链接"/>
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/star"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -140,6 +143,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/share"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"

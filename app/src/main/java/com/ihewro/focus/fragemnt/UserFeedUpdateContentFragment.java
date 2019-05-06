@@ -97,6 +97,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
         bindListener();
 
         refreshLayout.autoRefresh();
+
+        refreshLayout.setEnableAutoLoadMore(false);//禁止加载更多
     }
 
     public void initEmptyView() {

@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.FeedManageActivity"></activity>
+        <activity android:name=".activity.WebViewActivity"></activity>
+        <activity android:name=".activity.FeedManageActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.FeedListActivity" />
         <activity android:name=".activity.PicActivity" />
