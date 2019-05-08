@@ -22,9 +22,6 @@ public class BaseActivity extends SlideBackActivity {
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         setSlideBackDirection(SlideBackActivity.LEFT);
-
-        //setStatusBar();
-//        defaultListener();
     }
 
 

@@ -21,6 +21,14 @@ public class FeedFolder extends LitePalSupport {
     @Column(defaultValue = "1.0")
     private double orderValue;//顺序权限，用来排序的
 
+    public FeedFolder(String name) {
+        this.name = name;
+    }
+
+
+    public FeedFolder() {
+    }
+
     public int getId() {
         return id;
     }

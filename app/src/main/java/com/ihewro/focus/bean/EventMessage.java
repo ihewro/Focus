@@ -13,6 +13,9 @@ public class EventMessage {
 
     public static final String EDIT_SAVED = "EDIT_SAVED";
     public static final String ADD_FEED = "ADD_FEED";
+    public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
+    public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
+
     private String type;
     private String message;
     private int index;

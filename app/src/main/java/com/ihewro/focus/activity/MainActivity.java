@@ -23,6 +23,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -184,18 +185,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch (position) {
-                            case 1:
+                            case 0:
                                 //当前fragment显示所有数据
+                                clickAndUpdateMainFragmentData(new ArrayList<String>(),"全部文章");
                                 break;
-                            case 2:
+                            case 1:
                                 StarActivity.activityStart(MainActivity.this);
                                 break;
-                            case 3:
+                            case 2:
                                 FeedCategoryActivity.activityStart(MainActivity.this);
                                 break;
 
                         }
-
 
                         switch ((int) drawerItem.getIdentifier()) {
                             case -100://启用分类管理
@@ -264,28 +265,35 @@ public class MainActivity extends AppCompatActivity {
 
 
         subItems.clear();
-        List<Feed> feedList = LitePal.findAll(Feed.class);
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(false));
         subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false));
         subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false));
         subItems.add(new SectionDrawerItem().withName("订阅源"));
 
 
+        List<FeedFolder> feedFolderList = LitePal.findAll(FeedFolder.class);
+        for (int i = 0 ;i < feedFolderList.size();i++){
 
-        //TODO: 构造文件夹
-        List<IDrawerItem> feedItems = new ArrayList<>();
-        for (int i = 0; i < feedList.size(); i++) {
+            int notReadNum =10;//TODO:未读文章数目
 
-            Feed temp = feedList.get(i);
-            SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1).withTag(feedList.get(i).getId());
-            feedItems.add(secondaryDrawerItem);
+            List<IDrawerItem> feedItems = new ArrayList<>();
+            List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).find(Feed.class);
+
+            for (int j = 0; j < feedList.size(); j++) {
+
+                Feed temp = feedList.get(j);
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1).withTag(feedList.get(j).getId());
+                feedItems.add(secondaryDrawerItem);
+
+                notReadNum += temp.getUnreadNum();
+            }
+
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum+"").withSubItems(
+                    feedItems
+            );
+            //添加文件夹
+            subItems.add(one);
         }
-
-        ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName("默认").withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
-                feedItems
-        );
-        //添加文件夹
-        subItems.add(one);
     }
 
 

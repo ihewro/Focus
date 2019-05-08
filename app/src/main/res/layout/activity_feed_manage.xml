@@ -15,11 +15,11 @@
         app:title="管理订阅"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <android.support.v7.widget.RecyclerView
+    <FrameLayout
+        android:id="@+id/fl_main_body"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:id="@+id/recycler_view"
-        />
+        android:layout_height="match_parent">
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
