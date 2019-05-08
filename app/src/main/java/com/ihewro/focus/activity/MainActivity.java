@@ -28,12 +28,10 @@ import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -165,23 +163,6 @@ public class MainActivity extends AppCompatActivity {
     //初始化侧边栏
     public void initDrawer() {
 
-        ProfileDrawerItem currentUser = new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(getResources().getDrawable(R.drawable.ic_logo));
-        currentUser.withSelectedTextColor(Color.BLACK);
-
-        ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName("Collapsable Badge").withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
-                new SecondaryDrawerItem().withName("CollapsableItem").withLevel(2).withIdentifier(2000),
-                new SecondaryDrawerItem().withName("CollapsableItem 2").withLevel(2).withIdentifier(2001)
-        );
-
-        //初始化侧边栏
-        headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withCompactStyle(false)
-                .withHeaderBackground(R.drawable.header)
-                .build();
-
-        refreshLeftDrawerFeedList();
-
         //构造侧边栏项目
         updateDrawer();
 
@@ -189,10 +170,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateDrawer(){
+        //初始化侧边栏
+        refreshLeftDrawerFeedList();
+
+
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
-                .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
+                .withHeaderPadding(true)
                 .withSelectedItem(-1)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -213,13 +198,13 @@ public class MainActivity extends AppCompatActivity {
 
 
                         switch ((int) drawerItem.getIdentifier()) {
-                            case -1://启用分类管理
+                            case -100://启用分类管理
                                 FeedManageActivity.activityStart(MainActivity.this);
                                 break;
-                            case -2://应用设置界面
+                            case -200://应用设置界面
                                 SettingActivity.activityStart(MainActivity.this);
                                 break;
-                            case -3://捐赠支持界面
+                            case -300://捐赠支持界面
                                 MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
                                 break;
                             case 1://TODO:表示为切换fragment显示的内容
@@ -234,9 +219,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withIdentifier(-1),
-                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withIdentifier(-2),
-                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withIdentifier(-3)
+                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withIdentifier(-100),
+                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withIdentifier(-200),
+                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withIdentifier(-300)
 
                 )
                 .build();
@@ -275,6 +260,9 @@ public class MainActivity extends AppCompatActivity {
      * 获取用户的订阅数据，显示在左侧边栏的drawer中
      */
     public void refreshLeftDrawerFeedList() {
+
+
+
         subItems.clear();
         List<Feed> feedList = LitePal.findAll(Feed.class);
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(false));
@@ -282,11 +270,22 @@ public class MainActivity extends AppCompatActivity {
         subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false));
         subItems.add(new SectionDrawerItem().withName("订阅源"));
 
+
+
+        //TODO: 构造文件夹
+        List<IDrawerItem> feedItems = new ArrayList<>();
         for (int i = 0; i < feedList.size(); i++) {
+
             Feed temp = feedList.get(i);
             SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1).withTag(feedList.get(i).getId());
-            subItems.add(secondaryDrawerItem);
+            feedItems.add(secondaryDrawerItem);
         }
+
+        ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName("默认").withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
+                feedItems
+        );
+        //添加文件夹
+        subItems.add(one);
     }
 
 
@@ -350,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
     public void refreshUI(EventMessage eventBusMessage) {
         if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED)) {
             ALog.d("收到新的订阅添加，更新！");
-            refreshLeftDrawerFeedList();
             updateDrawer();
         }
     }

@@ -78,7 +78,6 @@ public class PostDetailActivity extends BaseActivity {
     private void initListener() {
 
 
-
         clickLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,4 +109,5 @@ public class PostDetailActivity extends BaseActivity {
         //设置收藏状态
 
     }
+
 }

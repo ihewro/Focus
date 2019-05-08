@@ -30,6 +30,7 @@ public class Feed extends LitePalSupport {
     private int feedFolderId;//feed文件夹id
     private int totalNum;//总文章数
     private int unreadNum;//未读文章数
+    private String logoPath;//feed的图标路径
 
     @Column(ignore = true)
     private List<FeedItem> feedItemList = new ArrayList<>();

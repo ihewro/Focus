@@ -17,7 +17,6 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
-import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -98,7 +97,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
         refreshLayout.autoRefresh();
 
-        refreshLayout.setEnableAutoLoadMore(false);//禁止加载更多
+        refreshLayout.setEnableLoadMore(false);//禁止加载更多
     }
 
     public void initEmptyView() {
@@ -107,7 +106,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL_LIST));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
     }
 

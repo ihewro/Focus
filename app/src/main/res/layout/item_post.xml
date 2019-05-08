@@ -33,11 +33,11 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="12dp">
+                android:layout_marginTop="13dp">
                 <ImageView
                     android:id="@+id/rss_icon"
                     android:layout_width="21dp"
-                    android:layout_height="21dp"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_rss_feed_grey_24dp"/>
                 <TextView

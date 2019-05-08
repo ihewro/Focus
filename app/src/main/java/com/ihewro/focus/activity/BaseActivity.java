@@ -1,10 +1,9 @@
 package com.ihewro.focus.activity;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.ihewro.focus.R;
+import com.saber.chentianslideback.SlideBackActivity;
 
 /**
  * <pre>
@@ -16,14 +15,18 @@ import com.ihewro.focus.R;
  * </pre>
  */
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends SlideBackActivity {
 
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
+        setSlideBackDirection(SlideBackActivity.LEFT);
+
         //setStatusBar();
+//        defaultListener();
     }
+
 
 
     /**
@@ -38,6 +41,11 @@ public class BaseActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void slideBackSuccess() {
+        finish();//或者其他
     }
 
 }
