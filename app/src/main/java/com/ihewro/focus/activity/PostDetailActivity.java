@@ -99,7 +99,7 @@ public class PostDetailActivity extends BaseActivity {
         feedItem.setRead(true);
         feedItem.save();
         if (mIndex != -1) {//如果是-1表示不需要传递该修改信息
-            EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_SAVED, mIndex));
+            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS, mIndex));
         }
     }
 

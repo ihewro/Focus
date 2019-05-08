@@ -11,10 +11,14 @@ package com.ihewro.focus.bean;
  */
 public class EventMessage {
 
-    public static final String EDIT_SAVED = "EDIT_SAVED";
+    public static final String MAKE_READ_STATUS = "MAKE_READ_STATUS";
     public static final String ADD_FEED = "ADD_FEED";
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
+    public static final String EDIT_FEED_FOLDER_NAME = "EDIT_FEED_FOLDER";//修改feed文件夹名称
+    public static final String EDIT_FEED_NAME = "EDIT_FEED_NAME";
+
+
 
     private String type;
     private String message;

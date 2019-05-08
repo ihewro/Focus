@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED)) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_FOLDER_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_NAME)) {
             ALog.d("收到新的订阅添加，更新！");
             updateDrawer();
         }

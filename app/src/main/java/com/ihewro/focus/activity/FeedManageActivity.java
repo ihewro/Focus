@@ -52,6 +52,7 @@ public class FeedManageActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         showFeedFolderListManageFragment();
     }

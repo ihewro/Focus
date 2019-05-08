@@ -160,7 +160,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_SAVED)) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS)) {
             //更新已读标志
             int indexInList = eventBusMessage.getIndex();
             eList.get(indexInList).setRead(true);

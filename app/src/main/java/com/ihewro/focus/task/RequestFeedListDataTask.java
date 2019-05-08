@@ -104,6 +104,7 @@ public class RequestFeedListDataTask {
             //启动进度条
             pbProgress.setVisibility(View.VISIBLE);
             pbProgress.setProgress(0);//初始进度条
+            ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(0));
 
             for (int i = 0; i <feedList.size() ; i++) {
                 Feed temp = feedList.get(i);
@@ -127,10 +128,10 @@ public class RequestFeedListDataTask {
                 if (index >= num){
                     pbProgress.setProgress(100);
                     ((TextView)(activity.findViewById(R.id.tvText))).setText("请求完毕，数据整理中……");
-                }else {
+                }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
                     int progress = (int) ((index*1.0)/num *100);
                     pbProgress.setProgress(progress);
-                    ((TextView)(activity.findViewById(R.id.tvText))).setText("正在请求"+(index+1)+"/"+num +" 订阅数据");
+                    ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(index));
                 }
             }
         }
@@ -244,5 +245,10 @@ public class RequestFeedListDataTask {
             updateTextInAlter(9999);
             callback.onFinish(list);
         }
+    }
+
+    private String returnProgressText(int index){
+        int order = index + 1;
+        return  "正在请求第" + order +"/" + num+"个订阅数据：\n"+feedList.get(index).getName()+"\n"+feedList.get(index).getUrl();
     }
 }

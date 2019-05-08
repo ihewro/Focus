@@ -23,6 +23,7 @@ import com.ihewro.focus.http.HttpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,6 +74,7 @@ public class FeedCategoryActivity extends AppCompatActivity {
     public void initEmptyView(){
 
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerLeft.setLayoutManager(linearLayoutManager);

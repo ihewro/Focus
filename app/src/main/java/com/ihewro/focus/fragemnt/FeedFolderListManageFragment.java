@@ -6,11 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
+import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedFolderListAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -64,20 +68,43 @@ public class FeedFolderListManageFragment extends Fragment {
 
 
     private void initListener(){
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+
+        // 拖拽排序事件
+        OnItemDragListener onItemDragListener = new OnItemDragListener() {
+            int start = 0;
+            float end = 0;
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                EventBus.getDefault().post(new EventMessage(EventMessage.SHOW_FEED_LIST_MANAGE,feedFolders.get(position).getId()+""));
+            public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos){
+                start = pos;
+                ALog.d("开始" + pos);
             }
-        });
+            @Override
+            public void onItemDragMoving(RecyclerView.ViewHolder source, int from, RecyclerView.ViewHolder target, int to) {
+                ALog.d("开始" + from + " || 目标" + to);
 
-        //TODO：拖拽排序事件
+            }
+            @Override
+            public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {
+                //修改表情中表情包权值，移动的表情包权值 = 移动后的位置
+                ALog.d("结束" + pos);
+                end = pos;
+                if (start > end){//向前移
+//                    expressionFolderList.get((int) end).setOrderValue(end + 0.5);
+                }else {//向后移
+//                    expressionFolderList.get((int) end).setOrderValue(end + 1.5);
+                }
+//                expressionFolderList.get((int) end).save();
+//                EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_DATABASE));
+            }
 
+        };
+        // 开启拖拽
+        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        adapter.enableDragItem(itemTouchHelper, R.id.move_logo, true);
+        adapter.setOnItemDragListener(onItemDragListener);
 
-        //TODO:长按修改名称
-
-
-        //TODO:右滑退订
     }
 
     private void createRecyclerView() {
@@ -86,7 +113,7 @@ public class FeedFolderListManageFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         feedFolders = LitePal.findAll(FeedFolder.class);
-        adapter = new FeedFolderListAdapter(feedFolders);
+        adapter = new FeedFolderListAdapter(feedFolders,getActivity());
         adapter.bindToRecyclerView(recyclerView);
 
     }
