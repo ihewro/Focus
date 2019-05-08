@@ -1,10 +1,15 @@
 package com.ihewro.focus.task;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
+import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -13,6 +18,8 @@ import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.FeedParser;
 import com.ihewro.focus.util.UIUtil;
+import com.tapadoo.alerter.Alert;
+import com.tapadoo.alerter.Alerter;
 
 import org.litepal.LitePal;
 
@@ -49,9 +56,12 @@ public class RequestFeedListDataTask {
     private int num;//总共需要请求的数目
     private int okNum = 0;//已经请求的数目
     private boolean isForce;//isForce为true的时候表明不是一开始打开页面，所以此时的刷新请求数据必须请求
+    private Activity activity;
+    private boolean is_use_internet;//是否使用网络请求
+    private ProgressBar pbProgress;
 
-
-    public RequestFeedListDataTask(boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
+    public RequestFeedListDataTask(Activity activity,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
+        this.activity = activity;
         this.feedList = feedList;
         this.callback = callback;
         this.isForce = !flag;
@@ -60,8 +70,7 @@ public class RequestFeedListDataTask {
 
 
     public void run(){
-
-//        feedList = LitePal.findAll(Feed.class);
+        callback.onBegin();
         this.num = feedList.size();
 
         //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
@@ -74,8 +83,28 @@ public class RequestFeedListDataTask {
         }*/
         if (flag && !isForce){
             this.okNum = num;
-            setUI(true);
+            setUI();
         }else {
+            //显示进度通知
+            //进度显示器
+            Alerter alerter = Alerter.create(activity)
+                    .setTitle("请求数据")
+                    .setText("正在请求")
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            return;
+                        }
+                    })
+                    .enableInfiniteDuration(true)
+                    .setProgressColorRes(R.color.colorAccent)
+                    .setDismissable(false);
+            Alert alert = alerter.show();
+            pbProgress = alert.getProgressBar();
+            //启动进度条
+            pbProgress.setVisibility(View.VISIBLE);
+            pbProgress.setProgress(0);//初始进度条
+
             for (int i = 0; i <feedList.size() ; i++) {
                 Feed temp = feedList.get(i);
                 String url = temp.getUrl();
@@ -85,6 +114,27 @@ public class RequestFeedListDataTask {
 
     }
 
+    /**
+     *
+     * @param index 已经完成了的任务个数
+     */
+    private void updateTextInAlter(int index){
+        if (isForce){//当有网络请求的时候，才有进度通知条
+            if (index == 9999){
+                ((TextView)(activity.findViewById(R.id.tvText))).setText("任务完成……");
+                Alerter.hide();
+            }else {
+                if (index >= num){
+                    pbProgress.setProgress(100);
+                    ((TextView)(activity.findViewById(R.id.tvText))).setText("请求完毕，数据整理中……");
+                }else {
+                    int progress = (int) ((index*1.0)/num *100);
+                    pbProgress.setProgress(progress);
+                    ((TextView)(activity.findViewById(R.id.tvText))).setText("正在请求"+(index+1)+"/"+num +" 订阅数据");
+                }
+            }
+        }
+    }
 
     private void requestData(String url) {
         final String originUrl = url;
@@ -134,7 +184,7 @@ public class RequestFeedListDataTask {
                     }
                     Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
-                setUI(true);
+                setUI();
             }
 
             @SuppressLint("CheckResult")
@@ -142,7 +192,7 @@ public class RequestFeedListDataTask {
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ALog.d("请求失败2" + t.toString());
                 Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
-                setUI(false);
+                setUI();
             }
         });
     }
@@ -164,9 +214,11 @@ public class RequestFeedListDataTask {
     }
 
 
-    private void setUI(boolean flag){
+
+    private void setUI(){
         okNum++;
-        if (this.okNum >= num){//数据全部请求完毕，
+        updateTextInAlter(okNum);
+        if (this.okNum >= num){//数据全部请求完毕
             //合并旧数据
             for (int i = 0; i < num;i++){
                 Feed temp = feedList.get(i);
@@ -189,6 +241,7 @@ public class RequestFeedListDataTask {
                 }
             });
             ALog.d("结束数据按时间排序");
+            updateTextInAlter(9999);
             callback.onFinish(list);
         }
     }

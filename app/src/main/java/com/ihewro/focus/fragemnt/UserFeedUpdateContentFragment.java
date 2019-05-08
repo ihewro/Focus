@@ -122,10 +122,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }else {//为空表示显示所有的feedId
             feedList = LitePal.findAll(Feed.class);
         }
-        RequestFeedListDataTask task = new RequestFeedListDataTask(isFirstOpen,feedList, new RequestFeedItemListCallback() {
+        RequestFeedListDataTask task = new RequestFeedListDataTask(getActivity(),isFirstOpen,feedList, new RequestFeedItemListCallback() {
+            @Override
+            public void onBegin() {
+                refreshLayout.finishRefresh(true);
+            }
+
             @Override
             public void onFinish(List<FeedItem> feedList) {
-                refreshLayout.finishRefresh(true);
                 eList.clear();
                 eList.addAll(feedList);
                 adapter.setNewData(eList);

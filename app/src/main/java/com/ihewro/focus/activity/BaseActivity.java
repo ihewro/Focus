@@ -42,7 +42,7 @@ public class BaseActivity extends SlideBackActivity {
 
     @Override
     protected void slideBackSuccess() {
-        finish();//或者其他
+        onBackPressed();//或者其他
     }
 
 }

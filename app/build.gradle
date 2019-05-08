@@ -116,7 +116,7 @@ dependencies {
     implementation 'com.android.support:customtabs:28.0.0'
 
     //通知
-    implementation 'com.tapadoo.android:alerter:4.0.2'
+    implementation 'com.tapadoo.android:alerter:2.0.6'
 
     //侧滑返回
     implementation 'com.github.ChenTianSaber:SlideBack:v0.8.2'

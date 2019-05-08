@@ -14,5 +14,7 @@ import java.util.List;
  * </pre>
  */
 public interface RequestFeedItemListCallback {
+
+    void onBegin();
     public void onFinish(List<FeedItem> feedList);
 }

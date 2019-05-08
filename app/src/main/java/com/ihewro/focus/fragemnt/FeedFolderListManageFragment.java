@@ -71,10 +71,11 @@ public class FeedFolderListManageFragment extends Fragment {
             }
         });
 
-
         //TODO：拖拽排序事件
 
+
         //TODO:长按修改名称
+
 
         //TODO:右滑退订
     }
