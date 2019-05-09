@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,8 +27,9 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
-import com.ihewro.focus.task.listener.TaskListener;
-import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.view.CustomPartShadowPopupView;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -35,13 +37,10 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.holder.DimenHolder;
-import com.mikepenz.materialdrawer.model.ContainerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -64,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     MaterialSearchView searchView;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.playButton)
+    ButtonBarLayout playButton;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private List<FeedItem> searchResults = new ArrayList<>();
     private FeedSearchAdapter adapter;
     private AccountHeader headerResult;
+    private CustomPartShadowPopupView popupView;
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initSearchAdapter(){
+    private void initSearchAdapter() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new FeedSearchAdapter(searchResults);
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 return false;
             }
+
         });
 
 
@@ -146,6 +149,27 @@ public class MainActivity extends AppCompatActivity {
             public void onSearchViewClosed() {
                 //Do some magic
                 recyclerView.setVisibility(View.GONE);
+            }
+        });
+
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //显示弹窗
+                if (popupView == null){
+                    popupView = (CustomPartShadowPopupView) new XPopup.Builder(MainActivity.this)
+                            .atView(playButton)
+                            .setPopupCallback(new XPopupCallback() {
+                                @Override
+                                public void onShow() {
+                                }
+                                @Override
+                                public void onDismiss() {
+                                }
+                            })
+                            .asCustom(new CustomPartShadowPopupView(MainActivity.this));
+                }
+                popupView.toggle();
             }
         });
     }
@@ -176,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateDrawer(){
+    public void updateDrawer() {
         //初始化侧边栏
         refreshLeftDrawerFeedList();
         //初始化侧边栏
@@ -198,10 +222,10 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem.getTag()!=null){
+                        if (drawerItem.getTag() != null) {
                             switch ((int) drawerItem.getTag()) {
                                 case 1000:
-                                    clickAndUpdateMainFragmentData(new ArrayList<String>(),"全部文章");
+                                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
                                     break;
 
                                 case 2000:
@@ -221,10 +245,10 @@ public class MainActivity extends AppCompatActivity {
                                     MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
                                     break;
                                 case 1:
-                                    ALog.d("名称为"+((SecondaryDrawerItem)drawerItem).getName() + "id为" + drawerItem.getTag());
+                                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getTag());
                                     ArrayList<String> list = new ArrayList<>();
                                     list.add(String.valueOf(drawerItem.getTag()));
-                                    clickAndUpdateMainFragmentData(list,((SecondaryDrawerItem)drawerItem).getName().toString());
+                                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString());
                                     break;
 
                             }
@@ -240,18 +264,18 @@ public class MainActivity extends AppCompatActivity {
                 )
                 .build();
 
-        drawer.setHeader(getLayoutInflater().inflate(R.layout.padding,null),false);
+        drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
     }
-
 
 
     /**
      * 初始化主fragment
+     *
      * @param feedIdList
      */
     private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
         if (feedPostsFragment == null) {
-            feedPostsFragment =  UserFeedUpdateContentFragment.newInstance(feedIdList);
+            feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList);
         }
         toolbar.setTitle("全部文章");
         addOrShowFragment(getSupportFragmentManager().beginTransaction(), feedPostsFragment);
@@ -259,13 +283,14 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 更新主fragment的内部数据并修改UI
+     *
      * @param feedIdList
      * @param title
      */
-    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList,String title){
-        if (feedPostsFragment == null){
+    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title) {
+        if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
-        }else {
+        } else {
             toolbar.setTitle(title);
             feedPostsFragment.updateData(feedIdList);
         }
@@ -279,7 +304,6 @@ public class MainActivity extends AppCompatActivity {
     public void refreshLeftDrawerFeedList() {
 
 
-
         subItems.clear();
 //        subItems.add(new SectionDrawerItem().withName("").withDivider(false));
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(1000));
@@ -289,9 +313,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         List<FeedFolder> feedFolderList = LitePal.findAll(FeedFolder.class);
-        for (int i = 0 ;i < feedFolderList.size();i++){
+        for (int i = 0; i < feedFolderList.size(); i++) {
 
-            int notReadNum =10;//TODO:未读文章数目
+            int notReadNum = 10;//TODO:未读文章数目
 
             List<IDrawerItem> feedItems = new ArrayList<>();
             List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).find(Feed.class);
@@ -305,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 notReadNum += temp.getUnreadNum();
             }
 
-            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum+"").withSubItems(
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum + "").withSubItems(
                     feedItems
             );
             //添加文件夹
