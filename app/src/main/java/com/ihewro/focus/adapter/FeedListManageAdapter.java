@@ -15,6 +15,8 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.callback.DialogCallback;
+import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -128,27 +130,14 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
     }
 
     private void moveToFolder(final Feed item){
-        final List<FeedFolder> feedFolders = LitePal.findAll(FeedFolder.class);
-        List<String> list = new ArrayList<>();
-        for (int i = 0;i < feedFolders.size(); i++){
-            list.add(feedFolders.get(i).getName());
-        }
-
-        String[] temp = list.toArray(new String[0]);
-        new MaterialDialog.Builder(activity)
-                .title("功能列表")
-//                        .content("加载表情目录中稍等")
-                .items(temp)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        //移动到指定的目录下
-                        item.setFeedFolderId(feedFolders.get(which).getId());
-                        item.save();
-                        EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
-                    }
-                })
-                .show();
-
+        new ShowFeedFolderListDialogTask(new DialogCallback() {
+            @Override
+            public void onFinish(MaterialDialog dialog, View view, int which, CharSequence text,int targetId) {
+                //移动到指定的目录下
+                item.setFeedFolderId(targetId);
+                item.save();
+                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+            }
+        },activity,"移动到新的文件夹","").execute();
     }
 }

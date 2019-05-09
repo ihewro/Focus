@@ -25,8 +25,10 @@ import com.ihewro.focus.adapter.FeedRequireListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedRequire;
+import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
+import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.UIUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -142,80 +144,101 @@ public class FeedListActivity extends BaseActivity {
         feedListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
-                //显示弹窗，填写参数进行订阅
-                final MaterialDialog loading = new MaterialDialog.Builder(FeedListActivity.this)
-                        .title("加载参数")
-                        .content("正在网络请求参数")
-                        .progress(false, 0, true)
-                        .build();
-
-                loading.show();
-                Retrofit retrofit = HttpUtil.getRetrofit("bean",GlobalConfig.serverUrl,10,10,10);
-                Call<List<FeedRequire>> request = retrofit.create(HttpInterface.class).getFeedRequireListByWebsite(feedList.get(position).getIid());
-                request.enqueue(new Callback<List<FeedRequire>>() {
-                    @SuppressLint("CheckResult")
-                    @Override
-                    public void onResponse(@NonNull Call<List<FeedRequire>> call, @NonNull Response<List<FeedRequire>> response) {
-                        if (response.isSuccessful()) {
-
-                            assert response.body() != null;
-                            feedRequireList.clear();
-                            //feed更新到当前的时间流中。
-                            feedRequireList.addAll(response.body());
-                            //用一个弹窗显示参数列表
-                            if (feedRequireList.size()>0){
-                                final FeedRequireListAdapter feedRequireListAdapter = new FeedRequireListAdapter(feedRequireList);
-                                MaterialDialog requireDialog = new MaterialDialog.Builder(FeedListActivity.this)
-                                        .title("填写参数")
-                                        .adapter(feedRequireListAdapter,new LinearLayoutManager(FeedListActivity.this))
-                                        .positiveText("订阅")
-                                        .negativeText("取消")
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                Feed feed = feedList.get(position);
-                                                StringBuilder stringBuilder = new StringBuilder(feed.getUrl());//构建订阅的域名🌽
-                                                if (stringBuilder.charAt(stringBuilder.length()-1) != '/'){//末尾一定是/
-                                                    stringBuilder.append("/");
-                                                }
-                                                for (int i =0 ; i < feedRequireList.size();i++){
-                                                    EditText editText = (EditText) feedRequireListAdapter.getViewByPosition(dialog.getRecyclerView(),i,R.id.input);
-                                                    stringBuilder.append(editText.getText().toString());
-
-                                                }
-                                                feed.setUrl(stringBuilder.toString());
-                                                feed.setIid();//否则会出现主键重复
-                                                feed.save();//添加新的订阅，存储到数据库中
-                                                Toasty.success(UIUtil.getContext(),"订阅成功").show();
-                                                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
-                                            }
-                                        })
-                                        .show();
-                            }else {//没有参数
-                                Feed feed = feedList.get(position);
-                                feed.setIid();//否则会出现主键重复
-                                feed.save();
-                                Toasty.success(UIUtil.getContext(),"订阅成功").show();
-                                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
-                            }
-                        } else {
-                            ALog.d("请求失败" + response.errorBody());
-                            Toasty.error(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
-
-                        }
-                        loading.dismiss();
-                        refreshLayout.finishRefresh(true);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<List<FeedRequire>> call, @NonNull Throwable t) {
-
-                        loading.dismiss();
-                        refreshLayout.finishRefresh(true);
-                    }
-                });
+                showRequireList(position);
 
             }
         });
+    }
+
+
+    /**
+     * 显示参数列表
+     * @param position
+     */
+    private void showRequireList(final int position){
+        //显示弹窗，填写参数进行订阅
+        final MaterialDialog loading = new MaterialDialog.Builder(FeedListActivity.this)
+                .title("加载参数")
+                .content("正在网络请求参数")
+                .progress(false, 0, true)
+                .build();
+
+        loading.show();
+        Retrofit retrofit = HttpUtil.getRetrofit("bean",GlobalConfig.serverUrl,10,10,10);
+        Call<List<FeedRequire>> request = retrofit.create(HttpInterface.class).getFeedRequireListByWebsite(feedList.get(position).getIid());
+        request.enqueue(new Callback<List<FeedRequire>>() {
+            @SuppressLint("CheckResult")
+            @Override
+            public void onResponse(@NonNull Call<List<FeedRequire>> call, @NonNull Response<List<FeedRequire>> response) {
+                if (response.isSuccessful()) {
+
+                    assert response.body() != null;
+                    feedRequireList.clear();
+                    //feed更新到当前的时间流中。
+                    feedRequireList.addAll(response.body());
+                    //用一个弹窗显示参数列表
+                    if (feedRequireList.size()>0){
+                        final FeedRequireListAdapter feedRequireListAdapter = new FeedRequireListAdapter(feedRequireList);
+                        MaterialDialog requireDialog = new MaterialDialog.Builder(FeedListActivity.this)
+                                .title("填写参数")
+                                .adapter(feedRequireListAdapter,new LinearLayoutManager(FeedListActivity.this))
+                                .positiveText("订阅")
+                                .negativeText("取消")
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        Feed feed = feedList.get(position);
+                                        StringBuilder stringBuilder = new StringBuilder(feed.getUrl());//构建订阅的域名🌽
+                                        if (stringBuilder.charAt(stringBuilder.length()-1) != '/'){//末尾一定是/
+                                            stringBuilder.append("/");
+                                        }
+                                        for (int i =0 ; i < feedRequireList.size();i++){
+                                            EditText editText = (EditText) feedRequireListAdapter.getViewByPosition(dialog.getRecyclerView(),i,R.id.input);
+                                            stringBuilder.append(editText.getText().toString());
+
+                                        }
+                                        feed.setUrl(stringBuilder.toString());
+                                        feed.setIid();//否则会出现主键重复
+                                        saveFeedToFeedFolder(feed);
+                                    }
+                                })
+                                .show();
+                    }else {//没有参数
+                        //显示弹窗
+                        Feed feed = feedList.get(position);
+                        feed.setIid();//否则会出现主键重复
+                        saveFeedToFeedFolder(feed);
+                    }
+                } else {
+                    ALog.d("请求失败" + response.errorBody());
+                    Toasty.error(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
+
+                }
+                loading.dismiss();
+                refreshLayout.finishRefresh(true);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<FeedRequire>> call, @NonNull Throwable t) {
+
+                loading.dismiss();
+                refreshLayout.finishRefresh(true);
+            }
+        });
+    }
+
+    private void saveFeedToFeedFolder(final Feed feed){
+        //显示feedFolderList 弹窗
+        new ShowFeedFolderListDialogTask(new DialogCallback() {
+            @Override
+            public void onFinish(MaterialDialog dialog, View view, int which, CharSequence text,int targetId) {
+                //移动到指定的目录下
+                feed.setFeedFolderId(targetId);
+                feed.save();
+                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+                Toasty.success(UIUtil.getContext(),"订阅成功").show();
+                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
+            }
+        },FeedListActivity.this,"添加的指定的文件夹下","").execute();
     }
 }

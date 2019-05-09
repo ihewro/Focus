@@ -81,9 +81,9 @@ public class RequestFeedListDataTask {
         }else {
             flag = false;
         }*/
+        this.okNum = num;
         if (okNum>0){//请求总数大于1才会进行请求
             if (flag && !isForce){
-                this.okNum = num;
                 setUI();
             }else {
                 //显示进度通知

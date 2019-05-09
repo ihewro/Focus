@@ -26,16 +26,22 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.ihewro.focus.task.listener.TaskListener;
+import com.ihewro.focus.util.UIUtil;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.holder.DimenHolder;
+import com.mikepenz.materialdrawer.model.ContainerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -173,32 +179,38 @@ public class MainActivity extends AppCompatActivity {
     public void updateDrawer(){
         //初始化侧边栏
         refreshLeftDrawerFeedList();
+        //初始化侧边栏
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withCompactStyle(false)
+                .withDividerBelowHeader(false)
+                .withHeightDp(20)
+                .withProfileImagesClickable(false)
+                .build();
 
 
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withHeaderPadding(true)
+//                .withHeader(R.layout.padding)
                 .withSelectedItem(-1)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        switch (position) {
-                            case 0:
-                                //当前fragment显示所有数据
+
+                        switch ((int) drawerItem.getTag()) {
+                            case 1000:
                                 clickAndUpdateMainFragmentData(new ArrayList<String>(),"全部文章");
                                 break;
-                            case 1:
+
+                            case 2000:
                                 StarActivity.activityStart(MainActivity.this);
                                 break;
-                            case 2:
+
+                            case 3000:
                                 FeedCategoryActivity.activityStart(MainActivity.this);
                                 break;
-
-                        }
-
-                        switch ((int) drawerItem.getIdentifier()) {
                             case -100://启用分类管理
                                 FeedManageActivity.activityStart(MainActivity.this);
                                 break;
@@ -208,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                             case -300://捐赠支持界面
                                 MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
                                 break;
-                            case 1://TODO:表示为切换fragment显示的内容
+                            case 1:
                                 ALog.d("名称为"+((SecondaryDrawerItem)drawerItem).getName() + "id为" + drawerItem.getTag());
                                 ArrayList<String> list = new ArrayList<>();
                                 list.add(String.valueOf(drawerItem.getTag()));
@@ -220,13 +232,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withIdentifier(-100),
-                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withIdentifier(-200),
-                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withIdentifier(-300)
+                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100),
+                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200),
+                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300)
 
                 )
                 .build();
+
+        drawer.setHeader(getLayoutInflater().inflate(R.layout.padding,null),false);
     }
+
 
 
     /**
@@ -265,10 +280,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         subItems.clear();
-        subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(false));
-        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false));
-        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false));
-        subItems.add(new SectionDrawerItem().withName("订阅源"));
+//        subItems.add(new SectionDrawerItem().withName("").withDivider(false));
+        subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(1000));
+        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(true).withTag(2000));
+        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(true).withTag(3000));
+        subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
 
 
         List<FeedFolder> feedFolderList = LitePal.findAll(FeedFolder.class);
