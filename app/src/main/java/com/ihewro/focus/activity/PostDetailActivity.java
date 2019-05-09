@@ -6,12 +6,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
@@ -42,7 +46,8 @@ public class PostDetailActivity extends BaseActivity {
     TextView postTime;
     @BindView(R.id.post_content)
     HtmlTextView postContent;
-
+    @BindView(R.id.main_body)
+    LinearLayout mainBody;
 
 
     private String mId;
@@ -79,7 +84,58 @@ public class PostDetailActivity extends BaseActivity {
 
     private void initListener() {
 
+
+        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            /**
+             * 发生确定的单击时执行
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
+//                ALog.d("单击");
+//                Toast.makeText(PostDetailActivity.this, "这是单击事件", Toast.LENGTH_SHORT).show();
+                return super.onSingleTapConfirmed(e);
+            }
+
+            /**
+             * 双击发生时的通知
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {//双击事件
+                ALog.d("双击");
+                likeButton.performClick();
+//                likeButton.setLiked(!likeButton.isLiked());
+                return super.onDoubleTap(e);
+            }
+
+
+            /**
+             * 双击手势过程中发生的事件，包括按下、移动和抬起事件
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent e) {
+                ALog.d("其他");
+                return super.onDoubleTapEvent(e);
+            }
+        });
+
+
+        postContent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+//                v.performClick();
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
     }
+
+
 
 
     public void initData() {
@@ -90,8 +146,10 @@ public class PostDetailActivity extends BaseActivity {
         //将该文章标记为已读，并且通知首页修改布局
         feedItem.setRead(true);
         feedItem.save();
-        if (mIndex != -1) {//TODO:如果是-1表示不需要传递该修改信息
+        if (mIndex == -1) {//TODO:如果是-1表示不需要传递该修改信息
             EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, mId));
+        }else {
+            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
         }
     }
 
@@ -108,12 +166,13 @@ public class PostDetailActivity extends BaseActivity {
 
     /**
      * 目录按钮的点击事件
+     *
      * @param item
      * @return
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_link://访问外链
                 String url = feedItem.getUrl();
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
@@ -121,7 +180,7 @@ public class PostDetailActivity extends BaseActivity {
                         PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
                 break;
             case R.id.action_share://分享
-                ShareUtil.shareBySystem(PostDetailActivity.this,"text",feedItem.getTitle()+"\n"+feedItem.getUrl());
+                ShareUtil.shareBySystem(PostDetailActivity.this, "text", feedItem.getTitle() + "\n" + feedItem.getUrl());
                 break;
 
         }
@@ -133,7 +192,7 @@ public class PostDetailActivity extends BaseActivity {
     /**
      * 显示自定义的收藏的图标
      */
-    private void showStarActionView(MenuItem item){
+    private void showStarActionView(MenuItem item) {
         starItem = item;
         //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
         likeButton = (LikeButton) getLayoutInflater().inflate(R.layout.action_bar_star, null);
@@ -143,9 +202,9 @@ public class PostDetailActivity extends BaseActivity {
 
     }
 
-    private void setLikeButton(){
+    private void setLikeButton() {
         //设置收藏状态
-        if (feedItem == null){
+        if (feedItem == null) {
             feedItem = LitePal.where("iid = ?", mId).limit(1).find(FeedItem.class).get(0);
         }
         likeButton.setLiked(feedItem.isFavorite());
@@ -155,20 +214,21 @@ public class PostDetailActivity extends BaseActivity {
             public void liked(LikeButton likeButton) {
                 feedItem.setFavorite(true);
                 feedItem.save();
-                if (mIndex == -1){
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId),true));
-                }else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX,mIndex,true));
+                if (mIndex == -1) {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId), true));
+                } else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, true));
                 }
             }
+
             @Override
             public void unLiked(LikeButton likeButton) {
                 feedItem.setFavorite(false);
                 feedItem.save();
-                if (mIndex == -1){
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId),false));
-                }else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX,mIndex,false));
+                if (mIndex == -1) {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId), false));
+                } else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, false));
                 }
             }
         });

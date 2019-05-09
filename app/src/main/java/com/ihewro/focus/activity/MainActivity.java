@@ -198,35 +198,36 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem.getTag()!=null){
+                            switch ((int) drawerItem.getTag()) {
+                                case 1000:
+                                    clickAndUpdateMainFragmentData(new ArrayList<String>(),"全部文章");
+                                    break;
 
-                        switch ((int) drawerItem.getTag()) {
-                            case 1000:
-                                clickAndUpdateMainFragmentData(new ArrayList<String>(),"全部文章");
-                                break;
+                                case 2000:
+                                    StarActivity.activityStart(MainActivity.this);
+                                    break;
 
-                            case 2000:
-                                StarActivity.activityStart(MainActivity.this);
-                                break;
+                                case 3000:
+                                    FeedCategoryActivity.activityStart(MainActivity.this);
+                                    break;
+                                case -100://启用分类管理
+                                    FeedManageActivity.activityStart(MainActivity.this);
+                                    break;
+                                case -200://应用设置界面
+                                    SettingActivity.activityStart(MainActivity.this);
+                                    break;
+                                case -300://捐赠支持界面
+                                    MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
+                                    break;
+                                case 1:
+                                    ALog.d("名称为"+((SecondaryDrawerItem)drawerItem).getName() + "id为" + drawerItem.getTag());
+                                    ArrayList<String> list = new ArrayList<>();
+                                    list.add(String.valueOf(drawerItem.getTag()));
+                                    clickAndUpdateMainFragmentData(list,((SecondaryDrawerItem)drawerItem).getName().toString());
+                                    break;
 
-                            case 3000:
-                                FeedCategoryActivity.activityStart(MainActivity.this);
-                                break;
-                            case -100://启用分类管理
-                                FeedManageActivity.activityStart(MainActivity.this);
-                                break;
-                            case -200://应用设置界面
-                                SettingActivity.activityStart(MainActivity.this);
-                                break;
-                            case -300://捐赠支持界面
-                                MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
-                                break;
-                            case 1:
-                                ALog.d("名称为"+((SecondaryDrawerItem)drawerItem).getName() + "id为" + drawerItem.getTag());
-                                ArrayList<String> list = new ArrayList<>();
-                                list.add(String.valueOf(drawerItem.getTag()));
-                                clickAndUpdateMainFragmentData(list,((SecondaryDrawerItem)drawerItem).getName().toString());
-                                break;
-
+                            }
                         }
                         return false;
                     }

@@ -5,7 +5,7 @@ package com.ihewro.focus.bean;
  *     author : hewro
  *     e-mail : ihewro@163.com
  *     time   : 2018/07/07
- *     desc   :
+ *     desc   : eventBus 使用的消息类
  *     version: 1.0
  * </pre>
  */

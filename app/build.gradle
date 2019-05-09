@@ -124,6 +124,9 @@ dependencies {
     //新手引导
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
 
+    //点赞按钮
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
+    //pup弹窗
+    implementation 'com.lxj:xpopup:1.7.5'
 }

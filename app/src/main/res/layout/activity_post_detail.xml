@@ -34,7 +34,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:id="@+id/main_body">
                 <TextView
                     android:id="@+id/post_title"
                     android:layout_width="match_parent"
@@ -76,10 +78,12 @@
 
                 <com.ihewro.focus.htmltextview.HtmlTextView
                     android:id="@+id/post_content"
+                    android:clickable="true"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
                     android:layout_marginBottom="50dp"
+                    android:textIsSelectable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/test_content"/>
