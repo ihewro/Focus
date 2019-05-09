@@ -22,6 +22,8 @@ import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.List;
@@ -57,6 +59,7 @@ public class FeedFolderListManageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed_folder_list_manage, container, false);
         unbinder = ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -123,5 +126,13 @@ public class FeedFolderListManageFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if(EventMessage.feedFolderOperation.contains(eventBusMessage.getType())){
+            ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
+            createRecyclerView();
+        }
     }
 }

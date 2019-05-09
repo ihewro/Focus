@@ -97,7 +97,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                     Toasty.success(activity,"标记未读成功").show();
                 }
 
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX,-1));
+                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_ITEM_READ));
             }
         });
 

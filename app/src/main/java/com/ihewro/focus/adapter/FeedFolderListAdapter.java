@@ -80,7 +80,7 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
                                     item.setName(name);
                                     item.save();
                                 }
-                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
                             }
                         }).show();
                 return true;
@@ -105,7 +105,7 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
                                 //从列表中移除该项
                                 remove(helper.getAdapterPosition());
                                 notifyDataSetChanged();
-                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
                             }
                         })
                         .show();

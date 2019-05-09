@@ -101,7 +101,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                                 //从列表中移除该项
                                 remove(helper.getAdapterPosition());
                                 notifyDataSetChanged();
-                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED));
                             }
                         })
                         .show();
@@ -124,7 +124,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                         }else {
                             item.setName(name);
                             item.save();
-                            EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+                            EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
                         }
                     }
                 }).show();
@@ -137,7 +137,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                 //移动到指定的目录下
                 item.setFeedFolderId(targetId);
                 item.save();
-                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+                EventBus.getDefault().post(new EventMessage(EventMessage.MOVE_FEED));
             }
         },activity,"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
     }

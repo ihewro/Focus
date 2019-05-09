@@ -10,14 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedFolderListAdapter;
 import com.ihewro.focus.adapter.FeedListManageAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
@@ -72,6 +76,7 @@ public class FeedListManageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed_list_manage, container, false);
         unbinder = ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -103,6 +108,13 @@ public class FeedListManageFragment extends Fragment {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if(EventMessage.feedOperation.contains(eventBusMessage.getType())){
+            ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
+            setRecyclerView();
+        }
+    }
 
     @Override
     public void onDestroyView() {

@@ -1,5 +1,8 @@
 package com.ihewro.focus.bean;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -11,18 +14,37 @@ package com.ihewro.focus.bean;
  */
 public class EventMessage {
 
+    //对文章Item的操作
     public static final String MAKE_READ_STATUS_BY_INDEX = "MAKE_READ_STATUS_BY_INDEX";
     public static final String MAKE_READ_STATUS_BY_ID = "MAKE_READ_STATUS_BY_ID";
     public static final String MAKE_STAR_STATUS_BY_INDEX = "MAKE_STAR_STATUS";
     public static final String MAKE_STAR_STATUS_BY_ID = "MAKE_STAR_STATUS_BY_ID";
+    public static final String EDIT_ITEM_READ = "EDIT_ITEM_READ";//修改了文章的已读状态
 
+    //点击事件
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
 
-    //下面这三个的消息的动作都是一样，是重构那个左侧边栏
-    public static final String ADD_FEED = "ADD_FEED";
+
+    //feed、feedFolder操作
+    public static final String ADD_FEED = "ADD_FEED";//添加新的订阅
+    public static final String MOVE_FEED = "MOVE_FEED";//移动feed到另一个文件夹
+    public static final String EDIT_FEED_NAME = "EDIT_FEED_NAME";//修改订阅名称
+    public static final String DELETE_FEED = "DELETE_FEED";//删除feed
+
+    public static final String ADD_FEED_FOLDER = "ADD_FEED_FOLDER";//添加新的订阅文件夹
     public static final String EDIT_FEED_FOLDER_NAME = "EDIT_FEED_FOLDER";//修改feed文件夹名称
-    public static final String EDIT_FEED_NAME = "EDIT_FEED_NAME";
+    public static final String DELETE_FEED_FOLDER = "DELETE_FEED_FOLDER";//删除feed文件夹
+
+    //首页的左侧边栏遇到这些通知都会更新
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ);
+    public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
+
+    //FeedList 收到这样的通知需要更新列表
+    public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED);
+
+    //FeedFolderList收到这样的通知需要更新列表
+    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
 
 
 

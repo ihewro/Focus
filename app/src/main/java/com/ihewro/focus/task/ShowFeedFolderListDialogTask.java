@@ -104,6 +104,7 @@ public class ShowFeedFolderListDialogTask extends AsyncTask<Void,Integer,List<St
                                         FeedFolder feedFolder = new FeedFolder(name);
                                         feedFolder.save();
                                         list.add(name);
+                                        EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED_FOLDER));
                                         showDialog(list);
                                     }
                                 }).show();

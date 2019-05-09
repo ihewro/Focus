@@ -36,6 +36,8 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +78,6 @@ public class FeedListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_list);
         ButterKnife.bind(this);
-
         Intent intent = getIntent();
         mId = intent.getStringExtra(Constants.KEY_STRING_WEBSITE_ID);
         initView();
@@ -235,10 +236,10 @@ public class FeedListActivity extends BaseActivity {
                 //移动到指定的目录下
                 feed.setFeedFolderId(targetId);
                 feed.save();
-                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
                 Toasty.success(UIUtil.getContext(),"订阅成功").show();
                 EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
             }
         },FeedListActivity.this,"添加到指定的文件夹下","").execute();
     }
+
 }

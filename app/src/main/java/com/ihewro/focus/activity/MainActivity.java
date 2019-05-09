@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
+        toolbarTitle.setText("全部文章");
         EventBus.getDefault().register(this);
 
         SkinCompatManager.getInstance().loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
 //                .withHeader(R.layout.padding)
-                .withSelectedItem(-1)
+//                .withSelectedItem(0)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -402,10 +402,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_FOLDER_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
+        if(EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())){
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             updateDrawer();
         }
