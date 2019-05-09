@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ihewro.focus.htmltextview;
+package com.ihewro.focus.view.htmltextview;
 
 import android.text.Layout;
 import android.text.Selection;

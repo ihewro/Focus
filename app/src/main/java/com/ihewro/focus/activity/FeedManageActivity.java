@@ -65,6 +65,9 @@ public class FeedManageActivity extends BaseActivity {
     private void showFeedListManageFragment(int id) {
         if (feedListManageFragment == null) {
             feedListManageFragment = FeedListManageFragment.newInstance(id);
+        }else {
+            //更新数据
+            feedListManageFragment.updateData(id);
         }
         addOrShowFragment(getSupportFragmentManager().beginTransaction(), feedListManageFragment);
     }

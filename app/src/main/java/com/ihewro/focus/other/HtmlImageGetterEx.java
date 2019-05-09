@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.ihewro.focus.htmltextview.HtmlTextView;
+import com.ihewro.focus.view.htmltextview.HtmlTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 

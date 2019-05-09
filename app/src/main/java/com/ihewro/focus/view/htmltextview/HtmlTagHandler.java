@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package com.ihewro.focus.htmltextview;
+package com.ihewro.focus.view.htmltextview;
 
 import android.support.annotation.Nullable;
 import android.text.Editable;

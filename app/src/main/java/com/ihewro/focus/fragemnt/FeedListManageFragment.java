@@ -121,4 +121,9 @@ public class FeedListManageFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    public void updateData(int id) {
+        mFeedFolderId = id;
+        setRecyclerView();
+    }
 }

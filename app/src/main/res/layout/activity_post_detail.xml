@@ -77,7 +77,7 @@
 
                 </LinearLayout>
 
-                <com.ihewro.focus.htmltextview.HtmlTextView
+                <com.ihewro.focus.view.htmltextview.HtmlTextView
                     android:id="@+id/post_content"
                     android:clickable="true"
                     android:paddingLeft="10dp"

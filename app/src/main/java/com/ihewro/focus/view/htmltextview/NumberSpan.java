@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.ihewro.focus.htmltextview;
+package com.ihewro.focus.view.htmltextview;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

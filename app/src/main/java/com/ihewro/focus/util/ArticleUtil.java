@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.google.common.base.Strings;
 import com.ihewro.focus.bean.FeedItem;
-import com.ihewro.focus.htmltextview.HtmlTextView;
+import com.ihewro.focus.view.htmltextview.HtmlTextView;
 import com.ihewro.focus.other.HtmlImageGetterEx;
 
 import es.dmoral.toasty.Toasty;

@@ -44,7 +44,7 @@ public class EventMessage {
     public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED);
 
     //FeedFolderList收到这样的通知需要更新列表
-    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
+    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,MOVE_FEED);
 
 
 

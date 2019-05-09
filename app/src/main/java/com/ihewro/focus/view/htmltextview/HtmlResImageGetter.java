@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.ihewro.focus.htmltextview;
+package com.ihewro.focus.view.htmltextview;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
