@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
@@ -30,9 +31,17 @@ import com.ihewro.focus.view.PostHeader;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnMultiPurposeListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -86,16 +95,17 @@ public class PostDetailActivity extends BaseActivity {
         mId = intent.getStringExtra(Constants.KEY_STRING_FEED_ITEM_ID);
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
         initData();
-        initListener();
 
         initView();
+
+        initListener();
+
     }
 
     private void initView() {
 
         refreshLayout.setRefreshHeader(new PostHeader(this,feedItem));
         refreshLayout.setRefreshFooter(new PostFooter(this,feedItem));
-
         //使上拉加载具有弹性效果
         refreshLayout.setEnableAutoLoadMore(false);
         //禁止越界拖动（1.0.4以上版本）
@@ -108,6 +118,24 @@ public class PostDetailActivity extends BaseActivity {
     }
 
     private void initListener() {
+
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                //TODO: 载入文章内容
+
+            }
+        });
+
+
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore();
+                //打开外链
+                openLink();
+            }
+        });
         //文章的touch事件
         final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener(){
 
@@ -196,10 +224,7 @@ public class PostDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_link://访问外链
-                String url = feedItem.getUrl();
-                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                CustomTabActivityHelper.openCustomTab(
-                        PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
+                openLink();
                 break;
             case R.id.action_share://分享
                 ShareUtil.shareBySystem(PostDetailActivity.this, "text", feedItem.getTitle() + "\n" + feedItem.getUrl());
@@ -254,6 +279,12 @@ public class PostDetailActivity extends BaseActivity {
                 }
             }
         });
+    }
 
+    private void openLink(){
+        String url = feedItem.getUrl();
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+        CustomTabActivityHelper.openCustomTab(
+                PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
     }
 }

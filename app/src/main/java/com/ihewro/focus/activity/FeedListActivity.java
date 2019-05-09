@@ -239,6 +239,6 @@ public class FeedListActivity extends BaseActivity {
                 Toasty.success(UIUtil.getContext(),"订阅成功").show();
                 EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
             }
-        },FeedListActivity.this,"添加的指定的文件夹下","").execute();
+        },FeedListActivity.this,"添加到指定的文件夹下","").execute();
     }
 }

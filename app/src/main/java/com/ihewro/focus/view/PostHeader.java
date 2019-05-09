@@ -95,7 +95,7 @@ public class PostHeader extends LinearLayout implements RefreshHeader {
                 mArrowView.setVisibility(GONE);//隐藏箭头
                 break;
             case ReleaseToRefresh:
-                mHeaderText.setText("释放立即加载");
+                mHeaderText.setText("加载完整页面");
                 mArrowView.animate().rotation(180);//显示箭头改为朝上
                 break;
         }

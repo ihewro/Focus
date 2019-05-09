@@ -9,11 +9,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.UIUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.List;
@@ -42,9 +44,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
     @Override
     protected void convert(BaseViewHolder helper, FeedItem item) {
         //绑定事件
-        helper.addOnClickListener(R.id.content)
-        .addOnClickListener(R.id.markRead)
-        .addOnClickListener(R.id.star);
+        bindListener(helper,item);
 
         ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
@@ -75,5 +75,58 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             helper.setText(R.id.star,"收藏");
         }
 
+    }
+
+
+    private void bindListener(final BaseViewHolder helper, final FeedItem item){
+
+        helper.getView(R.id.markRead).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                item.setRead(!item.isRead());
+                notifyDataSetChanged();
+                //保存到数据库
+                FeedItem temp = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
+                temp.setRead(item.isRead());
+                temp.save();
+
+                //通知
+                if (item.isRead()){
+                    Toasty.success(activity,"标记已读成功").show();
+                }else {
+                    Toasty.success(activity,"标记未读成功").show();
+                }
+
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX,-1));
+            }
+        });
+
+        helper.getView(R.id.star).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                item.setFavorite(!item.isFavorite());
+                notifyDataSetChanged();
+                //保存到数据库
+                FeedItem temp2 = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
+                temp2.setFavorite(item.isFavorite());
+                temp2.save();
+
+                //通知
+                if (item.isFavorite()){
+                    Toasty.success(activity,"收藏成功").show();
+                }else {
+                    Toasty.success(activity,"取消收藏成功").show();
+                }
+            }
+        });
+
+
+        helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PostDetailActivity.activityStart(activity,item.getIid(),helper.getAdapterPosition());
+
+            }
+        });
     }
 }

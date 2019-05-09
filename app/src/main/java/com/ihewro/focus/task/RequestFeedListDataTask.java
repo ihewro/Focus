@@ -49,7 +49,7 @@ public class RequestFeedListDataTask {
 
 
     private List<Feed> feedList = new ArrayList<>();
-    LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
+    private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
 
 
@@ -123,12 +123,18 @@ public class RequestFeedListDataTask {
     private void updateTextInAlter(int index){
         if (isForce){//当有网络请求的时候，才有进度通知条
             if (index == 9999){
-                ((TextView)(activity.findViewById(R.id.tvText))).setText("任务完成……");
+                TextView textView = activity.findViewById(R.id.tvText);
+                if (textView!=null){
+                    textView.setText("任务完成……");
+                }
                 Alerter.hide();
             }else {
                 if (index >= num){
                     pbProgress.setProgress(100);
-                    ((TextView)(activity.findViewById(R.id.tvText))).setText("请求完毕，数据整理中……");
+                    TextView textView = activity.findViewById(R.id.tvText);
+                    if (textView!=null){
+                        textView.setText("请求完毕，数据整理中……");
+                    }
                 }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
                     int progress = (int) ((index*1.0)/num *100);
                     pbProgress.setProgress(progress);

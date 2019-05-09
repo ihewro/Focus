@@ -40,12 +40,17 @@ public class ShowFeedFolderListDialogTask extends AsyncTask<Void,Integer,List<St
     private String content;
 
     private List<FeedFolder> feedFolders;
+    private boolean hasContent;
 
     public ShowFeedFolderListDialogTask(DialogCallback listener, Activity activity, String title, String content) {
         this.listener = listener;
         this.activity = activity;
         this.title = title;
-        this.content = content;
+        if (content.trim().equals("")){
+            hasContent = false;
+        }else {
+            hasContent = true;
+        }
     }
 
     @Override
@@ -75,7 +80,6 @@ public class ShowFeedFolderListDialogTask extends AsyncTask<Void,Integer,List<St
         final String[] temp = list.toArray(new String[0]);
         new MaterialDialog.Builder(activity)
                 .title(title)
-                .content(content)
                 .items(temp)
                 .neutralText("新增")
                 .itemsCallback(new MaterialDialog.ListCallback() {
@@ -99,7 +103,7 @@ public class ShowFeedFolderListDialogTask extends AsyncTask<Void,Integer,List<St
                                         String name = dialog2.getInputEditText().getText().toString().trim();
                                         FeedFolder feedFolder = new FeedFolder(name);
                                         feedFolder.save();
-                                        list.add(0,name);
+                                        list.add(name);
                                         showDialog(list);
                                     }
                                 }).show();

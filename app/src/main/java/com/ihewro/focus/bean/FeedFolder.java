@@ -21,6 +21,9 @@ public class FeedFolder extends LitePalSupport {
     @Column(defaultValue = "1.0")
     private double orderValue;//顺序权限，用来排序的
 
+    @Column(ignore = true)
+    private int notReadNum;
+
     public FeedFolder(String name) {
         this.name = name;
     }
@@ -51,5 +54,13 @@ public class FeedFolder extends LitePalSupport {
 
     public void setOrderValue(double orderValue) {
         this.orderValue = orderValue;
+    }
+
+    public int getNotReadNum() {
+        return notReadNum;
+    }
+
+    public void setNotReadNum(int notReadNum) {
+        this.notReadNum = notReadNum;
     }
 }

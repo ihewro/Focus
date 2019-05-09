@@ -15,6 +15,7 @@ import com.ihewro.focus.adapter.FeedFolderListAdapter;
 import com.ihewro.focus.adapter.FeedListManageAdapter;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -86,6 +87,13 @@ public class FeedListManageFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         feedList = LitePal.where("feedfolderid = ?", String.valueOf(mFeedFolderId)).find(Feed.class);
+
+        //获取未读数目
+        for (int i = 0;i<feedList.size();i++){
+            int num = LitePal.where("feediid = ?",feedList.get(i).getIid()).count(FeedItem.class);
+            feedList.get(i).setUnreadNum(num);
+        }
+
         adapter = new FeedListManageAdapter(feedList,getActivity());
         adapter.bindToRecyclerView(recyclerView);
 

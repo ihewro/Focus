@@ -24,7 +24,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StarActivity extends AppCompatActivity {
+public class StarActivity extends BaseActivity {
 
     List<FeedItem> eList = new ArrayList<FeedItem>();
     @BindView(R.id.toolbar)
@@ -48,7 +48,7 @@ public class StarActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initData();
     }
 

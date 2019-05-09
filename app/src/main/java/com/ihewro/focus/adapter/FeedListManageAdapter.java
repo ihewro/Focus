@@ -51,6 +51,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
         //TODO:如果有自己ico图标，则显示ico图标
         helper.setImageResource(R.id.main_logo,R.drawable.ic_rss_feed_grey_24dp);
 
+        helper.setText(R.id.not_read_num,item.getUnreadNum() + "");
 
         initListener(helper,item);
     }
@@ -138,6 +139,6 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                 item.save();
                 EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
             }
-        },activity,"移动到新的文件夹","").execute();
+        },activity,"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
     }
 }

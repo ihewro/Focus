@@ -19,6 +19,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedFolderListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;

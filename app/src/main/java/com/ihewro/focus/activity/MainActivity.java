@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
@@ -66,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.playButton)
     ButtonBarLayout playButton;
+    @BindView(R.id.fl_main_body)
+    FrameLayout flMainBody;
+    @BindView(R.id.toolbar_title)
+    TextView toolbarTitle;
+    @BindView(R.id.toolbar_container)
+    FrameLayout toolbarContainer;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -76,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private FeedSearchAdapter adapter;
     private AccountHeader headerResult;
     private CustomPartShadowPopupView popupView;
+
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -90,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        SkinCompatManager.getInstance().loadSkin("night",SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+        SkinCompatManager.getInstance().loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
 
         initEmptyView();
 
@@ -159,13 +168,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //显示弹窗
-                if (popupView == null){
+                if (popupView == null) {
                     popupView = (CustomPartShadowPopupView) new XPopup.Builder(MainActivity.this)
                             .atView(playButton)
                             .setPopupCallback(new XPopupCallback() {
                                 @Override
                                 public void onShow() {
                                 }
+
                                 @Override
                                 public void onDismiss() {
                                 }
@@ -230,11 +240,9 @@ public class MainActivity extends AppCompatActivity {
                                 case 1000:
                                     clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
                                     break;
-
                                 case 2000:
                                     StarActivity.activityStart(MainActivity.this);
                                     break;
-
                                 case 3000:
                                     FeedCategoryActivity.activityStart(MainActivity.this);
                                     break;
@@ -247,10 +255,10 @@ public class MainActivity extends AppCompatActivity {
                                 case -300://捐赠支持界面
                                     MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
                                     break;
-                                case 1:
-                                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getTag());
+                                case 18:
+                                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                                     ArrayList<String> list = new ArrayList<>();
-                                    list.add(String.valueOf(drawerItem.getTag()));
+                                    list.add(String.valueOf(drawerItem.getIdentifier()));
                                     clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString());
                                     break;
 
@@ -260,9 +268,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100),
-                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200),
-                        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300)
+                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100).withSelectable(false),
+                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200).withSelectable(false),
+                        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300).withSelectable(false)
 
                 )
                 .build();
@@ -294,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
         } else {
-            toolbar.setTitle(title);
+            toolbarTitle.setText(title);
             feedPostsFragment.updateData(feedIdList);
         }
 
@@ -308,28 +316,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         subItems.clear();
-//        subItems.add(new SectionDrawerItem().withName("").withDivider(false));
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(1000));
-        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(true).withTag(2000));
-        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(true).withTag(3000));
+        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(2000));
+        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false).withTag(3000));
         subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
 
 
         List<FeedFolder> feedFolderList = LitePal.findAll(FeedFolder.class);
         for (int i = 0; i < feedFolderList.size(); i++) {
 
-            int notReadNum = 10;//TODO:未读文章数目
+            int notReadNum = 0;
 
             List<IDrawerItem> feedItems = new ArrayList<>();
             List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).find(Feed.class);
 
             for (int j = 0; j < feedList.size(); j++) {
-
                 Feed temp = feedList.get(j);
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(false).withIdentifier(1).withTag(feedList.get(j).getId());
+                int current_notReadNum = LitePal.where("read = ? and feediid = ?", "0", String.valueOf(temp.getIid())).count(FeedItem.class);
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(18).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
                 feedItems.add(secondaryDrawerItem);
-
-                notReadNum += temp.getUnreadNum();
+                notReadNum += current_notReadNum;
             }
 
             ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum + "").withSubItems(
@@ -399,11 +405,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_FOLDER_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_NAME)) {
-            ALog.d("收到新的订阅添加，更新！");
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.ADD_FEED) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_FOLDER_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.EDIT_FEED_NAME) || Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
+            ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             updateDrawer();
         }
     }
-
-
 }

@@ -160,55 +160,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
         });
 
 
-        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                FeedItem item = eList.get(position);
-                ALog.d("点击了"+view.getId());
-                switch (view.getId()){
-                    case R.id.markRead:
-                        item.setRead(!item.isRead());
-                        adapter.notifyItemChanged(position);
-
-                        //保存到数据库
-                        FeedItem temp = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
-                        temp.setRead(item.isRead());
-                        temp.save();
-
-                        //通知
-                        if (item.isRead()){
-                            Toasty.success(getActivity(),"标记已读成功").show();
-                        }else {
-                            Toasty.success(getActivity(),"标记未读成功").show();
-                        }
-                        break;
-                    case R.id.star:
-                        item.setFavorite(!item.isFavorite());
-                        adapter.notifyItemChanged(position);
-
-                        //保存到数据库
-                        FeedItem temp2 = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
-                        temp2.setRead(item.isFavorite());
-                        temp2.save();
-
-                        //通知
-                        if (item.isFavorite()){
-                            Toasty.success(getActivity(),"收藏成功").show();
-                        }else {
-                            Toasty.success(getActivity(),"取消收藏成功").show();
-                        }
-                        break;
-
-                    case R.id.content:
-                        PostDetailActivity.activityStart(getActivity(),eList.get(position).getIid(),position);
-                        break;
-                }
-            }
-        });
-
-
-
-
     }
 
 
@@ -224,8 +175,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
         if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
             //更新已读标志
             int indexInList = eventBusMessage.getIndex();
-            eList.get(indexInList).setRead(true);
-            adapter.notifyItemChanged(indexInList);
+            if (indexInList!=-1){
+                eList.get(indexInList).setRead(true);
+                adapter.notifyItemChanged(indexInList);
+            }
         }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){
             //更新收藏状态
             int indexInList = eventBusMessage.getIndex();
