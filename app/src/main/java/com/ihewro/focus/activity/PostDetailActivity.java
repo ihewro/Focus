@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
@@ -26,8 +25,14 @@ import com.ihewro.focus.util.ArticleUtil;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ShareUtil;
+import com.ihewro.focus.view.PostFooter;
+import com.ihewro.focus.view.PostHeader;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -48,6 +53,8 @@ public class PostDetailActivity extends BaseActivity {
     HtmlTextView postContent;
     @BindView(R.id.main_body)
     LinearLayout mainBody;
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
 
 
     private String mId;
@@ -80,12 +87,22 @@ public class PostDetailActivity extends BaseActivity {
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
         initData();
         initListener();
+
+        initView();
+    }
+
+    private void initView() {
+
+        refreshLayout.setRefreshHeader(new PostHeader(this,feedItem));
+        refreshLayout.setRefreshFooter(new PostFooter(this,feedItem));
+
+        refreshLayout.setEnableLoadMore(false);
+        refreshLayout.setEnableRefresh(false);
     }
 
     private void initListener() {
-
-
-        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
+        //文章的touch事件
+        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener(){
 
             /**
              * 发生确定的单击时执行
@@ -136,8 +153,6 @@ public class PostDetailActivity extends BaseActivity {
     }
 
 
-
-
     public void initData() {
         feedItem = LitePal.where("iid = ?", mId).limit(1).find(FeedItem.class).get(0);
         ArticleUtil.setContent(this, feedItem, postContent);
@@ -148,7 +163,7 @@ public class PostDetailActivity extends BaseActivity {
         feedItem.save();
         if (mIndex == -1) {//TODO:如果是-1表示不需要传递该修改信息
             EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, mId));
-        }else {
+        } else {
             EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
         }
     }

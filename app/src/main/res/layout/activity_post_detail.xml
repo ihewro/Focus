@@ -26,7 +26,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srlEnablePureScrollMode="true"
         app:srlDragRate="1">
         <ScrollView
             android:layout_width="match_parent"
@@ -35,6 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:clickable="true"
                 android:id="@+id/main_body">
                 <TextView
