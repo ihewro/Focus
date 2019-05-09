@@ -123,4 +123,7 @@ dependencies {
 
     //新手引导
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
+
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
 }

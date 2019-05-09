@@ -81,38 +81,39 @@ public class RequestFeedListDataTask {
         }else {
             flag = false;
         }*/
-        if (flag && !isForce){
-            this.okNum = num;
-            setUI();
-        }else {
-            //显示进度通知
-            //进度显示器
-            Alerter alerter = Alerter.create(activity)
-                    .setTitle("请求数据")
-                    .setText("正在请求")
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            return;
-                        }
-                    })
-                    .enableInfiniteDuration(true)
-                    .setProgressColorRes(R.color.colorAccent)
-                    .setDismissable(false);
-            Alert alert = alerter.show();
-            pbProgress = alert.getProgressBar();
-            //启动进度条
-            pbProgress.setVisibility(View.VISIBLE);
-            pbProgress.setProgress(0);//初始进度条
-            ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(0));
+        if (okNum>0){//请求总数大于1才会进行请求
+            if (flag && !isForce){
+                this.okNum = num;
+                setUI();
+            }else {
+                //显示进度通知
+                //进度显示器
+                Alerter alerter = Alerter.create(activity)
+                        .setTitle("请求数据")
+                        .setText("正在请求")
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                return;
+                            }
+                        })
+                        .enableInfiniteDuration(true)
+                        .setProgressColorRes(R.color.colorAccent)
+                        .setDismissable(false);
+                Alert alert = alerter.show();
+                pbProgress = alert.getProgressBar();
+                //启动进度条
+                pbProgress.setVisibility(View.VISIBLE);
+                pbProgress.setProgress(0);//初始进度条
+                ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(0));
 
-            for (int i = 0; i <feedList.size() ; i++) {
-                Feed temp = feedList.get(i);
-                String url = temp.getUrl();
-                requestData(url);
+                for (int i = 0; i <feedList.size() ; i++) {
+                    Feed temp = feedList.get(i);
+                    String url = temp.getUrl();
+                    requestData(url);
+                }
             }
         }
-
     }
 
     /**

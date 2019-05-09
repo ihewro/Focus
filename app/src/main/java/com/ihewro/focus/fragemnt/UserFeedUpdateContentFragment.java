@@ -160,10 +160,16 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS)) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
             //更新已读标志
             int indexInList = eventBusMessage.getIndex();
             eList.get(indexInList).setRead(true);
+            adapter.notifyItemChanged(indexInList);
+        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){
+            //更新收藏状态
+            int indexInList = eventBusMessage.getIndex();
+            boolean flag = eventBusMessage.isFlag();
+            eList.get(indexInList).setFavorite(flag);
             adapter.notifyItemChanged(indexInList);
         }
     }

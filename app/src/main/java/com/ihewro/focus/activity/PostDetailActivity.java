@@ -21,6 +21,9 @@ import com.ihewro.focus.htmltextview.HtmlTextView;
 import com.ihewro.focus.util.ArticleUtil;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
+import com.ihewro.focus.util.ShareUtil;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -39,17 +42,14 @@ public class PostDetailActivity extends BaseActivity {
     TextView postTime;
     @BindView(R.id.post_content)
     HtmlTextView postContent;
-    @BindView(R.id.markRead)
-    RelativeLayout markRead;
-    @BindView(R.id.click_link)
-    RelativeLayout clickLink;
-    @BindView(R.id.star)
-    RelativeLayout star;
-    @BindView(R.id.share)
-    RelativeLayout share;
+
+
+
     private String mId;
     private int mIndex;
     private FeedItem feedItem;
+    private MenuItem starItem;
+    private LikeButton likeButton;
 
     public static void activityStart(Activity activity, String feedItemId, int indexInList) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
@@ -79,16 +79,6 @@ public class PostDetailActivity extends BaseActivity {
 
     private void initListener() {
 
-
-        clickLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = feedItem.getUrl();
-                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                CustomTabActivityHelper.openCustomTab(
-                        PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
-            }
-        });
     }
 
 
@@ -100,27 +90,88 @@ public class PostDetailActivity extends BaseActivity {
         //将该文章标记为已读，并且通知首页修改布局
         feedItem.setRead(true);
         feedItem.save();
-        if (mIndex != -1) {//如果是-1表示不需要传递该修改信息
-            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS, mIndex));
+        if (mIndex != -1) {//TODO:如果是-1表示不需要传递该修改信息
+            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, mId));
         }
     }
 
-    private void initView(){
-        //设置已读状态
-
-        //设置收藏状态
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.post, menu);
 
-        //查询是否收藏了
-
-
-
+        starItem = menu.findItem(R.id.action_star);
+        showStarActionView(starItem);
         return true;
     }
 
+
+    /**
+     * 目录按钮的点击事件
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_link://访问外链
+                String url = feedItem.getUrl();
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                CustomTabActivityHelper.openCustomTab(
+                        PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
+                break;
+            case R.id.action_share://分享
+                ShareUtil.shareBySystem(PostDetailActivity.this,"text",feedItem.getTitle()+"\n"+feedItem.getUrl());
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    /**
+     * 显示自定义的收藏的图标
+     */
+    private void showStarActionView(MenuItem item){
+        starItem = item;
+        //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
+        likeButton = (LikeButton) getLayoutInflater().inflate(R.layout.action_bar_star, null);
+        item.setActionView(likeButton);
+
+        setLikeButton();
+
+    }
+
+    private void setLikeButton(){
+        //设置收藏状态
+        if (feedItem == null){
+            feedItem = LitePal.where("iid = ?", mId).limit(1).find(FeedItem.class).get(0);
+        }
+        likeButton.setLiked(feedItem.isFavorite());
+        //收藏的点击事件
+        likeButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                feedItem.setFavorite(true);
+                feedItem.save();
+                if (mIndex == -1){
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId),true));
+                }else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX,mIndex,true));
+                }
+            }
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                feedItem.setFavorite(false);
+                feedItem.save();
+                if (mIndex == -1){
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId),false));
+                }else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX,mIndex,false));
+                }
+            }
+        });
+
+    }
 }

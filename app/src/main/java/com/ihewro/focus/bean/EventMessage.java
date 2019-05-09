@@ -11,10 +11,16 @@ package com.ihewro.focus.bean;
  */
 public class EventMessage {
 
-    public static final String MAKE_READ_STATUS = "MAKE_READ_STATUS";
-    public static final String ADD_FEED = "ADD_FEED";
+    public static final String MAKE_READ_STATUS_BY_INDEX = "MAKE_READ_STATUS_BY_INDEX";
+    public static final String MAKE_READ_STATUS_BY_ID = "MAKE_READ_STATUS_BY_ID";
+    public static final String MAKE_STAR_STATUS_BY_INDEX = "MAKE_STAR_STATUS";
+    public static final String MAKE_STAR_STATUS_BY_ID = "MAKE_STAR_STATUS_BY_ID";
+
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
+
+    //下面这三个的消息的动作都是一样，是重构那个左侧边栏
+    public static final String ADD_FEED = "ADD_FEED";
     public static final String EDIT_FEED_FOLDER_NAME = "EDIT_FEED_FOLDER";//修改feed文件夹名称
     public static final String EDIT_FEED_NAME = "EDIT_FEED_NAME";
 
@@ -25,6 +31,7 @@ public class EventMessage {
     private int index;
     private String message2;
     private String message3;
+    private boolean flag;
 
 
     public EventMessage(String type) {
@@ -34,6 +41,12 @@ public class EventMessage {
     public EventMessage(String type, int index) {
         this.type = type;
         this.index = index;
+    }
+
+    public EventMessage(String type, int index, boolean flag) {
+        this.type = type;
+        this.index = index;
+        this.flag = flag;
     }
 
     public EventMessage(String type, String message) {
@@ -54,6 +67,14 @@ public class EventMessage {
         this.message = message;
         this.message2 = message2;
         this.message3 = message3;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 
     public String getType() {
