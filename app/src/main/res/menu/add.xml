@@ -2,9 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_add_black_24dp"
+        android:id="@+id/action_import"
         android:orderInCategory="100"
-        android:title="添加订阅"
-        app:showAsAction="always" />
+        android:title="导入OPML"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        android:title="导出OPML"
+        app:showAsAction="never" />
+
+
 </menu>

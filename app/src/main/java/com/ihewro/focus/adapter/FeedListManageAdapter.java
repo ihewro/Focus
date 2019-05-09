@@ -98,6 +98,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                                 //从列表中移除该项
                                 remove(helper.getAdapterPosition());
                                 notifyDataSetChanged();
+                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
                             }
                         })
                         .show();

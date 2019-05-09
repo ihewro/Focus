@@ -1,10 +1,15 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="MaterialDrawerTheme.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--抽屉的风格-->
+        <item name="material_drawer_selected">@color/colorPrimary</item>
+        <item name="material_drawer_selected_text">@color/colorAccent</item>
+
     </style>
 
     <style name="Animation_Activity">
@@ -13,4 +18,8 @@
         <item name="android:activityCloseEnterAnimation">@anim/translate_left_to_center</item>
         <item name="android:activityCloseExitAnimation">@anim/translate_center_to_right</item>
     </style>
+
+    <!--抽屉的样式-->
+
+
 </resources>
