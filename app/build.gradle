@@ -46,7 +46,9 @@ dependencies {
     }
 
     //滑动菜单
-    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
+//    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
+    implementation 'com.github.anzaizai:EasySwipeMenuLayout:1.1.2'
+
 
     //dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
@@ -121,12 +123,15 @@ dependencies {
     //侧滑返回
     implementation 'com.github.ChenTianSaber:SlideBack:v0.8.2'
 
-    //新手引导
-    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
-
     //点赞按钮
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
     //pup弹窗
     implementation 'com.lxj:xpopup:1.7.5'
+
+    //多主题
+    implementation 'skin.support:skin-support:3.1.1'                   // skin-support 基础控件支持
+    implementation 'skin.support:skin-support-design:3.1.1'            // skin-support-design material design 控件支持[可选]
+    implementation 'skin.support:skin-support-cardview:3.1.1'          // skin-support-cardview CardView 控件支持[可选]
+    implementation 'skin.support:skin-support-constraint-layout:3.1.1' // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
 }

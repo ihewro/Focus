@@ -96,8 +96,15 @@ public class PostDetailActivity extends BaseActivity {
         refreshLayout.setRefreshHeader(new PostHeader(this,feedItem));
         refreshLayout.setRefreshFooter(new PostFooter(this,feedItem));
 
-        refreshLayout.setEnableLoadMore(false);
-        refreshLayout.setEnableRefresh(false);
+        //使上拉加载具有弹性效果
+        refreshLayout.setEnableAutoLoadMore(false);
+        //禁止越界拖动（1.0.4以上版本）
+        refreshLayout.setEnableOverScrollDrag(false);
+        //关闭越界回弹功能
+        refreshLayout.setEnableOverScrollBounce(false);
+        // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
+        refreshLayout.setEnableAutoLoadMore(false);
+
     }
 
     private void initListener() {

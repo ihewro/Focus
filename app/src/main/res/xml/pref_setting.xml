@@ -19,6 +19,41 @@
         android:title="@string/pref_title_use_internet_while_open"
         android:summary="@string/pref_summary_lower_flow_mode"/>
 
+    <Preference
+        android:key="@string/pref_key_load_choice"
+        android:title="@string/pref_title_load_choice"
+        android:summary="@string/pref_summary_load_choice"/>
+
+
+    <Preference
+        android:key="@string/pref_key_font_size"
+        android:title="@string/pref_title_font_size"
+        android:summary="@string/pref_summary_font_size"/>
+
+    <Preference
+        android:key="@string/pref_key_theme"
+        android:title="@string/pref_title_theme"
+        android:summary="@string/pref_summary_theme"/>
+
+
+    <PreferenceCategory
+        android:key="@string/pref_key_enhance_setting"
+        android:title="@string/pref_title_enhance_setting" />
+
+    <Preference
+        android:key="@string/pref_key_backup"
+        android:title="@string/pref_title_backup"
+        android:summary="@string/pref_summary_backup"/>
+
+
+
+
+
+    <Preference
+        android:key="@string/pref_key_recover"
+        android:title="@string/pref_title_recover"
+        android:summary="@string/pref_summary_recover"/>
+
     <PreferenceCategory
         android:key="@string/pref_key_primary_about"
         android:title="@string/pref_title_primary_about" />

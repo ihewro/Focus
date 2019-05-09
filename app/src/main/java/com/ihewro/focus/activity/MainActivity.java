@@ -53,6 +53,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import skin.support.SkinCompatManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         EventBus.getDefault().register(this);
+
+        SkinCompatManager.getInstance().loadSkin("night",SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
 
         initEmptyView();
 
@@ -257,9 +260,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("分类管理").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100),
-                        new SecondaryDrawerItem().withName("应用设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200),
-                        new SecondaryDrawerItem().withName("捐赠支持").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300)
+                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100),
+                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200),
+                        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300)
 
                 )
                 .build();

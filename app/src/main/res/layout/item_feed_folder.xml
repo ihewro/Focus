@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.mcxtzhang.swipemenulib.SwipeMenuLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:contentView="@+id/item_view"
+    app:rightMenuView="@+id/not_feed"
     android:focusable="true">
     <RelativeLayout
         android:id="@+id/item_view"
@@ -78,4 +80,4 @@
         android:text="退订"
         android:textColor="@android:color/white"/>
 
-</com.mcxtzhang.swipemenulib.SwipeMenuLayout>
+</com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>

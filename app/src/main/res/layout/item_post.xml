@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+<com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:focusable="true">
+    app:contentView="@+id/content"
+    app:rightMenuView="@+id/right">
 
     <RelativeLayout
         android:id="@+id/content"
@@ -91,22 +93,28 @@
     </RelativeLayout>
 
     <!-- 以下都是侧滑菜单的内容依序排列 -->
-    <Button
-        android:id="@+id/star"
-        android:layout_width="60dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="#d9dee4"
-        android:text="收藏"
-        android:textColor="@android:color/white"/>
+        android:id="@+id/right"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/star"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="#d9dee4"
+            android:text="收藏"
+            android:textColor="@android:color/white"/>
 
-    <Button
-        android:id="@+id/markRead"
-        android:layout_width="120dp"
-        android:layout_height="match_parent"
-        android:background="#ecd50a"
-        android:clickable="true"
-        android:text="标记未读"
-        android:textColor="@android:color/white"/>
+        <Button
+            android:id="@+id/markRead"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:background="#ecd50a"
+            android:clickable="true"
+            android:text="标记未读"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
 
 
-</com.mcxtzhang.swipemenulib.SwipeMenuLayout>
+</com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>

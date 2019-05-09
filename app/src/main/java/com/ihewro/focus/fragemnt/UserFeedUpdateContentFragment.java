@@ -7,11 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.blankj.ALog;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
@@ -35,6 +40,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import es.dmoral.toasty.Toasty;
 
 /**
  * 用户的最新订阅信息文章列表的碎片
@@ -94,10 +100,16 @@ public class UserFeedUpdateContentFragment extends Fragment {
         initEmptyView();
 
         bindListener();
-
         refreshLayout.autoRefresh();
-
         refreshLayout.setEnableLoadMore(false);//禁止加载更多
+        //使上拉加载具有弹性效果
+        refreshLayout.setEnableAutoLoadMore(false);
+        //禁止越界拖动（1.0.4以上版本）
+        refreshLayout.setEnableOverScrollDrag(false);
+        //关闭越界回弹功能
+        refreshLayout.setEnableOverScrollBounce(false);
+        // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
+        refreshLayout.setEnableAutoLoadMore(false);
     }
 
     public void initEmptyView() {
@@ -146,6 +158,55 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 requestAllData();
             }
         });
+
+
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                FeedItem item = eList.get(position);
+                ALog.d("点击了"+view.getId());
+                switch (view.getId()){
+                    case R.id.markRead:
+                        item.setRead(!item.isRead());
+                        adapter.notifyItemChanged(position);
+
+                        //保存到数据库
+                        FeedItem temp = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
+                        temp.setRead(item.isRead());
+                        temp.save();
+
+                        //通知
+                        if (item.isRead()){
+                            Toasty.success(getActivity(),"标记已读成功").show();
+                        }else {
+                            Toasty.success(getActivity(),"标记未读成功").show();
+                        }
+                        break;
+                    case R.id.star:
+                        item.setFavorite(!item.isFavorite());
+                        adapter.notifyItemChanged(position);
+
+                        //保存到数据库
+                        FeedItem temp2 = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
+                        temp2.setRead(item.isFavorite());
+                        temp2.save();
+
+                        //通知
+                        if (item.isFavorite()){
+                            Toasty.success(getActivity(),"收藏成功").show();
+                        }else {
+                            Toasty.success(getActivity(),"取消收藏成功").show();
+                        }
+                        break;
+
+                    case R.id.content:
+                        PostDetailActivity.activityStart(getActivity(),eList.get(position).getIid(),position);
+                        break;
+                }
+            }
+        });
+
+
 
 
     }
