@@ -18,6 +18,7 @@ import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.FeedParser;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedsLoadingPopupView;
+import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.tapadoo.alerter.Alerter;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -64,13 +66,18 @@ public class RequestFeedListDataTask {
     private Activity activity;
     private boolean is_use_internet;//是否使用网络请求
     private ProgressBar pbProgress;
+    private int orderChoice = FilterPopupView.ORDER_BY_NEW;
+    private int filterChoice = FilterPopupView.SHOW_ALL;
 
-    public RequestFeedListDataTask(Activity activity,View view,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
+
+    public RequestFeedListDataTask(int oderChoice, int filterChoice,Activity activity,View view,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
         this.activity = activity;
         this.feedList = feedList;
         this.callback = callback;
         this.isForce = !flag;
         this.view = view;
+        this.orderChoice = oderChoice;
+        this.filterChoice = filterChoice;
     }
 
 
@@ -155,18 +162,17 @@ public class RequestFeedListDataTask {
         int pos1 = url.lastIndexOf("/");
         if (pos1 == 7 || pos1 == 6){//说明这/是协议头的,比如https://www.ihewro.com
             url = url + "/";
-            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 100, 100, 100);
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 10, 10, 10);
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSData();
         }else {
             String with = url.substring(pos1+1);
             url = url.substring(0,pos1) + "/";
             ALog.d("根域名" + url + "参数" + with);
-            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 100, 100, 100);
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 10, 10, 10);
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSDataWith(with);
         }
-        Toasty.info(UIUtil.getContext(),"开始请求"+url).show();
         call.enqueue(new Callback<String>() {
             @SuppressLint("CheckResult")
             @Override
@@ -236,21 +242,64 @@ public class RequestFeedListDataTask {
                 String url = temp.getUrl();
                 mergeOldItems(url);
             }
-            //对数据排序
+
+
+
             ALog.d("开始对数据排序");
             List<FeedItem> list = new ArrayList<>(eList);
-            Collections.sort(list, new Comparator<FeedItem>() {
-                @Override
-                public int compare(FeedItem t0, FeedItem t1) {
-                    if (t0.getDate() < t1.getDate()){
-                        return 1;
-                    }else if (t0.getDate() > t1.getDate()){
-                        return -1;
-                    }else {
-                        return 0;
+
+
+            //对数据进行过滤
+            if (filterChoice == FilterPopupView.SHOW_STAR){
+                Iterator<FeedItem> sListIterator = list.iterator();
+                while (sListIterator.hasNext()) {
+                    FeedItem feedItem = sListIterator.next();
+                    if (!feedItem.isFavorite()) {//非收藏数据删除
+                        sListIterator.remove();
                     }
                 }
-            });
+            }else if (filterChoice == FilterPopupView.SHOW_UNREAD){
+                Iterator<FeedItem> sListIterator = list.iterator();
+                while (sListIterator.hasNext()) {
+                    FeedItem feedItem = sListIterator.next();
+                    if (!feedItem.isRead()) {//已经阅读过的数据删除
+                        sListIterator.remove();
+                    }
+                }
+            }
+
+            //对数据排序
+            //选择排序方式
+            if (orderChoice == FilterPopupView.ORDER_BY_NEW){
+                Collections.sort(list, new Comparator<FeedItem>() {
+                    @Override
+                    public int compare(FeedItem t0, FeedItem t1) {//新的在前
+                        if (t0.getDate() < t1.getDate()){
+                            return 1;
+                        }else if (t0.getDate() > t1.getDate()){
+                            return -1;
+                        }else {
+                            return 0;
+                        }
+                    }
+                });
+            }else {//旧的在前
+                Collections.sort(list, new Comparator<FeedItem>() {
+                    @Override
+                    public int compare(FeedItem t0, FeedItem t1) {//新的在前
+                        if (t0.getDate() > t1.getDate()){
+                            return 1;
+                        }else if (t0.getDate() < t1.getDate()){
+                            return -1;
+                        }else {
+                            return 0;
+                        }
+                    }
+                });
+            }
+
+
+
             ALog.d("结束数据按时间排序");
             updateTextInAlter(9999);
             callback.onFinish(list);

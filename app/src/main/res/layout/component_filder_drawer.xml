@@ -21,12 +21,13 @@
 
 
         <android.support.v7.widget.CardView
+            android:id="@+id/newest_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             app:cardCornerRadius="10dp" >
             <TextView
-
+                android:id="@+id/newest_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -35,11 +36,15 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/old_card"
             android:layout_width="match_parent"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             app:cardCornerRadius="10dp">
             <TextView
+                android:id="@+id/old_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -56,11 +61,15 @@
             android:textSize="17sp" />
 
         <android.support.v7.widget.CardView
+            android:id="@+id/all_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             app:cardCornerRadius="10dp">
             <TextView
+                android:id="@+id/all_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
@@ -69,11 +78,15 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/read_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             app:cardCornerRadius="10dp">
             <TextView
+                android:id="@+id/read_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -82,11 +95,15 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/star_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             android:layout_margin="10dp"
             app:cardCornerRadius="10dp">
             <TextView
+                android:id="@+id/star_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"

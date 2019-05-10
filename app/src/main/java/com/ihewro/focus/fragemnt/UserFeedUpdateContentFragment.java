@@ -25,6 +25,7 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.task.RequestFeedListDataTask;
+import com.ihewro.focus.view.FilterPopupView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -61,6 +62,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private View view;
     private boolean isFirstOpen = true;//首次打开
     ArrayList<String> feedIdList = new ArrayList<>();
+
+    private int orderChoice = FilterPopupView.ORDER_BY_NEW;
+    private int filterChoice = FilterPopupView.SHOW_ALL;
 
     @SuppressLint("ValidFragment")
     public UserFeedUpdateContentFragment(View view) {
@@ -141,7 +145,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }else {//为空表示显示所有的feedId
             feedList = LitePal.findAll(Feed.class);
         }
-        RequestFeedListDataTask task = new RequestFeedListDataTask(getActivity(),view,isFirstOpen,feedList, new RequestFeedItemListCallback() {
+        RequestFeedListDataTask task = new RequestFeedListDataTask(orderChoice,filterChoice,getActivity(),view,isFirstOpen,feedList, new RequestFeedItemListCallback() {
             @Override
             public void onBegin() {
                 refreshLayout.finishRefresh(true);
@@ -195,9 +199,15 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }
     }
 
-    public void updateData(ArrayList<String> feedIdList) {
+    public ArrayList<String> getFeedIdList() {
+        return feedIdList;
+    }
+
+    public void updateData(ArrayList<String> feedIdList, int oderChoice, int filterChoice) {
         this.feedIdList = feedIdList;
         this.isFirstOpen = true;
+        this.orderChoice = oderChoice;
+        this.filterChoice = filterChoice;
         refreshLayout.autoRefresh();
     }
 }

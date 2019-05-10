@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private FeedListShadowPopupView popupView;//点击顶部标题的弹窗
     private FilterPopupView drawerPopupView;//右侧边栏弹窗
 
+
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                                                 list.add(String.valueOf(feeds.get(i).getId()));
                                             }
                                             //切换到指定文件夹下
-                                            clickAndUpdateMainFragmentData(list,popupView.getFeedFolders().get(position).getName());
+                                            clickAndUpdateMainFragmentData(list,popupView.getFeedFolders().get(position).getName(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
                                         }
                                     });
                                 }
@@ -227,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
         //构造侧边栏项目
         updateDrawer();
 
+        //构造右侧栏目
+        createRightDrawer();
+
     }
 
 
@@ -255,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                         if (drawerItem.getTag() != null) {
                             switch ((int) drawerItem.getTag()) {
                                 case 1000:
-                                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
+                                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章",drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
                                     break;
                                 case 2000:
                                     StarActivity.activityStart(MainActivity.this);
@@ -276,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                                     ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                                     ArrayList<String> list = new ArrayList<>();
                                     list.add(String.valueOf(drawerItem.getIdentifier()));
-                                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString());
+                                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
                                     break;
 
                             }
@@ -316,12 +320,12 @@ public class MainActivity extends AppCompatActivity {
      * @param feedIdList
      * @param title
      */
-    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title) {
+    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title, int oderChoice, int filterChoice) {
         if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
         } else {
             toolbarTitle.setText(title);
-            feedPostsFragment.updateData(feedIdList);
+            feedPostsFragment.updateData(feedIdList,oderChoice,filterChoice);
         }
 
     }
@@ -410,21 +414,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_filter:
 
                 if (drawerPopupView == null){
-                    drawerPopupView = (FilterPopupView) new XPopup.Builder(this)
-                            .popupPosition(PopupPosition.Right)//右边
-                            .hasStatusBarShadow(true) //启用状态栏阴影
-                            .setPopupCallback(new XPopupCallback() {
-                                @Override
-                                public void onShow() {
 
-                                }
-
-                                @Override
-                                public void onDismiss() {
-
-                                }
-                            })
-                            .asCustom(new FilterPopupView(MainActivity.this));
                 }
 
                 drawerPopupView.toggle();
@@ -457,5 +447,25 @@ public class MainActivity extends AppCompatActivity {
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             updateDrawer();
         }
+    }
+
+
+    private void createRightDrawer(){
+        drawerPopupView = (FilterPopupView) new XPopup.Builder(this)
+                .popupPosition(PopupPosition.Right)//右边
+                .hasStatusBarShadow(true) //启用状态栏阴影
+                .setPopupCallback(new XPopupCallback() {
+                    @Override
+                    public void onShow() {
+
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                        //刷新当前页面的数据，因为筛选的规则变了
+                        clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(),toolbarTitle.getText().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
+                    }
+                })
+                .asCustom(new FilterPopupView(MainActivity.this));
     }
 }
