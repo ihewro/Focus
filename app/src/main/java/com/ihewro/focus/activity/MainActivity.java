@@ -180,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
                                 public void onDismiss() {
                                 }
                             })
+                            .hasShadowBg(false) // 是否有半透明的背景，默认为true
+                            .dismissOnBackPressed(false) // 按返回键是否关闭弹窗，默认为true
+                            .autoDismiss(false) // 操作完毕后是否自动关闭弹窗，默认为true；比如点击ConfirmPopup的确认按钮，默认自动关闭；如果为false，则不会关闭
+                            .dismissOnTouchOutside(false) // 点击外部是否关闭弹窗，默认为true
                             .asCustom(new CustomPartShadowPopupView(MainActivity.this));
                 }
                 popupView.toggle();
@@ -286,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
         if (feedPostsFragment == null) {
-            feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList);
+            feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList,toolbar);
         }
         toolbar.setTitle("全部文章");
         addOrShowFragment(getSupportFragmentManager().beginTransaction(), feedPostsFragment);

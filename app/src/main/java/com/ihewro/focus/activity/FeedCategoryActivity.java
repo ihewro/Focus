@@ -35,7 +35,7 @@ import retrofit2.Retrofit;
 
 import static com.ihewro.focus.GlobalConfig.serverUrl;
 
-public class FeedCategoryActivity extends AppCompatActivity {
+public class FeedCategoryActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

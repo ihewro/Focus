@@ -127,8 +127,9 @@ dependencies {
 //    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     implementation project(':likebutton')
 
-    //pup弹窗
-    implementation 'com.lxj:xpopup:1.7.5'
+    //pup弹窗，即将启用
+    implementation 'com.lxj:xpopup:1.7.6'
+    implementation 'com.github.razerdp:BasePopup:2.1.9'
 
     //多主题
     implementation 'skin.support:skin-support:3.1.1'                   // skin-support 基础控件支持

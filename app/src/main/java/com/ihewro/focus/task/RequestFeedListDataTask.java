@@ -1,15 +1,19 @@
 package com.ihewro.focus.task;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -18,6 +22,11 @@ import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.FeedParser;
 import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.view.CustomPartShadowPopupView;
+import com.ihewro.focus.view.FeedsLoadingView;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.impl.LoadingPopupView;
+import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.tapadoo.alerter.Alert;
 import com.tapadoo.alerter.Alerter;
 
@@ -52,6 +61,10 @@ public class RequestFeedListDataTask {
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
 
+    private FeedsLoadingView popupView;
+    private View view;
+
+
 
     private int num;//总共需要请求的数目
     private int okNum = 0;//已经请求的数目
@@ -60,12 +73,14 @@ public class RequestFeedListDataTask {
     private boolean is_use_internet;//是否使用网络请求
     private ProgressBar pbProgress;
 
-    public RequestFeedListDataTask(Activity activity,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
+    public RequestFeedListDataTask(Activity activity,View view,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
         this.activity = activity;
         this.feedList = feedList;
         this.callback = callback;
         this.isForce = !flag;
+        this.view = view;
     }
+
 
 
 
@@ -81,31 +96,14 @@ public class RequestFeedListDataTask {
         }else {
             flag = false;
         }*/
-        this.okNum = num;
-        if (okNum>0){//请求总数大于1才会进行请求
+        this.okNum = 0;
+        if (num>0){//请求总数大于1才会进行请求
             if (flag && !isForce){
+                this.okNum = num;
                 setUI();
             }else {
                 //显示进度通知
-                //进度显示器
-                Alerter alerter = Alerter.create(activity)
-                        .setTitle("请求数据")
-                        .setText("正在请求")
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                return;
-                            }
-                        })
-                        .enableInfiniteDuration(true)
-                        .setProgressColorRes(R.color.colorAccent)
-                        .setDismissable(false);
-                Alert alert = alerter.show();
-                pbProgress = alert.getProgressBar();
-                //启动进度条
-                pbProgress.setVisibility(View.VISIBLE);
-                pbProgress.setProgress(0);//初始进度条
-                ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(0));
+                ShowProgress();
 
                 for (int i = 0; i <feedList.size() ; i++) {
                     Feed temp = feedList.get(i);
@@ -123,22 +121,33 @@ public class RequestFeedListDataTask {
     private void updateTextInAlter(int index){
         if (isForce){//当有网络请求的时候，才有进度通知条
             if (index == 9999){
-                TextView textView = activity.findViewById(R.id.tvText);
-                if (textView!=null){
-                    textView.setText("任务完成……");
+                if (popupView!=null && popupView.isShow()){
+                    popupView.getProgressBar().setProgress(100);
+                    popupView.getProgressInfo().setText("任务完成");
+                    popupView.getCircle().setVisibility(View.GONE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            popupView.dismiss();
+                        }
+                    },1000); // 延时1秒
                 }
                 Alerter.hide();
             }else {
                 if (index >= num){
-                    pbProgress.setProgress(100);
-                    TextView textView = activity.findViewById(R.id.tvText);
-                    if (textView!=null){
-                        textView.setText("请求完毕，数据整理中……");
+                    if (popupView!=null && popupView.isShow()){
+                        popupView.getProgressBar().setProgress(100);
+                        popupView.getProgressInfo().setText("请求完毕，数据整理中……");
                     }
+
                 }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
-                    int progress = (int) ((index*1.0)/num *100);
-                    pbProgress.setProgress(progress);
-                    ((TextView)(activity.findViewById(R.id.tvText))).setText(returnProgressText(index));
+                    ALog.d("怎么回事吗？？");
+                    if (popupView!=null && popupView.isShow()){
+                        ALog.d("怎么回事吗？？2333");
+                        int progress = (int) ((index*1.0)/num *100);
+                        popupView.getProgressBar().setProgress(progress);
+                        popupView.getProgressInfo().setText(returnProgressText(index));
+                    }
                 }
             }
         }
@@ -222,7 +231,9 @@ public class RequestFeedListDataTask {
     }
 
 
-
+    /**
+     * 更新UI界面
+     */
     private void setUI(){
         okNum++;
         updateTextInAlter(okNum);
@@ -254,8 +265,36 @@ public class RequestFeedListDataTask {
         }
     }
 
+    private void ShowProgress(){
+        if (popupView == null) {
+            popupView = (FeedsLoadingView) new XPopup.Builder(activity)
+                    .atView(view)
+                    .setPopupCallback(new XPopupCallback() {
+                        @Override
+                        public void onShow() {
+                        }
+
+                        @Override
+                        public void onDismiss() {
+                        }
+                    })
+                    .hasShadowBg(false) // 是否有半透明的背景，默认为true
+                    .dismissOnBackPressed(false) // 按返回键是否关闭弹窗，默认为true
+                    .autoDismiss(false) // 操作完毕后是否自动关闭弹窗，默认为true；比如点击ConfirmPopup的确认按钮，默认自动关闭；如果为false，则不会关闭
+                    .dismissOnTouchOutside(false) // 点击外部是否关闭弹窗，默认为true
+                    .asCustom(new FeedsLoadingView(activity));
+        }
+        popupView.show();
+
+        //初始化
+        popupView.getProgressBar().setProgress(0);
+        popupView.getProgressInfo().setText(returnProgressText(0));
+
+
+    }
+
     private String returnProgressText(int index){
         int order = index + 1;
-        return  "正在请求第" + order +"/" + num+"个订阅数据：\n"+feedList.get(index).getName()+"\n"+feedList.get(index).getUrl();
+        return  "正在请求第" + order +"/" + num+"个订阅数据："+feedList.get(index).getName();
     }
 }

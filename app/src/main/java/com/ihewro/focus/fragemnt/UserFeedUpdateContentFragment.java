@@ -1,6 +1,7 @@
 package com.ihewro.focus.fragemnt;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,8 +58,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
     RecyclerView recyclerView;
     Unbinder unbinder;
 
+    private View view;
     private boolean isFirstOpen = true;//首次打开
     ArrayList<String> feedIdList = new ArrayList<>();
+
+    @SuppressLint("ValidFragment")
+    public UserFeedUpdateContentFragment(View view) {
+        this.view = view;
+    }
 
     public UserFeedUpdateContentFragment() {
     }
@@ -68,8 +75,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
      *
      * @return 返回实例
      */
-    public static UserFeedUpdateContentFragment newInstance(ArrayList<String> feedIdList) {
-        UserFeedUpdateContentFragment fragment = new UserFeedUpdateContentFragment();
+    public static UserFeedUpdateContentFragment newInstance(ArrayList<String> feedIdList,View view) {
+        UserFeedUpdateContentFragment fragment = new UserFeedUpdateContentFragment(view);
         Bundle args = new Bundle();
         args.putStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID,feedIdList);
         fragment.setArguments(args);
@@ -134,7 +141,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }else {//为空表示显示所有的feedId
             feedList = LitePal.findAll(Feed.class);
         }
-        RequestFeedListDataTask task = new RequestFeedListDataTask(getActivity(),isFirstOpen,feedList, new RequestFeedItemListCallback() {
+        RequestFeedListDataTask task = new RequestFeedListDataTask(getActivity(),view,isFirstOpen,feedList, new RequestFeedItemListCallback() {
             @Override
             public void onBegin() {
                 refreshLayout.finishRefresh(true);

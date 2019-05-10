@@ -1,13 +1,17 @@
 package com.ihewro.focus.view;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.lxj.xpopup.impl.PartShadowPopupView;
+import com.lxj.xpopup.util.XPopupUtils;
 
 /**
  * <pre>
@@ -58,5 +62,21 @@ public class CustomPartShadowPopupView extends PartShadowPopupView {
     protected void onDismiss() {
         super.onDismiss();
         Log.e("tag","CustomPartShadowPopupView onDismiss");
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        ALog.d("????");
+        // 如果自己接触到了点击，并且不在PopupContentView范围内点击，则进行判断是否是点击事件
+        // 如果是，则dismiss
+        Rect rect = new Rect();
+        getPopupContentView().getGlobalVisibleRect(rect);
+        if (!XPopupUtils.isInRect(event.getX(), event.getY(), rect)) {//不在点击范围
+            ALog.d("不在范围内");
+        }else {
+            ALog.d("在范围内");
+            performClick();
+        }
+        return true;
     }
 }
