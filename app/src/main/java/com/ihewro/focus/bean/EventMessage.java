@@ -24,6 +24,7 @@ public class EventMessage {
     //点击事件
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
+    public static final String MAIN_SWITCH_FRAGMENT_USE_FEED_ID = "MAIN_SWITCH_FRAGMENT_USE_FOLDER_ID";
 
 
     //feed、feedFolder操作

@@ -181,18 +181,20 @@ public class MainActivity extends AppCompatActivity {
                             .setPopupCallback(new XPopupCallback() {
                                 @Override
                                 public void onShow() {
-                                    popupView.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                                    popupView.getAdapter().setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                                         @Override
-                                        public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                                            int feedFolderId = popupView.getFeedFolders().get(position).getId();
-                                            List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
-                                            ArrayList<String> list = new ArrayList<>();
+                                        public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                                            if (view.getId() == R.id.long_click){
+                                                int feedFolderId = popupView.getFeedFolders().get(position).getId();
+                                                List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
+                                                ArrayList<String> list = new ArrayList<>();
 
-                                            for (int i = 0;i< feeds.size();i++){
-                                                list.add(String.valueOf(feeds.get(i).getId()));
+                                                for (int i = 0;i< feeds.size();i++){
+                                                    list.add(String.valueOf(feeds.get(i).getId()));
+                                                }
+                                                //切换到指定文件夹下
+                                                clickAndUpdateMainFragmentData(list,popupView.getFeedFolders().get(position).getName(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
                                             }
-                                            //切换到指定文件夹下
-                                            clickAndUpdateMainFragmentData(list,popupView.getFeedFolders().get(position).getName(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
                                         }
                                     });
                                 }
@@ -465,7 +467,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss() {
                         //刷新当前页面的数据，因为筛选的规则变了
-                        clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(),toolbarTitle.getText().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
+                        if (drawerPopupView.isNeedUpdate()){
+                            clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(),toolbarTitle.getText().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
+                            drawerPopupView.setNeedUpdate(false);
+                        }
                     }
                 })
                 .asCustom(new FilterPopupView(MainActivity.this));

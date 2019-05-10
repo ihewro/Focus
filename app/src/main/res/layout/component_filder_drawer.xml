@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
         android:orientation="vertical">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,15 +23,14 @@
             android:id="@+id/newest_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             app:cardCornerRadius="10dp" >
             <TextView
                 android:id="@+id/newest_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="最新的优先"
-                android:textSize="17sp" />
+                android:text="最新的优先"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -40,15 +39,14 @@
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             app:cardCornerRadius="10dp">
             <TextView
                 android:id="@+id/old_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="旧的优先"
-                android:textSize="17sp" />
+                android:text="旧的优先"/>
         </android.support.v7.widget.CardView>
 
         <TextView
@@ -72,8 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="不筛选"
-                android:textSize="17sp" />
+                android:text="不筛选"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -89,8 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="只包含未读"
-                android:textSize="17sp" />
+                android:text="只包含未读" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -106,8 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="只包含收藏"
-                android:textSize="17sp" />
+                android:text="只包含收藏" />
         </android.support.v7.widget.CardView>
 
 

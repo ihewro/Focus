@@ -13,8 +13,6 @@ import com.lxj.xpopup.core.DrawerPopupView;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
  * <pre>
  *     author : hewro
@@ -24,7 +22,7 @@ import butterknife.BindView;
  *     version: 1.0
  * </pre>
  */
-public class FilterPopupView extends DrawerPopupView implements View.OnClickListener {
+public class FilterPopupView extends DrawerPopupView {
 
     public static final int ORDER_BY_NEW = 960;
     public static final int ORDER_BY_OLD = 467;
@@ -45,15 +43,16 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
     CardView starCard;
 
     private CardView newestC;
+    private boolean isNeedUpdate = false;
 
     private int orderChoice = ORDER_BY_NEW;//当前排序选择
     private int filterChoice = SHOW_ALL;//当前筛选器的选择
 
 
 
-    List<Integer> oderOperation = Arrays.asList(ORDER_BY_NEW,ORDER_BY_OLD);
-    List<Integer> oderCardViews = Arrays.asList(R.id.newest_card, R.id.old_card);
-    List<Integer> oderTextViews = Arrays.asList(R.id.newest_tv, R.id.old_tv);
+    List<Integer> orderOperation = Arrays.asList(ORDER_BY_NEW,ORDER_BY_OLD);
+    List<Integer> orderCardViews = Arrays.asList(R.id.newest_card, R.id.old_card);
+    List<Integer> orderTextViews = Arrays.asList(R.id.newest_tv, R.id.old_tv);
 
 
     List<Integer> filterOperation = Arrays.asList(SHOW_ALL,SHOW_UNREAD,SHOW_STAR);
@@ -105,6 +104,27 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
 
     private void initListener() {
 
+        for (int i = 0; i < orderOperation.size();i++){
+            final int finalI = i;
+            findViewById(orderCardViews.get(i)).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isNeedUpdate = true;
+                    clickOrderList(finalI);
+                }
+            });
+        }
+
+        for (int i = 0; i < filterOperation.size();i++){
+            final int finalI = i;
+            findViewById(filterCardViews.get(i)).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isNeedUpdate = true;
+                    clickFilterList(finalI);
+                }
+            });
+        }
     }
 
     @Override
@@ -119,22 +139,9 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
         Log.e("tag", "CustomDrawerPopupView onDismiss");
     }
 
-    @Override
-    public void onClick(View view) {
-
-        int position =  filterCardViews.indexOf(view.getId());
-        if (position == -1){//点击是排序的列表
-            position = oderCardViews.indexOf(view.getId());//获取位置
-            clickOrderList(position);
-
-        }else {//点击的是筛选的列报表
-            clickFilterList(position);
-        }
 
 
-        dismiss();//关闭右侧边栏，并刷新数据
 
-    }
 
 
     /**
@@ -142,17 +149,17 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
      * @param position
      */
     private void clickOrderList(int position){
-        orderChoice = oderOperation.get(position);
+        orderChoice = orderOperation.get(position);
 
         //修改当前项为高亮
-        ((TextView)findViewById(oderTextViews.get(position))).setTextColor(getResources().getColor(R.color.text_unread));
-        ((CardView)findViewById(oderCardViews.get(position))).setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
+        ((TextView)findViewById(orderTextViews.get(position))).setTextColor(getResources().getColor(R.color.text_unread));
+        ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
 
         //修改其他项为普通颜色
-        for (int i = 0; i < oderOperation.size();i++){
+        for (int i = 0; i < orderOperation.size(); i++){
             if (i != position){
-                ((TextView)findViewById(oderTextViews.get(i))).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                ((CardView)findViewById(oderCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
             }
         }
@@ -187,4 +194,11 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
         return filterChoice;
     }
 
+    public boolean isNeedUpdate() {
+        return isNeedUpdate;
+    }
+
+    public void setNeedUpdate(boolean needUpdate) {
+        isNeedUpdate = needUpdate;
+    }
 }

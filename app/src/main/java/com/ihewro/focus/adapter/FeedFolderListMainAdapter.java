@@ -31,18 +31,8 @@ public class FeedFolderListMainAdapter extends BaseItemDraggableAdapter<FeedFold
     @Override
     protected void convert(BaseViewHolder helper, FeedFolder item) {
         helper.setText(R.id.title,item.getName());
-        initListener(helper,item);
-
+        helper.setGone(R.id.move_logo,false);
+        helper.addOnClickListener(R.id.long_click);
     }
 
-    private void initListener(BaseViewHolder helper, FeedFolder item) {
-        //点击切换fragment
-        helper.getView(R.id.long_click).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //切换首页内容
-
-            }
-        });
-    }
 }

@@ -262,7 +262,7 @@ public class RequestFeedListDataTask {
                 Iterator<FeedItem> sListIterator = list.iterator();
                 while (sListIterator.hasNext()) {
                     FeedItem feedItem = sListIterator.next();
-                    if (!feedItem.isRead()) {//已经阅读过的数据删除
+                    if (feedItem.isRead()) {//已经阅读过的数据删除
                         sListIterator.remove();
                     }
                 }
