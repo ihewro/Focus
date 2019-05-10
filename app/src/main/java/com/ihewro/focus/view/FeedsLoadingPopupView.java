@@ -21,13 +21,13 @@ import com.lxj.xpopup.impl.PartShadowPopupView;
  *     version: 1.0
  * </pre>
  */
-public class FeedsLoadingView  extends PartShadowPopupView {
+public class FeedsLoadingPopupView extends PartShadowPopupView {
 
     private ProgressBar progressBar;
     private TextView progressInfo;
     private ProgressBar circle;
 
-    public FeedsLoadingView(@NonNull Context context) {
+    public FeedsLoadingPopupView(@NonNull Context context) {
         super(context);
     }
 

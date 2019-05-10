@@ -29,8 +29,11 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
-import com.ihewro.focus.view.CustomPartShadowPopupView;
+import com.ihewro.focus.view.FeedListShadowPopupView;
+import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.enums.PopupPosition;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -83,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private List<FeedItem> searchResults = new ArrayList<>();
     private FeedSearchAdapter adapter;
     private AccountHeader headerResult;
-    private CustomPartShadowPopupView popupView;
+    private FeedListShadowPopupView popupView;//点击顶部标题的弹窗
+    private FilterPopupView drawerPopupView;//右侧边栏弹窗
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -169,22 +173,31 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //显示弹窗
                 if (popupView == null) {
-                    popupView = (CustomPartShadowPopupView) new XPopup.Builder(MainActivity.this)
+                    popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
                             .atView(playButton)
                             .setPopupCallback(new XPopupCallback() {
                                 @Override
                                 public void onShow() {
-                                }
+                                    popupView.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                                            int feedFolderId = popupView.getFeedFolders().get(position).getId();
+                                            List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
+                                            ArrayList<String> list = new ArrayList<>();
 
+                                            for (int i = 0;i< feeds.size();i++){
+                                                list.add(String.valueOf(feeds.get(i).getId()));
+                                            }
+                                            //切换到指定文件夹下
+                                            clickAndUpdateMainFragmentData(list,popupView.getFeedFolders().get(position).getName());
+                                        }
+                                    });
+                                }
                                 @Override
                                 public void onDismiss() {
                                 }
                             })
-                            .hasShadowBg(false) // 是否有半透明的背景，默认为true
-                            .dismissOnBackPressed(false) // 按返回键是否关闭弹窗，默认为true
-                            .autoDismiss(false) // 操作完毕后是否自动关闭弹窗，默认为true；比如点击ConfirmPopup的确认按钮，默认自动关闭；如果为false，则不会关闭
-                            .dismissOnTouchOutside(false) // 点击外部是否关闭弹窗，默认为true
-                            .asCustom(new CustomPartShadowPopupView(MainActivity.this));
+                            .asCustom(new FeedListShadowPopupView(MainActivity.this));
                 }
                 popupView.toggle();
             }
@@ -274,7 +287,8 @@ public class MainActivity extends AppCompatActivity {
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100).withSelectable(false),
                         new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200).withSelectable(false),
-                        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300).withSelectable(false)
+                        new SecondaryDrawerItem().withName("工具").withIcon(GoogleMaterial.Icon.gmd_pan_tool).withIdentifier(10).withTag(-400).withSelectable(false),
+        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300).withSelectable(false)
 
                 )
                 .build();
@@ -385,6 +399,37 @@ public class MainActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
 
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_filter:
+
+                if (drawerPopupView == null){
+                    drawerPopupView = (FilterPopupView) new XPopup.Builder(this)
+                            .popupPosition(PopupPosition.Right)//右边
+                            .hasStatusBarShadow(true) //启用状态栏阴影
+                            .setPopupCallback(new XPopupCallback() {
+                                @Override
+                                public void onShow() {
+
+                                }
+
+                                @Override
+                                public void onDismiss() {
+
+                                }
+                            })
+                            .asCustom(new FilterPopupView(MainActivity.this));
+                }
+
+                drawerPopupView.toggle();
+                break;
+        }
         return true;
     }
 

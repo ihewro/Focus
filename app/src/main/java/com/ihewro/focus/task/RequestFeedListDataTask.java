@@ -1,19 +1,14 @@
 package com.ihewro.focus.task;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
-import com.ihewro.focus.R;
-import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -22,12 +17,9 @@ import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.FeedParser;
 import com.ihewro.focus.util.UIUtil;
-import com.ihewro.focus.view.CustomPartShadowPopupView;
-import com.ihewro.focus.view.FeedsLoadingView;
+import com.ihewro.focus.view.FeedsLoadingPopupView;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.impl.LoadingPopupView;
 import com.lxj.xpopup.interfaces.XPopupCallback;
-import com.tapadoo.alerter.Alert;
 import com.tapadoo.alerter.Alerter;
 
 import org.litepal.LitePal;
@@ -61,7 +53,7 @@ public class RequestFeedListDataTask {
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
 
-    private FeedsLoadingView popupView;
+    private FeedsLoadingPopupView popupView;
     private View view;
 
 
@@ -267,7 +259,7 @@ public class RequestFeedListDataTask {
 
     private void ShowProgress(){
         if (popupView == null) {
-            popupView = (FeedsLoadingView) new XPopup.Builder(activity)
+            popupView = (FeedsLoadingPopupView) new XPopup.Builder(activity)
                     .atView(view)
                     .setPopupCallback(new XPopupCallback() {
                         @Override
@@ -278,11 +270,10 @@ public class RequestFeedListDataTask {
                         public void onDismiss() {
                         }
                     })
-                    .hasShadowBg(false) // 是否有半透明的背景，默认为true
                     .dismissOnBackPressed(false) // 按返回键是否关闭弹窗，默认为true
                     .autoDismiss(false) // 操作完毕后是否自动关闭弹窗，默认为true；比如点击ConfirmPopup的确认按钮，默认自动关闭；如果为false，则不会关闭
                     .dismissOnTouchOutside(false) // 点击外部是否关闭弹窗，默认为true
-                    .asCustom(new FeedsLoadingView(activity));
+                    .asCustom(new FeedsLoadingPopupView(activity));
         }
         popupView.show();
 
