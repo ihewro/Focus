@@ -124,7 +124,8 @@ dependencies {
     implementation 'com.github.ChenTianSaber:SlideBack:v0.8.2'
 
     //点赞按钮
-    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+//    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+    implementation project(':likebutton')
 
     //pup弹窗
     implementation 'com.lxj:xpopup:1.7.5'
@@ -134,4 +135,5 @@ dependencies {
     implementation 'skin.support:skin-support-design:3.1.1'            // skin-support-design material design 控件支持[可选]
     implementation 'skin.support:skin-support-cardview:3.1.1'          // skin-support-cardview CardView 控件支持[可选]
     implementation 'skin.support:skin-support-constraint-layout:3.1.1' // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
+
 }

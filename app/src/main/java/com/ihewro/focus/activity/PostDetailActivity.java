@@ -234,7 +234,7 @@ public class PostDetailActivity extends BaseActivity {
     private void showStarActionView(MenuItem item) {
         starItem = item;
         //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
-        likeButton = (LikeButton) getLayoutInflater().inflate(R.layout.action_bar_star, null);
+        likeButton = getLayoutInflater().inflate(R.layout.action_bar_star, null).findViewById(R.id.star_button);
         item.setActionView(likeButton);
 
         setLikeButton();
