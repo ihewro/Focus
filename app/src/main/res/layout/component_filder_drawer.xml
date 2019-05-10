@@ -3,7 +3,7 @@
     android:layout_width="280dp"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/ripple_light"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <LinearLayout
@@ -18,7 +18,6 @@
             android:text="排序规则"
             android:textColor="@color/text_unread"
             android:textSize="17sp" />
-
 
         <android.support.v7.widget.CardView
             android:id="@+id/newest_card"
@@ -72,7 +71,7 @@
                 android:id="@+id/all_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="10dp"
                 android:text="不筛选"
                 android:textSize="17sp" />
         </android.support.v7.widget.CardView>
@@ -106,7 +105,7 @@
                 android:id="@+id/star_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="10dp"
                 android:text="只包含收藏"
                 android:textSize="17sp" />
         </android.support.v7.widget.CardView>

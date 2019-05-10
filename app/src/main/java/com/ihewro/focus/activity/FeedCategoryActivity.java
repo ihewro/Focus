@@ -3,24 +3,32 @@ package com.ihewro.focus.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedCategoryLeftAdapter;
 import com.ihewro.focus.adapter.FeedCategoryRightAdapter;
+import com.ihewro.focus.adapter.FeedListAdapter;
+import com.ihewro.focus.bean.EventMessage;
+import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.Website;
 import com.ihewro.focus.bean.WebsiteCategory;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +47,6 @@ public class FeedCategoryActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
     @BindView(R.id.recycler_left)
     RecyclerView recyclerLeft;
     @BindView(R.id.recycler_right)
@@ -50,6 +56,13 @@ public class FeedCategoryActivity extends BaseActivity {
 
     List<WebsiteCategory> websiteCategoryList = new ArrayList<>();
     List<Website> websiteList = new ArrayList<>();
+    @BindView(R.id.search_view)
+    MaterialSearchView searchView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+
+    private FeedListAdapter adapter;
+    private List<Feed> feedList = new ArrayList<>();
 
 
     public static void activityStart(Activity activity) {
@@ -72,7 +85,7 @@ public class FeedCategoryActivity extends BaseActivity {
 
     }
 
-    public void initEmptyView(){
+    public void initEmptyView() {
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -81,7 +94,6 @@ public class FeedCategoryActivity extends BaseActivity {
         recyclerLeft.setLayoutManager(linearLayoutManager);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
         recyclerRight.setLayoutManager(linearLayoutManager2);
-
 
 
         leftAdapter = new FeedCategoryLeftAdapter(websiteCategoryList);
@@ -93,14 +105,37 @@ public class FeedCategoryActivity extends BaseActivity {
 
         leftAdapter.setEmptyView(R.layout.simple_empty_view);
         rightAdapter.setEmptyView(R.layout.simple_empty_view);
+
+        initSearchAdapter();
     }
 
 
-    public void bindListener(){
+    public void bindListener() {
+
+
+        //搜索在线源🔍
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //TODO:提交才开始搜索
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //输入过程中不做任何操作
+                return false;
+            }
+        });
+
+
+
         leftAdapter.setOnItemClickListener(new FeedCategoryLeftAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ((FeedCategoryLeftAdapter)adapter).setCurrentPosition(position);
+                ((FeedCategoryLeftAdapter) adapter).setCurrentPosition(position);
                 leftAdapter.notifyDataSetChanged();
                 requestRightData(websiteCategoryList.get(position).getName());
             }
@@ -109,67 +144,98 @@ public class FeedCategoryActivity extends BaseActivity {
         rightAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FeedListActivity.activityStart(FeedCategoryActivity.this,websiteList.get(position).getName());
+                FeedListActivity.activityStart(FeedCategoryActivity.this, websiteList.get(position).getName());
             }
         });
     }
 
-    public void requestLeftData(){
-        Retrofit retrofit = HttpUtil.getRetrofit("bean",serverUrl,10,10,10);
+    public void requestLeftData() {
+        Retrofit retrofit = HttpUtil.getRetrofit("bean", serverUrl, 10, 10, 10);
         Call<List<WebsiteCategory>> request = retrofit.create(HttpInterface.class).getCategoryList();
         request.enqueue(new Callback<List<WebsiteCategory>>() {
             @Override
             public void onResponse(Call<List<WebsiteCategory>> call, Response<List<WebsiteCategory>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     assert response.body() != null;
                     websiteCategoryList.addAll(response.body());
                     leftAdapter.setNewData(websiteCategoryList);
                     requestRightData(websiteCategoryList.get(0).getName());
-                }else {
+                } else {
                     ALog.d("请求失败" + response.errorBody());
                 }
             }
 
             @Override
             public void onFailure(Call<List<WebsiteCategory>> call, Throwable t) {
-                ALog.d("请求失败2"+t.getMessage());
+                ALog.d("请求失败2" + t.getMessage());
             }
         });
     }
 
-    public void requestRightData(String categoryName){
-        Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl,10,10,10);
+    public void requestRightData(String categoryName) {
+        Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl, 10, 10, 10);
         Call<List<Website>> request = retrofit.create(HttpInterface.class).getWebsiteListByCategory(categoryName);
 
         request.enqueue(new Callback<List<Website>>() {
             @Override
             public void onResponse(Call<List<Website>> call, Response<List<Website>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     websiteList.clear();
                     websiteList.addAll(response.body());
                     rightAdapter.setNewData(websiteList);
-                }else {
+                } else {
                     ALog.d("请求失败" + response.errorBody());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Website>> call, Throwable t) {
-                ALog.d("请求失败2"+t.getMessage());
+                ALog.d("请求失败2" + t.getMessage());
             }
         });
+    }
 
+
+    private void initSearchAdapter(){
+        //初始化列表
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        adapter = new FeedListAdapter(feedList);
+        adapter.bindToRecyclerView(recyclerView);
+        adapter.setEmptyView(R.layout.simple_empty_view);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.feed, menu);
-
-        //查询是否收藏了
-
-
-
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_add_by_url:
+                //弹窗
+                //TODO:使用底部弹窗，而且在订阅的时候，要求填写名称
+                new MaterialDialog.Builder(FeedCategoryActivity.this)
+                        .title("输入需要手动订阅的url：")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .content("举例：https://www.ihewro.com/feed")
+                        .input("", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog2, CharSequence input) {
+                                //TODO:不能重复订阅相同的url
+                                String url = dialog2.getInputEditText().getText().toString().trim();
+                                //TODO: 检查这个url的合法性
+
+                            }
+                        }).show();
+                break;
+        }
+
+        return true;
+    }
 }

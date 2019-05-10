@@ -84,6 +84,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         Bundle args = new Bundle();
         args.putStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID,feedIdList);
         fragment.setArguments(args);
+        fragment.isFirstOpen = true;
         return fragment;
     }
 

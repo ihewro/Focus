@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     private Drawer drawer;
     private List<FeedItem> searchResults = new ArrayList<>();
     private FeedSearchAdapter adapter;
-    private AccountHeader headerResult;
     private FeedListShadowPopupView popupView;//点击顶部标题的弹窗
     private FilterPopupView drawerPopupView;//右侧边栏弹窗
 
@@ -116,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 初始化
+     */
     private void initSearchAdapter() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);

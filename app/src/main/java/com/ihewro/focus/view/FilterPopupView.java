@@ -33,25 +33,15 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
     public static final int SHOW_UNREAD = 705;
     public static final int SHOW_STAR = 750;
 
-    @BindView(R.id.newest_tv)
     TextView newestTv;
-    @BindView(R.id.newest_card)
     CardView newestCard;
-    @BindView(R.id.old_tv)
     TextView oldTv;
-    @BindView(R.id.old_card)
     CardView oldCard;
-    @BindView(R.id.all_tv)
     TextView allTv;
-    @BindView(R.id.all_card)
     CardView allCard;
-    @BindView(R.id.read_tv)
     TextView readTv;
-    @BindView(R.id.read_card)
     CardView readCard;
-    @BindView(R.id.star_tv)
     TextView starTv;
-    @BindView(R.id.star_card)
     CardView starCard;
 
     private CardView newestC;
@@ -85,8 +75,9 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
         Log.e("tag", "CustomDrawerPopupView onCreate");
 
 
-        //初始化选项
+        initView();
 
+        //初始化选项
         clickOrderList(0);
         clickOrderList(0);
 
@@ -96,6 +87,20 @@ public class FilterPopupView extends DrawerPopupView implements View.OnClickList
         allCard.setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
 
         initListener();
+    }
+
+    private void initView(){
+        newestTv = findViewById(R.id.newest_tv);
+        newestCard = findViewById(R.id.newest_card);
+        oldTv = findViewById(R.id.old_tv);
+        oldCard = findViewById(R.id.old_card);
+        allTv = findViewById(R.id.all_tv);
+        allCard = findViewById(R.id.all_card);
+        readTv = findViewById(R.id.read_tv);
+        readCard = findViewById(R.id.read_card);
+        starTv = findViewById(R.id.star_tv);
+        starCard = findViewById(R.id.star_card);
+
     }
 
     private void initListener() {

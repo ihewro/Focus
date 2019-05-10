@@ -28,5 +28,11 @@ public class FeedListAdapter  extends BaseQuickAdapter<Feed, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, Feed item) {
         helper.setText(R.id.name,item.getName());
         helper.setText(R.id.desc,item.getDesc());
+
+        initListener();
+    }
+
+    private void initListener(){
+
     }
 }
