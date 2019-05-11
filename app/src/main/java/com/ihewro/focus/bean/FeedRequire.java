@@ -12,16 +12,32 @@ import org.litepal.crud.LitePalSupport;
  *     version: 1.0
  * </pre>
  */
-public class FeedRequire extends LitePalSupport {
+public class FeedRequire {
 
-    @Column(unique = true)
+
+    public static final int SET_URL = 444;//该类型直接设置url
+    public static final int JOIN_URL = 787;//该类型的需要拼接url这两个操作只可能有一个出现，参数列表中不可能出现两种
+
+
+    public static final int SET_NAME = 356;//设置订阅的名称
+    
     private String iid;
     private String feedId;//订阅的id，用于和所需的参数关联
     private String name;//参数英文名称
     private String chinaName;//参数中文名称
     private String desc;//参数描述
     private boolean optional;//true 表示可选，false表示必选
+    private int type;//参数的作用是什么，比如url，表示该参数需要拼接成url
 
+
+    public FeedRequire() {
+    }
+
+    public FeedRequire(String chinaName, String desc, int type) {
+        this.chinaName = chinaName;
+        this.desc = desc;
+        this.type = type;
+    }
 
     public String getIid() {
         return iid;
@@ -69,5 +85,13 @@ public class FeedRequire extends LitePalSupport {
 
     public void setOptional(boolean optional) {
         this.optional = optional;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

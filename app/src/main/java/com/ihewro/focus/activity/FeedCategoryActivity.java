@@ -22,10 +22,14 @@ import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedRequire;
+import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Website;
 import com.ihewro.focus.bean.WebsiteCategory;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
+import com.ihewro.focus.view.RequireListPopupView;
+import com.lxj.xpopup.XPopup;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -216,23 +220,18 @@ public class FeedCategoryActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
         switch (item.getItemId()) {
             case R.id.action_add_by_url:
                 //弹窗
-                //TODO:使用底部弹窗，而且在订阅的时候，要求填写名称
-                new MaterialDialog.Builder(FeedCategoryActivity.this)
-                        .title("输入需要手动订阅的url：")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .content("举例：https://www.ihewro.com/feed")
-                        .input("", "", new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog2, CharSequence input) {
-                                //TODO:不能重复订阅相同的url
-                                String url = dialog2.getInputEditText().getText().toString().trim();
-                                //TODO: 检查这个url的合法性
+                List<FeedRequire> list = new ArrayList<>();
+                list.add(new FeedRequire("订阅地址","举例：https://www.ihewro.com/feed",FeedRequire.SET_URL));
+                list.add(new FeedRequire("订阅名称","随意给订阅取一个名字，选填",FeedRequire.SET_NAME));
+                new XPopup.Builder(FeedCategoryActivity.this)
+//                        .moveUpToKeyboard(false) //如果不加这个，评论弹窗会移动到软键盘上面
+                        .asCustom(new RequireListPopupView(FeedCategoryActivity.this,list,"手动订阅","适用于高级玩家",new Help(false),new Feed()))
+                        .show();
 
-                            }
-                        }).show();
                 break;
         }
 

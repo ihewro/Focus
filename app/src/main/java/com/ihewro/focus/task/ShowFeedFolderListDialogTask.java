@@ -2,6 +2,7 @@ package com.ihewro.focus.task;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.InputType;
@@ -35,14 +36,14 @@ public class ShowFeedFolderListDialogTask extends AsyncTask<Void,Integer,List<St
 
     private DialogCallback listener;
     @SuppressLint("StaticFieldLeak")
-    private Activity activity;
+    private Context activity;
     private String title;
     private String content;
 
     private List<FeedFolder> feedFolders;
     private boolean hasContent;
 
-    public ShowFeedFolderListDialogTask(DialogCallback listener, Activity activity, String title, String content) {
+    public ShowFeedFolderListDialogTask(DialogCallback listener, Context activity, String title, String content) {
         this.listener = listener;
         this.activity = activity;
         this.title = title;

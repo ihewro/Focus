@@ -72,7 +72,7 @@ public class Feed extends LitePalSupport {
     }
 
     public void setIid() {
-        this.iid = name.hashCode() + url.hashCode() + "";//如果没有id，就生成一个唯一标识符
+        this.iid =  url.hashCode() + "";//url是唯一标识符
     }
 
     public int getTotalNum() {

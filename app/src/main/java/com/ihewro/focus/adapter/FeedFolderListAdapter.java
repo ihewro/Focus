@@ -18,6 +18,7 @@ import com.ihewro.focus.activity.FeedListActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.util.UIUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -100,9 +101,21 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 int id = item.getId();
-                                LitePal.deleteAll(Feed.class,"feedfolderid = ?", String.valueOf(id));//删除文件夹下面的订阅
-                                LitePal.delete(FeedFolder.class,id);//删除文件夹
-                                //从列表中移除该项
+                                //1.删除该文件夹下的所有feedITEN
+                                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
+                                for (int i = 0;i<temp.size();i++){
+                                    LitePal.deleteAll(FeedItem.class,"feediid = ?",temp.get(i).getIid());
+                                    //2.删除文件夹下的所有feed
+                                    temp.get(i).delete();
+                                }
+//                                //删除文件夹下的所有feed
+//                                LitePal.deleteAll(Feed.class,"feedfolderid = ?", String.valueOf(id));//删除文件夹下面的订阅
+
+
+                                //3.删除文件夹
+                                LitePal.delete(FeedFolder.class,id);
+
+                                //4.从列表中移除该项
                                 remove(helper.getAdapterPosition());
                                 notifyDataSetChanged();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));

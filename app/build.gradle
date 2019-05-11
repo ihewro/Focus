@@ -137,4 +137,6 @@ dependencies {
     implementation 'skin.support:skin-support-cardview:3.1.1'          // skin-support-cardview CardView 控件支持[可选]
     implementation 'skin.support:skin-support-constraint-layout:3.1.1' // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
 
+    //表单验证
+    implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
 }

@@ -15,8 +15,10 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -97,7 +99,11 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 int id = item.getId();
+                                //先删除对应的feedITEM
+                                LitePal.deleteAll(FeedItem.class,"feediid = ?",item.getIid());
+                                //再删除feed
                                 LitePal.delete(Feed.class,id);
+
                                 //从列表中移除该项
                                 remove(helper.getAdapterPosition());
                                 notifyDataSetChanged();
