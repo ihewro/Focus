@@ -183,6 +183,15 @@ public class RequireListPopupView extends BottomPopupView {
                     editTextView.setError("格式不正确");
                     isValidate = false;
                 }else {
+                    //处理正确的URL
+                    if (editText.startsWith("http://")) {
+                        editText = editText;
+                    } else if (editText.startsWith("https://")) {
+//                        editText = editText.replace("https", "http");
+                        editText = editText;
+                    } else {
+                        editText = "http://" + editText;
+                    }
                     feed.setUrl(editText);
                 }
             }else if (feedRequire.getType() == FeedRequire.SET_NAME){

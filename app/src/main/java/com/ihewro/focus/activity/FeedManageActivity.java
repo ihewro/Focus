@@ -3,30 +3,41 @@ package com.ihewro.focus.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.fragemnt.FeedFolderListManageFragment;
 import com.ihewro.focus.fragemnt.FeedListManageFragment;
+import com.ihewro.focus.util.OPMLCreateHelper;
+import com.ihewro.focus.util.OPMLReadHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * 分类管理页面，对分类、分类文件夹增加、删除、修改、排序
  */
-public class FeedManageActivity extends BaseActivity {
+public class FeedManageActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks,FileChooserDialog.FileCallback {
 
 
     @BindView(R.id.toolbar)
@@ -35,6 +46,8 @@ public class FeedManageActivity extends BaseActivity {
     FrameLayout flMainBody;
 
     private Fragment currentFragment = null;
+    OPMLReadHelper opmlReadHelper;
+    OPMLCreateHelper opmlCreateHelper;
 
     private FeedListManageFragment feedListManageFragment;
     private FeedFolderListManageFragment feedFolderListManageFragment;
@@ -131,11 +144,89 @@ public class FeedManageActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_import://导入
+                opmlReadHelper = new OPMLReadHelper(FeedManageActivity.this);
+                opmlReadHelper.run();
+                break;
+
+            case R.id.action_export://导出
+                opmlCreateHelper = new OPMLCreateHelper(FeedManageActivity.this);
+                opmlCreateHelper.run();
+                break;
+
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        /**
+         * 2. easyPermission 接管权限管理
+         * {@link OPMLReadHelper#run}
+         */
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
     public void onBackPressed() {
         if (currentFragment == null || currentFragment == feedFolderListManageFragment){
             finish();
         }else if(currentFragment == feedListManageFragment){
             showFeedFolderListManageFragment();
         }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        //3.1 申请成功
+        if (requestCode == OPMLReadHelper.RQUEST_STORAGE_READ){
+            if (opmlReadHelper==null){
+                opmlReadHelper = new OPMLReadHelper(FeedManageActivity.this);
+            }
+            opmlReadHelper.run();
+        }else if (requestCode == OPMLCreateHelper.REQUEST_STORAGE_WRITE){
+            if (opmlCreateHelper==null){
+                opmlCreateHelper = new OPMLCreateHelper(FeedManageActivity.this);
+            }
+            opmlCreateHelper.run();
+        }
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        //3.2 申请失败
+        // 用户因为之前点了不再显示权限申请提示导致的申请失败，显示一个引导去设置界面的对话框
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this).build().show();
+        }else {//用户拒绝的申请,显示通知
+            Toasty.error(FeedManageActivity.this,"请允许读存储器的权限，这样才能导入文件哦！").show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //处理3.2 的第一种情况
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            Toast.makeText(this, "从设置界面返回", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    @Override
+    public void onFileSelection(@NonNull FileChooserDialog dialog, @NonNull File file) {
+        //选择了某个文件
+        opmlReadHelper.add(file.getAbsolutePath());
+    }
+
+    @Override
+    public void onFileChooserDismissed(@NonNull FileChooserDialog dialog) {
+
     }
 }
