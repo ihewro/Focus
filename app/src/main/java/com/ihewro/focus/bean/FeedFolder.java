@@ -17,7 +17,7 @@ public class FeedFolder extends LitePalSupport {
     private int id;//使用int型主键
 
     @Column(unique = true, defaultValue = "")
-    private String name;//文件夹名称,且是唯一的
+    private String name;//文件夹名称,且是唯一的，订阅可以重名，但是文件夹不能重名
     @Column(defaultValue = "1.0")
     private double orderValue;//顺序权限，用来排序的
 

@@ -3,7 +3,6 @@ package com.ihewro.focus.util;
 import android.Manifest;
 import android.app.Activity;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Xml;
 import android.view.View;
 import android.widget.Toast;
@@ -11,11 +10,10 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.google.common.base.Strings;
-import com.ihewro.focus.R;
 import com.ihewro.focus.activity.FeedManageActivity;
-import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 
@@ -141,7 +139,7 @@ public class OPMLReadHelper {
             String name = parser.getName();
             // Starts by looking for the entry tag
             if (name.equals(OUTLINE)) {
-                feedList.addAll(readOutline(parser));
+                feedList.addAll(readOutline(parser,""));
             } else {
                 skip(parser);
             }
@@ -149,22 +147,26 @@ public class OPMLReadHelper {
         return feedList;
     }
 
-    private List<Feed> readOutline(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private List<Feed> readOutline(XmlPullParser parser, String feedFolderName) throws IOException, XmlPullParserException {
+        List<FeedFolder> feedFolders = new ArrayList<>();
+
         List<Feed> feedList = new ArrayList<>();
         String type = parser.getAttributeValue(null, "type");
-        if (Objects.equals(type, "rss")) {
-            feedList.add(parseSubscription(parser));
+        if (Objects.equals(type, "rss")) {//单个rss订阅源
+            feedList.add(parseFeed(parser,feedFolderName));
             parser.nextTag();
-        } else {
+        } else {//是一个文件夹
             parser.require(XmlPullParser.START_TAG, null, OUTLINE);
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }
                 String name = parser.getName();
+                //可能是null;
+                feedFolderName = parser.getAttributeValue(null, "text");
                 // Starts by looking for the entry tag
                 if (name.equals(OUTLINE)) {
-                    feedList.addAll(readOutline(parser));
+                    feedList.addAll(readOutline(parser,feedFolderName));
                 } else {
                     skip(parser);
                 }
@@ -173,7 +175,7 @@ public class OPMLReadHelper {
         return feedList;
     }
 
-    private Feed parseSubscription(XmlPullParser parser) {
+    private Feed parseFeed(XmlPullParser parser,String feedFolderName) {
         String text = parser.getAttributeValue(null, "text");
         String title = parser.getAttributeValue(null, "title");
         String xmlUrl = parser.getAttributeValue(null, "xmlUrl");
