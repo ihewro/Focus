@@ -1,5 +1,7 @@
 package com.ihewro.focus;
 
+import android.os.Environment;
+
 /**
  * <pre>
  *     author : hewro
@@ -10,5 +12,10 @@ package com.ihewro.focus;
  * </pre>
  */
 public class GlobalConfig {
-    public static final String serverUrl = "http://cloud.bmob.cn/f3d283d6ac358cd2/focus/";
+    public static final String serverUrl = "https://cloud.bmob.cn/f3d283d6ac358cd2/focus/";
+
+
+    public static final String storageFolderName = "focus";//所有表情包都在此目录下建立子目录
+    public static final String appDirPath = Environment.getExternalStorageDirectory() + "/" + GlobalConfig.storageFolderName + "/";
+    public static final String appXMLPath = Environment.getExternalStorageDirectory() + "/" + GlobalConfig.storageFolderName + "/" + "xml/";
 }

@@ -3,6 +3,8 @@ package com.ihewro.focus.bean;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -24,6 +26,9 @@ public class FeedFolder extends LitePalSupport {
     @Column(ignore = true)
     private int notReadNum;
 
+    @Column(ignore = true)
+    private List<Feed> feedList;
+
     public FeedFolder(String name) {
         this.name = name;
     }
@@ -31,6 +36,7 @@ public class FeedFolder extends LitePalSupport {
 
     public FeedFolder() {
     }
+
 
     public int getId() {
         return id;
@@ -62,5 +68,13 @@ public class FeedFolder extends LitePalSupport {
 
     public void setNotReadNum(int notReadNum) {
         this.notReadNum = notReadNum;
+    }
+
+    public List<Feed> getFeedList() {
+        return feedList;
+    }
+
+    public void setFeedList(List<Feed> feedList) {
+        this.feedList = feedList;
     }
 }

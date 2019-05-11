@@ -18,6 +18,7 @@ import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 
 import org.greenrobot.eventbus.EventBus;
+import org.litepal.LitePal;
 import org.litepal.exceptions.LitePalSupportException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -98,9 +99,9 @@ public class OPMLReadHelper {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(fis, null);
             parser.nextTag();
-            List<Feed> feedList = readOPML(parser);
+            List<FeedFolder> feedFolders = readOPML(parser);
             //保存到指定的文件夹中
-            saveFeedToFeedFolder(feedList);
+            saveFeedToFeedFolder(feedFolders);
 
             Toast.makeText(activity, "导入成功", Toast.LENGTH_SHORT).show();
         } catch (XmlPullParserException e) {
@@ -111,8 +112,8 @@ public class OPMLReadHelper {
         }
     }
 
-    private List<Feed> readOPML(XmlPullParser parser) throws IOException, XmlPullParserException {
-        List<Feed> feedList = new ArrayList<>();
+    private List<FeedFolder> readOPML(XmlPullParser parser) throws IOException, XmlPullParserException {
+        List<FeedFolder>feedFolders = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, OPML);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -121,17 +122,18 @@ public class OPMLReadHelper {
             String name = parser.getName();
             // Starts by looking for the entry tag
             if (name.equals(BODY)) {
-                feedList.addAll(readBody(parser));
+                feedFolders.addAll(readBody(parser));
             } else {
                 skip(parser);
             }
         }
-        return feedList;
+        return feedFolders;
     }
 
-    private List<Feed> readBody(XmlPullParser parser) throws IOException, XmlPullParserException {
-        List<Feed> feedList = new ArrayList<>();
+    private List<FeedFolder> readBody(XmlPullParser parser) throws IOException, XmlPullParserException {
+        List<FeedFolder> feedFolders = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, BODY);
+
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -139,34 +141,59 @@ public class OPMLReadHelper {
             String name = parser.getName();
             // Starts by looking for the entry tag
             if (name.equals(OUTLINE)) {
-                feedList.addAll(readOutline(parser,""));
+                String text = parser.getAttributeValue(null, "text");
+                feedFolders.add(readOutline(parser,text));
             } else {
                 skip(parser);
             }
         }
-        return feedList;
+        return feedFolders;
     }
 
-    private List<Feed> readOutline(XmlPullParser parser, String feedFolderName) throws IOException, XmlPullParserException {
-        List<FeedFolder> feedFolders = new ArrayList<>();
+    private FeedFolder readOutline(XmlPullParser parser, String feedFolderName) throws IOException, XmlPullParserException {
 
-        List<Feed> feedList = new ArrayList<>();
+        FeedFolder feedFolder = new FeedFolder(feedFolderName);
+
         String type = parser.getAttributeValue(null, "type");
-        if (Objects.equals(type, "rss")) {//单个rss订阅源
-            feedList.add(parseFeed(parser,feedFolderName));
+        if (Objects.equals(type, "rss")) {//只有一个订阅源，且没有分组
+            feedFolder.getFeedList().add(parseFeed(parser,feedFolderName));
             parser.nextTag();
+
         } else {//是一个文件夹
+            //我们只处理二级目录
+            feedFolder.getFeedList().addAll(readFeedFolderOutLine(parser,feedFolderName));
+
+        }
+        return feedFolder;
+    }
+
+
+    /**
+     * 读取文件夹下的所有feed
+     * @param parser
+     * @param feedFolderName
+     * @return
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    private List<Feed> readFeedFolderOutLine (XmlPullParser parser, String feedFolderName) throws IOException, XmlPullParserException {
+        List<Feed> feedList = new ArrayList<>();
+        parser.require(XmlPullParser.START_TAG, null, OUTLINE);
+
+        String type = parser.getAttributeValue(null, "type");
+        if (Objects.equals(type, "rss")) {
+            feedList.add(parseFeed(parser, feedFolderName));
+            parser.nextTag();
+        } else {
             parser.require(XmlPullParser.START_TAG, null, OUTLINE);
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }
                 String name = parser.getName();
-                //可能是null;
-                feedFolderName = parser.getAttributeValue(null, "text");
                 // Starts by looking for the entry tag
                 if (name.equals(OUTLINE)) {
-                    feedList.addAll(readOutline(parser,feedFolderName));
+                    feedList.addAll(readFeedFolderOutLine(parser, feedFolderName));
                 } else {
                     skip(parser);
                 }
@@ -199,28 +226,30 @@ public class OPMLReadHelper {
         return feed;
     }
 
-    private void saveFeedToFeedFolder(final List<Feed> feedList){
+    private void saveFeedToFeedFolder(final List<FeedFolder> feedFolders){
         //显示feedFolderList 弹窗
-        new ShowFeedFolderListDialogTask(new DialogCallback() {
-            @Override
-            public void onFinish(MaterialDialog dialog, View view, int which, CharSequence text, int targetId) {
-                //移动到指定的目录下
 
-                for (int i =0; i < feedList.size();i++){
-                    Feed feed = feedList.get(i);
-                    feed.setIid();//否则会出现主键重复
-                    feed.setFeedFolderId(targetId);
-                    try{
-                        feed.save();
-                        Toasty.success(UIUtil.getContext(),"订阅成功").show();
-                        EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
-                    }catch (LitePalSupportException exception){
-                        Toasty.info(activity,feed.getName()+"该订阅已经存在了哦！").show();
-                    }
+        for (int i = 0;i < feedFolders.size();i++){
+            //首先检查这个feedFolder名称是否存在。
+            FeedFolder feedFolder = feedFolders.get(i);
+            List<FeedFolder> temp = LitePal.where("name = ?",feedFolder.getName()).find(FeedFolder.class);
+            if (temp.size()<1){
+                if (feedFolder.getName() == null || feedFolder.getName().equals("")){
+                    feedFolder.setName("导入的未命名文件夹");
                 }
-
-                EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
+                //新建一个feedFolder
+                feedFolder.save();
+            }else {//存在这个名称
+                feedFolder.setId(temp.get(0).getId());//使用是数据库的对象
             }
-        }, activity,"添加到指定的文件夹下","").execute();
+            //将导入的feed全部保存
+            for (Feed feed:feedFolder.getFeedList()) {
+                feed.setFeedFolderId(feedFolder.getId());
+                feed.setIid();
+                feed.save();
+            }
+            EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
+
+        }
     }
 }
