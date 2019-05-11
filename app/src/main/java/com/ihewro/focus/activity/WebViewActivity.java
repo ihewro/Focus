@@ -50,5 +50,6 @@ public class WebViewActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         webView.loadUrl(url);
+//        webView.loadData();
     }
 }

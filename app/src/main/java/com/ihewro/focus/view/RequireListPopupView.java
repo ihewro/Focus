@@ -27,6 +27,7 @@ import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.core.BottomPopupView;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -201,7 +202,7 @@ public class RequireListPopupView extends BottomPopupView {
                 }else {
                     feed.setName(editText);
                 }
-            }else if (feedRequire.getType() == FeedRequire.JOIN_URL){
+            }else {
                 if (editText.trim().equals("")){
                     editTextView.setError("不能为空哦");
                     isValidate = false;

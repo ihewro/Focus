@@ -61,6 +61,7 @@ public class LocalLinkMovementMethod extends LinkMovementMethod {
 
             if (link.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
+                    //TODO：打开链接
                     link[0].onClick(widget);
                 } else if (action == MotionEvent.ACTION_DOWN) {
                     Selection.setSelection(buffer,

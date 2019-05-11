@@ -21,7 +21,6 @@ import com.ihewro.focus.view.FeedsLoadingPopupView;
 import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.XPopupCallback;
-import com.tapadoo.alerter.Alerter;
 
 import org.litepal.LitePal;
 
@@ -131,7 +130,6 @@ public class RequestFeedListDataTask {
                         }
                     },1000); // 延时1秒
                 }
-                Alerter.hide();
             }else {
                 if (index >= num){
                     if (popupView!=null && popupView.isShow()){
@@ -192,12 +190,23 @@ public class RequestFeedListDataTask {
 
 
                 } else {
+
                     try {
-                        ALog.d("请求失败" + response.errorBody().string());
+                        ALog.d("请求失败" + response.code() + response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody(), Toast.LENGTH_SHORT).show();
+
+                   /* try {
+                        ALog.d("请求失败" + response.message());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+                    try {
+                        Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 setUI();
             }

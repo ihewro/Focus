@@ -1,5 +1,6 @@
 package com.ihewro.focus.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,7 +53,7 @@ public class PostDetailActivity extends BaseActivity {
     @BindView(R.id.post_time)
     TextView postTime;
     @BindView(R.id.post_content)
-    HtmlTextView postContent;
+    WebView postContent;
     @BindView(R.id.main_body)
     LinearLayout mainBody;
     @BindView(R.id.refreshLayout)
@@ -109,6 +111,7 @@ public class PostDetailActivity extends BaseActivity {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initListener() {
 
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -195,6 +198,10 @@ public class PostDetailActivity extends BaseActivity {
         }
     }
 
+
+    private void setContent(){
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
