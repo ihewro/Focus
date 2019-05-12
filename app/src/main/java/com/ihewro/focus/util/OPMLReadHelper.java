@@ -2,24 +2,19 @@ package com.ihewro.focus.util;
 
 import android.Manifest;
 import android.app.Activity;
-import android.os.Environment;
 import android.util.Xml;
-import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.google.common.base.Strings;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.activity.FeedManageActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
-import com.ihewro.focus.callback.DialogCallback;
-import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
-import org.litepal.exceptions.LitePalSupportException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -30,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import es.dmoral.toasty.Toasty;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
@@ -65,7 +59,7 @@ public class OPMLReadHelper {
         if (EasyPermissions.hasPermissions(activity, perms)) {
             //有权限
             new FileChooserDialog.Builder(activity)
-                    .initialPath(Environment.getExternalStorageDirectory().getAbsolutePath())  //初始显示了目录
+                    .initialPath(GlobalConfig.appDirPath)  //初始显示了目录
                     .extensionsFilter(".opml") //选择的文件类型
                     .tag("optional-identifier")
                     .goUpLabel("上一级")
@@ -178,7 +172,6 @@ public class OPMLReadHelper {
      */
     private List<Feed> readFeedFolderOutLine (XmlPullParser parser, String feedFolderName) throws IOException, XmlPullParserException {
         List<Feed> feedList = new ArrayList<>();
-        parser.require(XmlPullParser.START_TAG, null, OUTLINE);
 
         String type = parser.getAttributeValue(null, "type");
         if (Objects.equals(type, "rss")) {
@@ -191,7 +184,6 @@ public class OPMLReadHelper {
                     continue;
                 }
                 String name = parser.getName();
-                // Starts by looking for the entry tag
                 if (name.equals(OUTLINE)) {
                     feedList.addAll(readFeedFolderOutLine(parser, feedFolderName));
                 } else {

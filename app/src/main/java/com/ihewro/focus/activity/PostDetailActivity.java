@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.ALog;
@@ -23,7 +23,6 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.WebviewFallback;
-import com.ihewro.focus.view.htmltextview.HtmlTextView;
 import com.ihewro.focus.util.ArticleUtil;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
@@ -54,10 +53,12 @@ public class PostDetailActivity extends BaseActivity {
     TextView postTime;
     @BindView(R.id.post_content)
     WebView postContent;
-    @BindView(R.id.main_body)
-    LinearLayout mainBody;
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
+    @BindView(R.id.feed_name)
+    TextView feedName;
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
 
 
     private String mId;
@@ -98,8 +99,8 @@ public class PostDetailActivity extends BaseActivity {
 
     private void initView() {
 
-        refreshLayout.setRefreshHeader(new PostHeader(this,feedItem));
-        refreshLayout.setRefreshFooter(new PostFooter(this,feedItem));
+        refreshLayout.setRefreshHeader(new PostHeader(this, feedItem));
+        refreshLayout.setRefreshFooter(new PostFooter(this, feedItem));
         //使上拉加载具有弹性效果
         refreshLayout.setEnableAutoLoadMore(false);
         //禁止越界拖动（1.0.4以上版本）
@@ -132,7 +133,7 @@ public class PostDetailActivity extends BaseActivity {
             }
         });
         //文章的touch事件
-        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener(){
+        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
             /**
              * 发生确定的单击时执行
@@ -188,6 +189,7 @@ public class PostDetailActivity extends BaseActivity {
         ArticleUtil.setContent(this, feedItem, postContent);
         postTitle.setText(feedItem.getTitle());
         postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
+        feedName.setText(feedItem.getFeedName());
         //将该文章标记为已读，并且通知首页修改布局
         feedItem.setRead(true);
         feedItem.save();
@@ -199,7 +201,7 @@ public class PostDetailActivity extends BaseActivity {
     }
 
 
-    private void setContent(){
+    private void setContent() {
 
     }
 
@@ -280,7 +282,7 @@ public class PostDetailActivity extends BaseActivity {
         });
     }
 
-    private void openLink(){
+    private void openLink() {
         String url = feedItem.getUrl();
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
         CustomTabActivityHelper.openCustomTab(

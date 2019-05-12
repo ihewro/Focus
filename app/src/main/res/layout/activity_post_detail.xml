@@ -9,15 +9,14 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="0px">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title=""
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:title=" "
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -27,29 +26,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:srlDragRate="1">
-        <ScrollView
+
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:clickable="true"
-                android:id="@+id/main_body">
-                <TextView
-                    android:id="@+id/post_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:text="《狗十三》——我们都是不合格的父母而已"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorAccent"
-                    android:background="@color/color_grey_dark"/>
+                android:orientation="vertical">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -60,35 +46,60 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp">
 
-
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingTop="15dp"
                         android:orientation="horizontal">
-                        <ImageView
+                        <TextView
+                            android:id="@+id/feed_name"
+                            android:text="订阅名称"
+                            android:textSize="12sp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_alignParentLeft="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
                         <TextView
                             android:id="@+id/post_time"
+                            android:textSize="12sp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_alignParentRight="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="3月13日星期三 下午7：48"/>
-                    </LinearLayout>
+                    </RelativeLayout>
 
                 </LinearLayout>
 
-                <WebView
+
+                <TextView
+                    android:id="@+id/post_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="30dp"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:gravity="center"
+                    android:text="《狗十三》——我们都是不合格的父母而已"
+                    android:textSize="17sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+
+                <com.ihewro.focus.view.ScrollWebView
                     android:id="@+id/post_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
-                    android:layout_marginBottom="50dp"
                     android:textIsSelectable="true"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/test_content"/>
+
             </LinearLayout>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
+
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </android.support.design.widget.CoordinatorLayout>

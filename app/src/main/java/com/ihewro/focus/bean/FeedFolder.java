@@ -3,6 +3,7 @@ package com.ihewro.focus.bean;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class FeedFolder extends LitePalSupport {
     private int notReadNum;
 
     @Column(ignore = true)
-    private List<Feed> feedList;
+    private List<Feed> feedList = new ArrayList<>();
 
     public FeedFolder(String name) {
         this.name = name;
@@ -71,6 +72,9 @@ public class FeedFolder extends LitePalSupport {
     }
 
     public List<Feed> getFeedList() {
+        if (feedList == null){
+            feedList = new ArrayList<>();
+        }
         return feedList;
     }
 

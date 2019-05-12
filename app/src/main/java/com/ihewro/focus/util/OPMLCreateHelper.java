@@ -3,6 +3,7 @@ package com.ihewro.focus.util;
 import android.Manifest;
 import android.app.Activity;
 
+import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
@@ -71,15 +72,29 @@ public class OPMLCreateHelper {
 
     private void add() {
         try {
+
+            //创建目录
+            File appDir = new File(GlobalConfig.appXMLPath);
+            if (!appDir.exists()){
+                appDir.mkdirs();
+            }
+
+
             String name = DateUtil.getNowDateStr();//日期
-
-            String outPutPath = GlobalConfig.appXMLPath+"export"+name+".xml";
-
+            String outPutPath = GlobalConfig.appXMLPath+"export"+name+".opml";
             File outFile = new File(outPutPath);
             if (outFile.exists()){
                 outFile.delete();
             }
-            boolean flag = outFile.createNewFile();
+            boolean flag = false;
+            //创建文件
+            outFile = new File(outPutPath);
+            try {
+                flag = outFile.createNewFile();
+            }catch (IOException e){
+                ALog.d(e + "创建失败？？");
+            }
+
             if (flag){
                 FileOutputStream fileOutputStream = new FileOutputStream(outFile);
                 createXml(fileOutputStream);
@@ -93,6 +108,7 @@ public class OPMLCreateHelper {
 
     private void createXml(OutputStream outputStream){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.newDocument();
@@ -110,6 +126,8 @@ public class OPMLCreateHelper {
             Element head = document.createElement("head");
             Element title = document.createElement("title");
             title.setTextContent("Focus");
+            head.appendChild(title);
+
             opml.appendChild(head);
 
             //  <body>
@@ -135,11 +153,15 @@ public class OPMLCreateHelper {
                 body.appendChild(outLine);
             }
 
+            opml.appendChild(body);
+            document.appendChild(opml);
+
 
             TransformerFactory tff = TransformerFactory.newInstance();
             Transformer transformer = tff.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");//开启缩进
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");//设置编码格式
+
 
             DOMSource domSource = new DOMSource(document);
             PrintWriter printWriter = new PrintWriter(outputStream);

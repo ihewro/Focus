@@ -1,9 +1,20 @@
 package com.ihewro.focus.view;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.util.Log;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.blankj.ALog;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 
 /**
  * <pre>
@@ -15,6 +26,8 @@ import android.webkit.WebViewClient;
  * </pre>
  */
 public class MyWebViewClient extends WebViewClient {
+
+    private Context context;
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onPageFinished(WebView view, String url) {
@@ -28,6 +41,14 @@ public class MyWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         view.getSettings().setJavaScriptEnabled(true);
         super.onPageStarted(view, url, favicon);
+    }
+
+
+    public MyWebViewClient() {
+    }
+
+    public MyWebViewClient(Context context) {
+        this.context = context;
     }
 
     private void addImageClickListener(WebView webView) {
@@ -50,5 +71,30 @@ public class MyWebViewClient extends WebViewClient {
 
         //内置视频播放器
 
+    }
+
+//    shouldInterceptRequest
+
+
+
+
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        ALog.d("请求的url有" + url);
+
+        //拦截https://focus.com/content.css 替换成本地的css
+        AssetManager am = context.getAssets();
+       if (url.equals("https://focus.com/content.css")){
+           try {
+               InputStream is = context.getAssets().open("css/" + "webview.css");
+               ALog.i("shouldInterceptRequest", "use offline resource for: " + url);
+               return new WebResourceResponse("text/css", "UTF-8", is);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+
+
+        return super.shouldInterceptRequest(view, url);
     }
 }

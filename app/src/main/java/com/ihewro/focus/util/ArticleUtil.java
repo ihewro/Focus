@@ -2,6 +2,9 @@ package com.ihewro.focus.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -23,7 +26,7 @@ import es.dmoral.toasty.Toasty;
  * </pre>
  */
 public class ArticleUtil {
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     public static void setContent(Context context, FeedItem article, WebView textView) {
         if (article == null || textView == null) {
             return;
@@ -39,20 +42,39 @@ public class ArticleUtil {
 
         webSettings.setJavaScriptEnabled(true);
 
+
+
+
+        // disable scroll on touch
+        textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE){
+                    return false;
+                }else {
+                    return true;
+                }
+            }
+        });
+
+
         //
         String[] imageUrls = {};
         textView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");
-        textView.setWebViewClient(new MyWebViewClient());
+        textView.setWebViewClient(new MyWebViewClient(context));
 
         //加载HTML
+
+        String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";
 
         String linkCss = "<style>img{max-width:50%}video{height:auto!important;width:100%;display:block}</style>\n";
 
 
         String meta = "";
-        String body = "<html><header>" + linkCss + meta + "</header>" + getContent(article)
+        String body = "<html><header>" + linkCss + meta +css + "</header>" + getContent(article)
                 + "</body></html>";
 
+        textView.setBackgroundColor(Color.parseColor("#00000000"));
         textView.loadData( body, "text/html; charset=UTF-8", null);
 
 
