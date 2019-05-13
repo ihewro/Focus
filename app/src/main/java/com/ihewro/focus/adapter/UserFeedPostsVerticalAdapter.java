@@ -37,10 +37,12 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
     private Activity activity;
     private String feedName;
+    private List<FeedItem> feedItemList;
 
     public UserFeedPostsVerticalAdapter(@Nullable List<FeedItem> data, Activity activity) {
         super(R.layout.item_post, data);
         this.activity = activity;
+        this.feedItemList = data;
     }
 
     @Override
@@ -141,11 +143,32 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                                 new OnSelectListener() {
                                     @Override
                                     public void onSelect(int position, String text) {
-
+                                        if (position == 0){
+                                            markReadOfTop(helper,item);
+                                        }else if (position == 1){
+                                            markReadOfBottom(helper,item);
+                                        }
                                     }
                                 })
                         .show();
             }
         });
+    }
+
+    private void markReadOfTop(final BaseViewHolder helper, final FeedItem item){
+        for (int i = 0;i<helper.getAdapterPosition();i++){
+            feedItemList.get(i).setRead(true);
+            feedItemList.get(i).save();
+            notifyItemChanged(i);
+
+        }
+    }
+
+    private void markReadOfBottom(final BaseViewHolder helper, final FeedItem item){
+        for (int i = helper.getAdapterPosition();i<feedItemList.size();i++){
+            feedItemList.get(i).setRead(true);
+            feedItemList.get(i).save();
+            notifyItemChanged(i);
+        }
     }
 }

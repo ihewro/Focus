@@ -38,7 +38,6 @@ public class FeedFolder extends LitePalSupport {
     public FeedFolder() {
     }
 
-
     public int getId() {
         return id;
     }
