@@ -95,7 +95,7 @@ public class FeedListManageFragment extends Fragment {
 
         //获取未读数目
         for (int i = 0;i<feedList.size();i++){
-            int num = LitePal.where("feediid = ?",feedList.get(i).getIid()).count(FeedItem.class);
+            int num = LitePal.where("feedid = ?", String.valueOf(feedList.get(i).getId())).count(FeedItem.class);
             feedList.get(i).setUnreadNum(num);
         }
 
@@ -103,7 +103,6 @@ public class FeedListManageFragment extends Fragment {
         adapter.bindToRecyclerView(recyclerView);
 
         if (feedList.size()==0){
-            //TODO:设置空布局
             adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
         }
     }

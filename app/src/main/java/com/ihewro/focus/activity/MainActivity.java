@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.canking.minipay.Config;
 import com.canking.minipay.MiniPayUtils;
@@ -32,9 +36,14 @@ import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Operation;
+import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
+import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
+import com.ihewro.focus.view.FeedOperationPopupView;
 import com.ihewro.focus.view.FilterPopupView;
 import com.ihewro.focus.view.OperationBottomPopupView;
 import com.lxj.xpopup.XPopup;
@@ -63,6 +72,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 import skin.support.SkinCompatManager;
 
 
@@ -162,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                         FeedItem item = searchResults.get(position);
-                        PostDetailActivity.activityStart(MainActivity.this, item.getIid(), -1);
+                        PostDetailActivity.activityStart(MainActivity.this, item.getId(), -1);
 
                     }
                 });
@@ -333,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void drawerLongClick(IDrawerItem drawerItem){
-        ALog.d("长按！");
 
         if (drawerItem.getTag()!=null){
             switch ((int)drawerItem.getTag()){
@@ -341,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
                     //获取到这个文件夹的数据
 
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new OperationBottomPopupView(MainActivity.this, getFeedFolderOperationList(drawerItem.getIdentifier()),"订阅文件夹名称","未读数目",new Help(false)))
+                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),"订阅文件夹名称","未读数目",new Help(false)))
                             .show();
 
 
@@ -349,101 +358,15 @@ public class MainActivity extends AppCompatActivity {
                 case DRAWER_FOLDER_ITEM:
                     //获取到这个feed的数据
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new OperationBottomPopupView(MainActivity.this, getFeedOperationList(drawerItem.getIdentifier()),"订阅名称","未读数目",new Help(false)))
+                            .asCustom(new FeedOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),"订阅名称","未读数目",new Help(false)))
                             .show();
                     break;
             }
         }
     }
 
-    private List<Operation> getFeedFolderOperationList(final long id){
-        FeedFolder feedFolder = LitePal.find(FeedFolder.class,id);
-
-        List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation("重命名文件夹","", getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feedFolder, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-                o = (FeedFolder)o;
-                //对文件夹进行重命名
-
-            }
-        }));
-
-        operations.add(new Operation("退订文件夹","", getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feedFolder, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-                o = (FeedFolder)o;
-                //退订文件夹的内容
-
-                //1.删除该文件夹下的所有feedITEN
-                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
-                for (int i = 0;i<temp.size();i++){
-                    LitePal.deleteAll(FeedItem.class,"feediid = ?",temp.get(i).getIid());
-                    //2.删除文件夹下的所有feed
-                    temp.get(i).delete();
-                }
-//                                //删除文件夹下的所有feed
-//                                LitePal.deleteAll(Feed.class,"feedfolderid = ?", String.valueOf(id));//删除文件夹下面的订阅
 
 
-                //3.删除文件夹
-                LitePal.delete(FeedFolder.class,id);
-
-                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
-            }
-        }));
-
-        operations.add(new Operation("标记全部已读", "",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feedFolder, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-                o = (FeedFolder)o;
-                //标记全部已读
-
-
-            }
-        }));
-
-        return  operations;
-    }
-
-
-    private List<Operation> getFeedOperationList(long id){
-        List<Operation> operations = new ArrayList<>();
-        Feed feed = LitePal.find(Feed.class,id);
-        operations.add(new Operation("重命名","",getResources().getDrawable(R.drawable.ic_edit_black_24dp),feed, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-
-            }
-        }));
-
-
-        operations.add(new Operation("退订","",getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feed, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-
-            }
-        }));
-
-
-        operations.add(new Operation("标记全部已读","",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feed, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-
-            }
-        }));
-
-
-        operations.add(new Operation("移动到其他文件夹","",getResources().getDrawable(R.drawable.ic_touch_app_black_24dp),feed, new OperationCallback() {
-            @Override
-            public void run(Object o) {
-
-            }
-        }));
-
-
-        return  operations;
-    }
 
 
     /**
@@ -499,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
             for (int j = 0; j < feedList.size(); j++) {
                 Feed temp = feedList.get(j);
-                int current_notReadNum = LitePal.where("read = ? and feediid = ?", "0", String.valueOf(temp.getIid())).count(FeedItem.class);
+                int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
                 SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
                 feedItems.add(secondaryDrawerItem);
 

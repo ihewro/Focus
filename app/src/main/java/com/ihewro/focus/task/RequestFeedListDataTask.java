@@ -222,7 +222,7 @@ public class RequestFeedListDataTask {
         List<Feed> tempList = LitePal.where("url = ?" ,url).find(Feed.class);
         if (tempList.size()>0){
             Feed temp = tempList.get(0);
-            List<FeedItem> tempFeedItemList = LitePal.where("feediid = ?",temp.getIid()).find(FeedItem.class);
+            List<FeedItem> tempFeedItemList = LitePal.where("feedid = ?", String.valueOf(temp.getId())).find(FeedItem.class);
             ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
             eList.addAll(tempFeedItemList);
         }

@@ -213,7 +213,6 @@ public class OPMLReadHelper {
         iconUrl = htmlUrl + "/favicon.ico";
 
         Feed feed = new Feed(title,xmlUrl,description);
-        feed.setIid();
 
         return feed;
     }
@@ -237,7 +236,6 @@ public class OPMLReadHelper {
             //将导入的feed全部保存
             for (Feed feed:feedFolder.getFeedList()) {
                 feed.setFeedFolderId(feedFolder.getId());
-                feed.setIid();
                 feed.save();
             }
             EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));

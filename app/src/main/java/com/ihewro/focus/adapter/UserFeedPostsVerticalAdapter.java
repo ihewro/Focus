@@ -88,7 +88,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                 item.setRead(!item.isRead());
                 notifyDataSetChanged();
                 //保存到数据库
-                FeedItem temp = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
+                FeedItem temp = LitePal.find(FeedItem.class,item.getId());
                 temp.setRead(item.isRead());
                 temp.save();
 
@@ -108,10 +108,10 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             public void onClick(View view) {
                 item.setFavorite(!item.isFavorite());
                 notifyDataSetChanged();
+
                 //保存到数据库
-                FeedItem temp2 = LitePal.where("iid = ?",item.getIid()).limit(1).find(FeedItem.class).get(0);
-                temp2.setFavorite(item.isFavorite());
-                temp2.save();
+                item.setFavorite(item.isFavorite());
+                item.save();
 
                 //通知
                 if (item.isFavorite()){
@@ -126,7 +126,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostDetailActivity.activityStart(activity,item.getIid(),helper.getAdapterPosition());
+                PostDetailActivity.activityStart(activity,item.getId(),helper.getAdapterPosition());
             }
         });
 

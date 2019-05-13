@@ -141,4 +141,11 @@ public class OperationBottomPopupView  extends BottomPopupView {
     }
 
 
+    public List<Operation> getOperationList() {
+        return operationList;
+    }
+
+    public void setOperationList(List<Operation> operationList) {
+        this.operationList = operationList;
+    }
 }

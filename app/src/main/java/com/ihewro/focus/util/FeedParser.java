@@ -128,34 +128,30 @@ public class FeedParser {
                 skip(parser);
             }
         }
-
-//写在请求结束的那个地方合并旧数据
-//        feedItems.addAll(feed.getFeedItemList());//把新的数据和旧的数据合并
-//        feed.setFeedItemList(new ArrayList<>(new LinkedHashSet<>(feedItems)));
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");
-//        feed.setTotalCount(0L);
-//        feed.setUnreadCount(0L);
-
         //给feed下面所有feedItem设置feedName和feedId;
         //获取当前feed的iid
-
         List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
-        String feedIid = "";
+        int feedId = 0;
         if (tempFeeds.size() <= 0){
-            ALog.d("出现未订阅错误"+feed.getUrl());
+            ALog.d("出现未订阅错误"+feed.getUrl());//我们获取feedItem内容是从找数据库的feed，所以不可能feedItem中的feed url 不在数据库中欧冠
         }else {
-            feedIid = tempFeeds.get(0).getIid();
+            feedId = tempFeeds.get(0).getId();
         }
+        feed.setId(feedId);
+
+        //给feed下所有feedItem绑定feed信息
         for (int i =0;i<feed.getFeedItemList().size();i++){
             feed.getFeedItemList().get(i).setFeedName(feed.getName());
-            feed.getFeedItemList().get(i).setFeedId(feedIid);
+            feed.getFeedItemList().get(i).setFeedId(feedId);
             try{
                 feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
             }catch (LitePalSupportException exception){
-                ALog.d("数据重复不会插入");
+                ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
                 //此时要对feedItem进行状态字段的恢复，读取数据的状态
-                FeedItem temp = LitePal.where("iid = ?",feed.getFeedItemList().get(i).getIid()).limit(1).find(FeedItem.class).get(0);
+                FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
+                feed.getFeedItemList().get(i).setId(temp.getId());
                 feed.getFeedItemList().get(i).setRead(temp.isRead());
                 feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
                 feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间

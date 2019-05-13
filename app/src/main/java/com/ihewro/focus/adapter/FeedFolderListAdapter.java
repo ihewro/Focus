@@ -104,13 +104,10 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
                                 //1.删除该文件夹下的所有feedITEN
                                 List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
                                 for (int i = 0;i<temp.size();i++){
-                                    LitePal.deleteAll(FeedItem.class,"feediid = ?",temp.get(i).getIid());
+                                    LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(temp.get(i).getId()));
                                     //2.删除文件夹下的所有feed
                                     temp.get(i).delete();
                                 }
-//                                //删除文件夹下的所有feed
-//                                LitePal.deleteAll(Feed.class,"feedfolderid = ?", String.valueOf(id));//删除文件夹下面的订阅
-
 
                                 //3.删除文件夹
                                 LitePal.delete(FeedFolder.class,id);

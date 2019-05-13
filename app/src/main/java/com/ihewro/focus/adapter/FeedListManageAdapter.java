@@ -100,7 +100,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 int id = item.getId();
                                 //先删除对应的feedITEM
-                                LitePal.deleteAll(FeedItem.class,"feediid = ?",item.getIid());
+                                LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(item.getId()));
                                 //再删除feed
                                 LitePal.delete(Feed.class,id);
 

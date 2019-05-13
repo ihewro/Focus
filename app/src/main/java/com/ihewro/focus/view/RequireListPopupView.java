@@ -237,7 +237,6 @@ public class RequireListPopupView extends BottomPopupView {
             @Override
             public void onFinish(MaterialDialog dialog, View view, int which, CharSequence text, int targetId) {
                 //移动到指定的目录下
-                feed.setIid();//否则会出现主键重复
                 feed.setFeedFolderId(targetId);
                 try{
                     feed.save();

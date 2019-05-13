@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.ihewro.focus.decoration.ISuspensionInterface;
 import com.ihewro.focus.util.DateUtil;
 
+import org.litepal.LitePal;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
@@ -18,16 +19,20 @@ import org.litepal.crud.LitePalSupport;
  * </pre>
  */
 public class FeedItem extends LitePalSupport implements ISuspensionInterface {
+
     @Column(unique = true)
-    private String iid;//唯一id，标识
+    private int id;
 
     private String title;//文章标题
     private Long date;//文章发布日期
     private String summary;//文章简介
     private String content;//文章内容
     private String feedIid;
+    private int feedId;
     private String feedName;
-    private String url;//文章指向的链接
+
+    @Column(unique = true)
+    private String url;//文章指向的链接，作为文章的唯一标识符
 
     private boolean read;//是否已经阅读,true 表示已阅读
     private boolean favorite;//是否收藏，true 表示已收藏
@@ -56,7 +61,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         this.url = url;
         this.read = read;
         this.favorite = favorite;
-        this.iid = title.hashCode() + url.hashCode() +"";//生成唯一标识符
     }
 
     public String getUrl() {
@@ -85,14 +89,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public String getIid() {
-        return iid;
-    }
-
-    public void setIid(String iid) {
-        this.iid = iid;
     }
 
     public Long getDate() {
@@ -153,15 +149,30 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         return DateUtil.getTimeStringByInt(date);//返回年/月/日格式的日期
     }
 
+    public int getId() {
+        if (!this.isSaved()){
+            this.id = LitePal.where("url = ?",this.url).find(FeedItem.class).get(0).getId();
+        }
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
+    public int getFeedId() {
+        return feedId;
+    }
 
+    public void setFeedId(int feedId) {
+        this.feedId = feedId;
+    }
 
     @Override
     public boolean equals(@android.support.annotation.Nullable Object obj) {
         FeedItem feedItem = ((FeedItem)obj);
         assert feedItem != null;
-        if (this.url.equals(feedItem.getUrl()) && this.title.equals(feedItem.getTitle())){
+        if (this.url.equals(feedItem.getUrl())){
             return true;
         }else {
             return false;
@@ -170,6 +181,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     @Override
     public int hashCode() {
-        return this.getUrl().hashCode() + this.getTitle().hashCode();
+        return this.getUrl().hashCode();
     }
 }

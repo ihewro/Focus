@@ -61,13 +61,13 @@ public class PostDetailActivity extends BaseActivity {
     AppBarLayout appbar;
 
 
-    private String mId;
+    private int mId;
     private int mIndex;
     private FeedItem feedItem;
     private MenuItem starItem;
     private LikeButton likeButton;
 
-    public static void activityStart(Activity activity, String feedItemId, int indexInList) {
+    public static void activityStart(Activity activity, int feedItemId, int indexInList) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_STRING_FEED_ITEM_ID, feedItemId);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
@@ -87,7 +87,7 @@ public class PostDetailActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        mId = intent.getStringExtra(Constants.KEY_STRING_FEED_ITEM_ID);
+        mId = intent.getIntExtra(Constants.KEY_STRING_FEED_ITEM_ID,0);
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
         initData();
 
@@ -185,7 +185,7 @@ public class PostDetailActivity extends BaseActivity {
 
 
     public void initData() {
-        feedItem = LitePal.where("iid = ?", mId).limit(1).find(FeedItem.class).get(0);
+        feedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         ArticleUtil.setContent(this, feedItem, postContent);
         postTitle.setText(feedItem.getTitle());
         postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
@@ -253,7 +253,7 @@ public class PostDetailActivity extends BaseActivity {
     private void setLikeButton() {
         //设置收藏状态
         if (feedItem == null) {
-            feedItem = LitePal.where("iid = ?", mId).limit(1).find(FeedItem.class).get(0);
+            feedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
         likeButton.setLiked(feedItem.isFavorite());
         //收藏的点击事件
@@ -263,7 +263,7 @@ public class PostDetailActivity extends BaseActivity {
                 feedItem.setFavorite(true);
                 feedItem.save();
                 if (mIndex == -1) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId), true));
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, true));
                 } else {
                     EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, true));
                 }
@@ -274,7 +274,7 @@ public class PostDetailActivity extends BaseActivity {
                 feedItem.setFavorite(false);
                 feedItem.save();
                 if (mIndex == -1) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, Integer.parseInt(mId), false));
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, false));
                 } else {
                     EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, false));
                 }
