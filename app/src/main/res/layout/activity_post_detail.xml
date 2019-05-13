@@ -82,10 +82,9 @@
                     android:paddingRight="30dp"
                     android:gravity="center"
                     android:text="《狗十三》——我们都是不合格的父母而已"
-                    android:textSize="17sp"
+                    android:textSize="25sp"
                     android:textColor="@color/colorAccent"
                     />
-
 
                 <com.ihewro.focus.view.ScrollWebView
                     android:id="@+id/post_content"

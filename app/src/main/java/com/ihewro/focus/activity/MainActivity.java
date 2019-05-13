@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,15 +25,19 @@ import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
+import com.ihewro.focus.bean.DrawItemInfo;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.Help;
+import com.ihewro.focus.bean.Operation;
+import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FilterPopupView;
+import com.ihewro.focus.view.OperationBottomPopupView;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.enums.PopupPosition;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -77,6 +82,15 @@ public class MainActivity extends AppCompatActivity {
     TextView toolbarTitle;
     @BindView(R.id.toolbar_container)
     FrameLayout toolbarContainer;
+
+    private static final int DRAWER_FOLDER_ITEM = 847;
+    private static final int DRAWER_FOLDER = 301;
+    private static final int SHOW_ALL = 14;
+    private static final int SHOW_STAR = 876;
+    private static final int SHOW_DISCOVER = 509;
+    private static final int FEED_MANAGE = 460;
+    private static final int SETTING = 911;
+    private static final int PAY_SUPPORT = 71;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -260,48 +274,175 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem.getTag() != null) {
-                            switch ((int) drawerItem.getTag()) {
-                                case 1000:
-                                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章",drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
-                                    break;
-                                case 2000:
-                                    StarActivity.activityStart(MainActivity.this);
-                                    break;
-                                case 3000:
-                                    FeedCategoryActivity.activityStart(MainActivity.this);
-                                    break;
-                                case -100://启用分类管理
-                                    FeedManageActivity.activityStart(MainActivity.this);
-                                    break;
-                                case -200://应用设置界面
-                                    SettingActivity.activityStart(MainActivity.this);
-                                    break;
-                                case -300://捐赠支持界面
-                                    MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
-                                    break;
-                                case 18:
-                                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
-                                    ArrayList<String> list = new ArrayList<>();
-                                    list.add(String.valueOf(drawerItem.getIdentifier()));
-                                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
-                                    break;
-
-                            }
-                        }
-                        return false;
+                        drawerItemClick(drawerItem);
+                        return true;
+                    }
+                })
+                .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(View view, int position, IDrawerItem drawerItem) {
+                        drawerLongClick(drawerItem);
+                        return true;
                     }
                 })
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(-100).withSelectable(false),
-                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(-200).withSelectable(false),
+                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(FEED_MANAGE).withSelectable(false),
+                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false),
                         new SecondaryDrawerItem().withName("工具").withIcon(GoogleMaterial.Icon.gmd_pan_tool).withIdentifier(10).withTag(-400).withSelectable(false),
-        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(-300).withSelectable(false)
+        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(PAY_SUPPORT).withSelectable(false)
 
                 )
                 .build();
 
         drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
+    }
+
+
+    private void drawerItemClick(IDrawerItem drawerItem){
+        if (drawerItem.getTag() != null) {
+            switch ((int) drawerItem.getTag()) {
+                case SHOW_ALL:
+                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章",drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
+                    break;
+                case SHOW_STAR:
+                    StarActivity.activityStart(MainActivity.this);
+                    break;
+                case SHOW_DISCOVER:
+                    FeedCategoryActivity.activityStart(MainActivity.this);
+                    break;
+                case FEED_MANAGE://启用分类管理
+                    FeedManageActivity.activityStart(MainActivity.this);
+                    break;
+                case SETTING://应用设置界面
+                    SettingActivity.activityStart(MainActivity.this);
+                    break;
+                case PAY_SUPPORT://捐赠支持界面
+                    MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
+                    break;
+                case DRAWER_FOLDER_ITEM:
+                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
+                    ArrayList<String> list = new ArrayList<>();
+                    list.add(String.valueOf(drawerItem.getIdentifier()));
+                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(),drawerPopupView.getOrderChoice(),drawerPopupView.getFilterChoice());
+                    break;
+
+            }
+        }
+
+    }
+
+
+    private void drawerLongClick(IDrawerItem drawerItem){
+        ALog.d("长按！");
+
+        if (drawerItem.getTag()!=null){
+            switch ((int)drawerItem.getTag()){
+                case DRAWER_FOLDER:
+                    //获取到这个文件夹的数据
+
+                    new XPopup.Builder(MainActivity.this)
+                            .asCustom(new OperationBottomPopupView(MainActivity.this, getFeedFolderOperationList(drawerItem.getIdentifier()),"订阅文件夹名称","未读数目",new Help(false)))
+                            .show();
+
+
+                    break;
+                case DRAWER_FOLDER_ITEM:
+                    //获取到这个feed的数据
+                    new XPopup.Builder(MainActivity.this)
+                            .asCustom(new OperationBottomPopupView(MainActivity.this, getFeedOperationList(drawerItem.getIdentifier()),"订阅名称","未读数目",new Help(false)))
+                            .show();
+                    break;
+            }
+        }
+    }
+
+    private List<Operation> getFeedFolderOperationList(final long id){
+        FeedFolder feedFolder = LitePal.find(FeedFolder.class,id);
+
+        List<Operation> operations = new ArrayList<>();
+        operations.add(new Operation("重命名文件夹","", getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feedFolder, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                o = (FeedFolder)o;
+                //对文件夹进行重命名
+
+            }
+        }));
+
+        operations.add(new Operation("退订文件夹","", getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feedFolder, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                o = (FeedFolder)o;
+                //退订文件夹的内容
+
+                //1.删除该文件夹下的所有feedITEN
+                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
+                for (int i = 0;i<temp.size();i++){
+                    LitePal.deleteAll(FeedItem.class,"feediid = ?",temp.get(i).getIid());
+                    //2.删除文件夹下的所有feed
+                    temp.get(i).delete();
+                }
+//                                //删除文件夹下的所有feed
+//                                LitePal.deleteAll(Feed.class,"feedfolderid = ?", String.valueOf(id));//删除文件夹下面的订阅
+
+
+                //3.删除文件夹
+                LitePal.delete(FeedFolder.class,id);
+
+                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
+            }
+        }));
+
+        operations.add(new Operation("标记全部已读", "",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feedFolder, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                o = (FeedFolder)o;
+                //标记全部已读
+
+
+            }
+        }));
+
+        return  operations;
+    }
+
+
+    private List<Operation> getFeedOperationList(long id){
+        List<Operation> operations = new ArrayList<>();
+        Feed feed = LitePal.find(Feed.class,id);
+        operations.add(new Operation("重命名","",getResources().getDrawable(R.drawable.ic_edit_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+
+            }
+        }));
+
+
+        operations.add(new Operation("退订","",getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+
+            }
+        }));
+
+
+        operations.add(new Operation("标记全部已读","",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+
+            }
+        }));
+
+
+        operations.add(new Operation("移动到其他文件夹","",getResources().getDrawable(R.drawable.ic_touch_app_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+
+            }
+        }));
+
+
+        return  operations;
     }
 
 
@@ -342,9 +483,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         subItems.clear();
-        subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(1000));
-        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(2000));
-        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false).withTag(3000));
+        subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(SHOW_ALL));
+        subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(SHOW_STAR));
+        subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false).withTag(SHOW_DISCOVER));
         subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
 
 
@@ -359,14 +500,16 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < feedList.size(); j++) {
                 Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feediid = ?", "0", String.valueOf(temp.getIid())).count(FeedItem.class);
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(18).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
                 feedItems.add(secondaryDrawerItem);
+
                 notReadNum += current_notReadNum;
             }
 
-            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum + "").withSubItems(
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum + "").withSubItems(
                     feedItems
             );
+
             //添加文件夹
             subItems.add(one);
         }

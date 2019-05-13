@@ -196,12 +196,7 @@ public class RequestFeedListDataTask {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                   /* try {
-                        ALog.d("请求失败" + response.message());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
+                    
                     try {
                         Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {

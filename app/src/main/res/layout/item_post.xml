@@ -10,6 +10,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/container"
         android:layout_margin="15dp"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp">
@@ -28,18 +29,35 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="10dp"
+                android:paddingTop="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
                 android:paddingBottom="10dp"
                 android:orientation="vertical"
                 >
-                <TextView
-                    android:id="@+id/post_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="内容标题"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/post_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:paddingRight="45dp"
+                        android:layout_alignParentLeft="true"
+                        android:text="内容标题内容标题内容标题内容标题内容标题"/>
+
+                    <ImageView
+                        android:id="@+id/operations"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_more_vert_black_24dp"/>
+
+                </RelativeLayout>
+
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -110,6 +128,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/right"
+        android:layout_margin="15dp"
         android:orientation="horizontal">
         <Button
             android:id="@+id/star"

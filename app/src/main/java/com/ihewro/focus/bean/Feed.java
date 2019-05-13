@@ -22,6 +22,8 @@ public class Feed extends LitePalSupport {
     private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id
     private String name;
     private String desc;
+
+    @Column(unique = true)
     private String url;//不包括参数
     private String link;// 订阅指向的网站
     private String websiteName;

@@ -14,6 +14,8 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.UIUtil;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -125,7 +127,24 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             @Override
             public void onClick(View view) {
                 PostDetailActivity.activityStart(activity,item.getIid(),helper.getAdapterPosition());
+            }
+        });
 
+        helper.getView(R.id.operations).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new XPopup.Builder(activity)
+                        .atView(helper.getView(R.id.operations))  // 依附于所点击的View，内部会自动判断在上方或者下方显示
+                        .asAttachList(new String[]{"将以上部分标记为已读", "将以下部分标记为未读"},
+                                new int[]{},
+                                new OnSelectListener() {
+                                    @Override
+                                    public void onSelect(int position, String text) {
+
+                                    }
+                                })
+                        .show();
             }
         });
     }
