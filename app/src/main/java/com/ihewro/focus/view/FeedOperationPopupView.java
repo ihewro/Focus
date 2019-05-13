@@ -47,7 +47,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
     private List<Operation> getFeedOperationList(final long id){
         List<Operation> operations = new ArrayList<>();
         Feed feed = LitePal.find(Feed.class,id);
-        operations.add(new Operation("重命名","",getResources().getDrawable(R.drawable.ic_edit_black_24dp),feed, new OperationCallback() {
+        operations.add(new Operation("重命名","",getResources().getDrawable(R.drawable.ic_rate_review_black_24dp),feed, new OperationCallback() {
             @Override
             public void run(Object o) {
                 final Feed item = (Feed) o;

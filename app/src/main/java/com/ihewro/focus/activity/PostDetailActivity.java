@@ -17,13 +17,16 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.WebviewFallback;
-import com.ihewro.focus.util.ArticleUtil;
+import com.ihewro.focus.util.PostUtil;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ShareUtil;
@@ -60,6 +63,9 @@ public class PostDetailActivity extends BaseActivity {
     @BindView(R.id.appbar)
     AppBarLayout appbar;
 
+    private MaterialDialog ReadSettingDialog;
+    private PostSetting postSetting;
+
 
     private int mId;
     private int mIndex;
@@ -89,6 +95,11 @@ public class PostDetailActivity extends BaseActivity {
         Intent intent = getIntent();
         mId = intent.getIntExtra(Constants.KEY_STRING_FEED_ITEM_ID,0);
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
+
+        //初始化postSetting
+
+
+
         initData();
 
         initView();
@@ -186,7 +197,7 @@ public class PostDetailActivity extends BaseActivity {
 
     public void initData() {
         feedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
-        ArticleUtil.setContent(this, feedItem, postContent);
+        PostUtil.setContent(this, feedItem, postContent);
         postTitle.setText(feedItem.getTitle());
         postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
         feedName.setText(feedItem.getFeedName());
@@ -201,9 +212,6 @@ public class PostDetailActivity extends BaseActivity {
     }
 
 
-    private void setContent() {
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -231,9 +239,39 @@ public class PostDetailActivity extends BaseActivity {
                 ShareUtil.shareBySystem(PostDetailActivity.this, "text", feedItem.getTitle() + "\n" + feedItem.getUrl());
                 break;
 
+            case R.id.text_setting:
+                ReadSettingDialog = new MaterialDialog.Builder(this)
+                        .customView(R.layout.read_setting, true)
+                        .negativeText("重置")
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                //重置设置
+
+                            }
+                        })
+
+                        .show();
+
+                initReadSettingListener();
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initReadSettingListener(){
+        if (ReadSettingDialog.isShowing()){
+            //字号改变
+
+            //字间距改变
+
+            //行间距改变
+
+            //切换夜间模式
+
+        }
     }
 
 

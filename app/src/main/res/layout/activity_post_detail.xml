@@ -86,7 +86,7 @@
                     android:textColor="@color/colorAccent"
                     />
 
-                <com.ihewro.focus.view.ScrollWebView
+                <WebView
                     android:id="@+id/post_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -94,6 +94,7 @@
                     android:textIsSelectable="true"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:isScrollContainer="false"
                     android:text="@string/test_content"/>
 
             </LinearLayout>

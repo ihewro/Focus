@@ -15,11 +15,15 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.FeedListActivity;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.view.FeedFolderOperationPopupView;
+import com.lxj.xpopup.XPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -56,71 +60,23 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
     private void initListener(final BaseViewHolder helper, final FeedFolder item){
 
         //点击切换fragment
-        helper.getView(R.id.long_click).setOnClickListener(new View.OnClickListener() {
+        helper.getView(R.id.item_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EventBus.getDefault().post(new EventMessage(EventMessage.SHOW_FEED_LIST_MANAGE,item.getId()+""));
             }
         });
-        //长按修改名称
-        helper.getView(R.id.long_click).setOnLongClickListener(new View.OnLongClickListener() {
+        //长按显示功能菜单
+        helper.getView(R.id.item_view).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                //弹窗
-                new MaterialDialog.Builder(activity)
-                        .title("修改文件夹名称")
-                        .content("输入新的名称：")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .input("", "", new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                String name = dialog.getInputEditText().getText().toString().trim();
-                                if (name.equals("")){
-                                    Toasty.info(activity,"请勿填写空名字哦😯").show();
-                                }else {
-                                    item.setName(name);
-                                    item.save();
-                                }
-                                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
-                            }
-                        }).show();
+                new XPopup.Builder(activity)
+                        .asCustom(new FeedFolderOperationPopupView(activity, item.getId(),item.getName(),"",new Help(false)))
+                        .show();
                 return true;
             }
         });
-        //退订
-        helper.getView(R.id.not_feed).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //弹窗
-                new MaterialDialog.Builder(activity)
-                        .title("操作通知")
-                        .content("确定去掉订阅文件夹吗，确定则会取消该文件夹下所有订阅！")
-                        .positiveText("确定")
-                        .negativeText("取消")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                int id = item.getId();
-                                //1.删除该文件夹下的所有feedITEN
-                                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
-                                for (int i = 0;i<temp.size();i++){
-                                    LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(temp.get(i).getId()));
-                                    //2.删除文件夹下的所有feed
-                                    temp.get(i).delete();
-                                }
 
-                                //3.删除文件夹
-                                LitePal.delete(FeedFolder.class,id);
-
-                                //4.从列表中移除该项
-                                remove(helper.getAdapterPosition());
-                                notifyDataSetChanged();
-                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
-                            }
-                        })
-                        .show();
-            }
-        });
     }
 
 }

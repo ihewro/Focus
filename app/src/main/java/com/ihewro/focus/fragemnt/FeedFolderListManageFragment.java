@@ -106,7 +106,7 @@ public class FeedFolderListManageFragment extends Fragment {
         ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        adapter.enableDragItem(itemTouchHelper, R.id.move_logo, true);
+        adapter.enableDragItem(itemTouchHelper, R.id.item_view, true);
         adapter.setOnItemDragListener(onItemDragListener);
 
     }

@@ -25,16 +25,13 @@ import es.dmoral.toasty.Toasty;
  *     version: 1.0
  * </pre>
  */
-public class ArticleUtil {
+public class PostUtil {
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     public static void setContent(Context context, FeedItem article, WebView textView) {
         if (article == null || textView == null) {
             return;
         }
-
-
         WebSettings webSettings = textView.getSettings();
-
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕        ☆☆

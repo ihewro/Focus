@@ -22,6 +22,7 @@ public class UserPreference extends LitePalSupport {
 
     private String key;
     private String value;
+    private String defaultValue;
 
     public int getId() {
         return id;
@@ -47,6 +48,14 @@ public class UserPreference extends LitePalSupport {
         this.value = value;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     public static String queryValueByKey(String key){
         List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
         if (userPreferences.size()>0){
@@ -54,6 +63,25 @@ public class UserPreference extends LitePalSupport {
             return temp.getValue();
         }else {
             return null;
+        }
+    }
+
+    public static String queryDefaultValueByKey(String key){
+        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
+        if (userPreferences.size()>0){
+            UserPreference temp = userPreferences.get(0);
+            return temp.getDefaultValue();
+        }else {
+            return null;
+        }
+    }
+
+    public static void setValueByKey(String key,String value){
+        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
+        if (userPreferences.size()>0){
+            UserPreference temp = userPreferences.get(0);
+            temp.setValue(value);
+            temp.save();
         }
     }
 }
