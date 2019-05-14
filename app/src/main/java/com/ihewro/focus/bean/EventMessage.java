@@ -21,6 +21,9 @@ public class EventMessage {
     public static final String MAKE_STAR_STATUS_BY_ID = "MAKE_STAR_STATUS_BY_ID";
     public static final String EDIT_ITEM_READ = "EDIT_ITEM_READ";//修改了文章的已读状态
 
+    public static final String MARK_FEED_READ = "MARK_FEED_READ";//给一个订阅全部标记已读
+    public static final String MARK_FEED_FOLDER_READ = "MARK_FEED_FOLDER_READ";//一个订阅文件夹全部标记已读
+
     //点击事件
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
@@ -38,22 +41,22 @@ public class EventMessage {
     public static final String DELETE_FEED_FOLDER = "DELETE_FEED_FOLDER";//删除feed文件夹
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
 
     //FeedList 收到这样的通知需要更新列表
-    public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED);
+    public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED,MARK_FEED_READ);
 
     //FeedFolderList收到这样的通知需要更新列表
-    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,MOVE_FEED);
+    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,MOVE_FEED,MARK_FEED_FOLDER_READ);
 
 
 
     private String type;
     private String message;
-    private int index;
+    private int integer;
     private String message2;
     private String message3;
     private boolean flag;
@@ -65,12 +68,14 @@ public class EventMessage {
 
     public EventMessage(String type, int index) {
         this.type = type;
-        this.index = index;
+        this.integer = index;
     }
+
+
 
     public EventMessage(String type, int index, boolean flag) {
         this.type = type;
-        this.index = index;
+        this.integer = index;
         this.flag = flag;
     }
 
@@ -85,6 +90,8 @@ public class EventMessage {
         this.message = message;
         this.message2 = message2;
     }
+
+
 
 
     public EventMessage(String type, String message, String message2, String message3) {
@@ -134,12 +141,12 @@ public class EventMessage {
         this.message3 = message3;
     }
 
-    public int getIndex() {
-        return index;
+    public int getInteger() {
+        return integer;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setInteger(int integer) {
+        this.integer = integer;
     }
 
     @Override

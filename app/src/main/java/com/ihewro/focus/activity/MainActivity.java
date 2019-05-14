@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -12,40 +11,29 @@ import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.canking.minipay.Config;
 import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
-import com.ihewro.focus.bean.DrawItemInfo;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
-import com.ihewro.focus.bean.Operation;
-import com.ihewro.focus.callback.DialogCallback;
-import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
-import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
-import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
 import com.ihewro.focus.view.FilterPopupView;
-import com.ihewro.focus.view.OperationBottomPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.enums.PopupPosition;
 import com.lxj.xpopup.interfaces.XPopupCallback;
@@ -72,7 +60,6 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import es.dmoral.toasty.Toasty;
 import skin.support.SkinCompatManager;
 
 
@@ -254,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     public void initDrawer() {
 
         //构造侧边栏项目
-        updateDrawer();
+        createDrawer();
 
         //构造右侧栏目
         createRightDrawer();
@@ -262,30 +249,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateDrawer() {
+    public void createDrawer() {
         //初始化侧边栏
-        refreshLeftDrawerFeedList();
+        refreshLeftDrawerFeedList(false);
         //初始化侧边栏
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withCompactStyle(false)
-                .withDividerBelowHeader(false)
-                .withHeightDp(20)
-                .withProfileImagesClickable(false)
-                .build();
-
-
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
                 .withToolbar(toolbar)
-//                .withHeader(R.layout.padding)
-//                .withSelectedItem(0)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         drawerItemClick(drawerItem);
-                        return true;
+                        return false;
                     }
                 })
                 .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
@@ -303,10 +279,15 @@ public class MainActivity extends AppCompatActivity {
 
                 )
                 .build();
-
         drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
     }
 
+
+    private void updateDrawer(){
+        //初始化侧边栏
+        refreshLeftDrawerFeedList(true);
+        drawer.setItems(subItems);
+    }
 
     private void drawerItemClick(IDrawerItem drawerItem){
         if (drawerItem.getTag() != null) {
@@ -402,9 +383,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 获取用户的订阅数据，显示在左侧边栏的drawer中
      */
-    public void refreshLeftDrawerFeedList() {
-
-
+    public void refreshLeftDrawerFeedList(boolean isUpdate) {
         subItems.clear();
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(SHOW_ALL));
         subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(SHOW_STAR));
@@ -423,7 +402,10 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < feedList.size(); j++) {
                 Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
+                if (isUpdate){
+                    drawer.updateItem(secondaryDrawerItem);
+                }
                 feedItems.add(secondaryDrawerItem);
 
                 notReadNum += current_notReadNum;
@@ -482,10 +464,6 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.action_filter:
-
-                if (drawerPopupView == null){
-
-                }
 
                 drawerPopupView.toggle();
                 break;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
@@ -72,38 +73,63 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
 
         operations.add(new Operation("退订文件夹","", getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),feedFolder, new OperationCallback() {
             @Override
-            public void run(Object o) {
-                o = (FeedFolder)o;
-                //退订文件夹的内容
+            public void run(final Object o) {
+                new MaterialDialog.Builder(getContext())
+                        .title("操作通知")
+                        .content("确定退订该文件夹吗？确定会退订文件夹下所有订阅")
+                        .positiveText("确定")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                FeedFolder feedFolder = ((FeedFolder)o);
+                                //退订文件夹的内容
 
-                //1.删除该文件夹下的所有feedITEN
-                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
-                for (int i = 0;i<temp.size();i++){
-                    LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(temp.get(i).getId()));
-                    //2.删除文件夹下的所有feed
-                    temp.get(i).delete();
-                }
+                                //1.删除该文件夹下的所有feedITEN
+                                List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
+                                for (int i = 0;i<temp.size();i++){
+                                    LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(temp.get(i).getId()));
+                                    //2.删除文件夹下的所有feed
+                                    temp.get(i).delete();
+                                }
 
-                //3.删除文件夹
-                LitePal.delete(FeedFolder.class,id);
+                                //3.删除文件夹
+                                LitePal.delete(FeedFolder.class,id);
 
-                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
+                            }
+                        })
+                        .show();
+
             }
         }));
 
         operations.add(new Operation("标记全部已读", "",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feedFolder, new OperationCallback() {
             @Override
-            public void run(Object o) {
-                FeedFolder feedFolder = (FeedFolder)o;
-                //标记全部已读
-                List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolder.getId())).find(Feed.class);
-                for (Feed feed: feedList){
-                    ContentValues values = new ContentValues();
-                    values.put("read", "1");
-                    LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(feed.getId()));
+            public void run(final Object o) {
+                //显示弹窗
+                new MaterialDialog.Builder(getContext())
+                        .title("操作通知")
+                        .content("确定将该订阅下所有文章标记已读吗？")
+                        .positiveText("确定")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                }
+                                FeedFolder feedFolder = (FeedFolder)o;
+                                //标记全部已读
+                                List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolder.getId())).find(Feed.class);
+                                for (Feed feed: feedList){
+                                    ContentValues values = new ContentValues();
+                                    values.put("read", "1");
+                                    LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(feed.getId()));
 
+                                }
+                                EventBus.getDefault().post(new EventMessage(EventMessage.MARK_FEED_FOLDER_READ, (int) id));
+                            }
+                        })
+                        .show();
             }
         }));
 

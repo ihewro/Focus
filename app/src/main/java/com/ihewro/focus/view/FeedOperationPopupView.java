@@ -17,7 +17,6 @@ import com.ihewro.focus.bean.Operation;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
-import com.ihewro.focus.util.UIUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -51,7 +50,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
             @Override
             public void run(Object o) {
                 final Feed item = (Feed) o;
-                new MaterialDialog.Builder(UIUtil.getContext())
+                new MaterialDialog.Builder(getContext())
                         .title("修改订阅名称")
                         .content("输入新的名称：")
                         .inputType(InputType.TYPE_CLASS_TEXT)
@@ -60,7 +59,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                                 String name = dialog.getInputEditText().getText().toString().trim();
                                 if (name.equals("")){
-                                    Toasty.info(UIUtil.getContext(),"请勿填写空名字哦😯").show();
+                                    Toasty.info(getContext(),"请勿填写空名字哦😯").show();
                                 }else {
                                     item.setName(name);
                                     item.save();
@@ -76,9 +75,9 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
             @Override
             public void run(Object o) {
                 final Feed item = (Feed)o;
-                new MaterialDialog.Builder(UIUtil.getContext())
+                new MaterialDialog.Builder(getContext())
                         .title("操作通知")
-                        .content("确定去掉订阅文件夹吗，确定则会取消该文件夹下所有订阅！")
+                        .content("确定退订该订阅吗")
                         .positiveText("确定")
                         .negativeText("取消")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -101,9 +100,24 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
         operations.add(new Operation("标记全部已读","",getResources().getDrawable(R.drawable.ic_radio_button_checked_black_24dp),feed, new OperationCallback() {
             @Override
             public void run(Object o) {
-                ContentValues values = new ContentValues();
-                values.put("read", "1");
-                LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(id));
+
+                //显示弹窗
+                new MaterialDialog.Builder(getContext())
+                        .title("操作通知")
+                        .content("确定将该订阅下所有文章标记已读吗？")
+                        .positiveText("确定")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                ContentValues values = new ContentValues();
+                                values.put("read", "1");
+                                LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(id));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.MARK_FEED_READ, (int) id));
+                            }
+                        })
+                        .show();
             }
         }));
 
@@ -120,7 +134,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         item.save();
                         EventBus.getDefault().post(new EventMessage(EventMessage.MOVE_FEED));
                     }
-                },UIUtil.getContext(),"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
+                },getContext(),"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
             }
         }));
 

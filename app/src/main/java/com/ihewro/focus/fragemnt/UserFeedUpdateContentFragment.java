@@ -8,16 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.blankj.ALog;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
-import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
@@ -42,7 +37,6 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import es.dmoral.toasty.Toasty;
 
 /**
  * 用户的最新订阅信息文章列表的碎片
@@ -186,17 +180,40 @@ public class UserFeedUpdateContentFragment extends Fragment {
     public void refreshUI(EventMessage eventBusMessage) {
         if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
             //更新已读标志
-            int indexInList = eventBusMessage.getIndex();
+            int indexInList = eventBusMessage.getInteger();
             if (indexInList!=-1){
                 eList.get(indexInList).setRead(true);
                 adapter.notifyItemChanged(indexInList);
             }
         }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){
             //更新收藏状态
-            int indexInList = eventBusMessage.getIndex();
+            int indexInList = eventBusMessage.getInteger();
             boolean flag = eventBusMessage.isFlag();
             eList.get(indexInList).setFavorite(flag);
             adapter.notifyItemChanged(indexInList);
+        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//检查feedid是否在本碎片的内容内
+
+            //如果在，则让这部分
+            List<Integer> feedIdList = new ArrayList<>();
+            if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ)){
+                feedIdList.add(eventBusMessage.getInteger());
+            }else{//整个文件夹都标记为已读
+                List<Feed>feedList = LitePal.where("feedfolderid = ?", String.valueOf(eventBusMessage.getInteger())).find(Feed.class);
+                for(Feed feed:feedList){
+                    feedIdList.add(feed.getId());
+                }
+            }
+
+            //TODO: 删除文件夹，移动feed都需要更新这部分内容
+
+            //找到当前内容是否有在 标记已读的文件夹
+            for (int i = 0; i< eList.size();i++){
+                if (feedIdList.contains(eList.get(i).getFeedId())){
+                    eList.get(i).setRead(true);//设置为已读
+                    adapter.notifyItemChanged(i);//修改UI
+                }
+            }
+
         }
     }
 
