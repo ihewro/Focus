@@ -5,12 +5,24 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
 
         <!--抽屉的风格-->
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
         <item name="material_drawer_selected_text">@color/colorAccent</item>
-
     </style>
+
+
+    <!--再写一个是为了左侧边栏-->
+    <style name="AppTheme.Dark" parent="MaterialDrawerTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary_night</item>
+    </style>
+
+
+
 
     <style name="Animation_Activity">
         <item name="android:activityOpenEnterAnimation">@anim/translate_right_to_center</item>

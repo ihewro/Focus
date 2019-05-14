@@ -1,7 +1,6 @@
 package com.ihewro.focus;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
 
 import com.blankj.ALog;
 import com.ihewro.focus.activity.ErrorActivity;
@@ -132,6 +131,5 @@ public class MyApplication extends LitePalApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(this);
     }
 }

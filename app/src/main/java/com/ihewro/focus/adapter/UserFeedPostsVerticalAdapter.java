@@ -20,9 +20,11 @@ import com.lxj.xpopup.interfaces.OnSelectListener;
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import skin.support.utils.SkinPreference;
 
 /**
  * <pre>
@@ -57,18 +59,31 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         helper.setText(R.id.post_time, DateUtil.getTTimeStringByInt(item.getDate()));
 
 
+        int not_read_color;
+        int read_color;
+
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            not_read_color = R.color.text_unread_night;
+            read_color = R.color.text_read_night;
+        }else {
+            not_read_color = R.color.text_unread;
+            read_color = R.color.text_read;
+        }
         if (item.isRead()){
+
             ALog.d("是否已读" + item.isRead());
-            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(R.color.text_read));
-            helper.setTextColor(R.id.post_title,activity.getResources().getColor(R.color.text_read));
-            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(R.color.text_read));
-            helper.setTextColor(R.id.post_time,activity.getResources().getColor(R.color.text_read));
+
+            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(read_color));
+            helper.setTextColor(R.id.post_title,activity.getResources().getColor(read_color));
+            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(read_color));
+            helper.setTextColor(R.id.post_time,activity.getResources().getColor(read_color));
             helper.setText(R.id.markRead,"标记未读");
         }else {
-            helper.setTextColor(R.id.post_title,activity.getResources().getColor(R.color.text_unread));
-            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(R.color.text_unread));
-            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(R.color.text_unread));
-            helper.setTextColor(R.id.post_time,activity.getResources().getColor(R.color.text_unread));
+
+            helper.setTextColor(R.id.post_title,activity.getResources().getColor(not_read_color));
+            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(not_read_color));
+            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(not_read_color));
+            helper.setTextColor(R.id.post_time,activity.getResources().getColor(not_read_color));
             helper.setText(R.id.markRead,"标记已读");
         }
         if (item.isFavorite()){
@@ -127,7 +142,11 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostDetailActivity.activityStart(activity,item.getId(),helper.getAdapterPosition());
+                ArrayList<Integer> list = new ArrayList<>();
+                for (FeedItem feedItem: feedItemList){
+                    list.add(feedItem.getId());
+                }
+                PostDetailActivity.activityStart(activity,item.getId(),helper.getAdapterPosition(),list,true);
             }
         });
 

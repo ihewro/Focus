@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +23,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StarActivity extends BaseActivity {
+public class StarActivity extends BackActivity {
 
     List<FeedItem> eList = new ArrayList<FeedItem>();
     @BindView(R.id.toolbar)

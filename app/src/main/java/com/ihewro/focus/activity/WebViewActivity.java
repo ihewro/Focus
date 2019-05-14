@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 /**
  * 自定义的webView
  */
-public class WebViewActivity extends BaseActivity {
+public class WebViewActivity extends BackActivity {
 
     public static final String EXTRA_URL = "extra.url";
     @BindView(R.id.toolbar)

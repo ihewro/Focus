@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 
@@ -17,7 +16,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BackActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

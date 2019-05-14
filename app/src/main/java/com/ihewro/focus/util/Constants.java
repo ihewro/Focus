@@ -15,5 +15,6 @@ public class Constants {
     public static final String KEY_STRING_WEBSITE_ID = "website_id";
     public static final String KEY_INT_INDEX = "int_index";
     public static final String KEY_FEED_ITEM_ID_LIST = "KEY_FEED_ITEM_ID_LIST";
+    public static final String IS_UPDATE_MAIN_READ_MARK = "isUpdateMainReadMark";
 
 }

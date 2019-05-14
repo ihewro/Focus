@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary_night">#ff2e2e2e</color>
+    <color name="colorPrimaryDark_night">#aaa</color>
+    <color name="colorAccent_night">#dfffffff</color>
+
+    <color name="white_night">#000000</color>
+
+    <color name="ripple_light_night">#99000000</color>
+    <color name="ripple_dark_night">#40808080</color>
+
+
+    <!--页面渲染-->
+    <color name="text_secondary_dark_night">#8affffff</color> <!-- 54% -->
+    <color name="text_unread_night">#CBffffff</color> <!-- 54% -->
+    <color name="text_read_night">#B4B4B4</color> <!-- 54% -->
+    <color name="color_grey_dark_night">#f2f2f2</color>
+
+    <color name="main_grey_light_night">#eeeeee</color>
+
+</resources>

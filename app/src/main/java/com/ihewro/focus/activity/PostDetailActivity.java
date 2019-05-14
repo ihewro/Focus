@@ -18,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.Switch;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -48,6 +51,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import skin.support.SkinCompatManager;
+import skin.support.utils.SkinPreference;
 
 
 public class PostDetailActivity extends AppCompatActivity {
@@ -74,13 +79,15 @@ public class PostDetailActivity extends AppCompatActivity {
     private FeedItem currentFeedItem;
     private MenuItem starItem;
     private LikeButton likeButton;
+    private boolean isUpdateMainReadMark;
 
     private List<Integer> feedItemIdList;
 
-        public static void activityStart(Activity activity, int feedItemId, int indexInList, ArrayList<Integer> feedItemIdList) {
+        public static void activityStart(Activity activity, int feedItemId, int indexInList, ArrayList<Integer> feedItemIdList,boolean flag) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_STRING_FEED_ITEM_ID, feedItemId);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
+        intent.putExtra(Constants.IS_UPDATE_MAIN_READ_MARK,flag);
         intent.putIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST,feedItemIdList);
         activity.startActivity(intent);
     }
@@ -101,16 +108,12 @@ public class PostDetailActivity extends AppCompatActivity {
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
         feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
         mId = feedItemIdList.get(mIndex);
-
-
+        isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
         initData();
 
         initRecyclerView();
 
         initView();
-
-
-        initListener();
 
     }
 
@@ -192,12 +195,13 @@ public class PostDetailActivity extends AppCompatActivity {
                 return super.onDoubleTapEvent(e);
             }
         });
-        adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
+
+       /* adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return gestureDetector.onTouchEvent(event);
             }
-        });
+        });*/
 
 
     }
@@ -220,8 +224,9 @@ public class PostDetailActivity extends AppCompatActivity {
         }
         //获取所有文章的对象
         List<FeedItem> feedItemList = LitePal.findAll(FeedItem.class,ids);
-        adapter = new PostDetailListAdapter(this,mIndex,postSetting, feedItemList);
-        recyclerView.setAdapter(adapter);
+        adapter = new PostDetailListAdapter(this,isUpdateMainReadMark,postSetting, feedItemList);
+        adapter.bindToRecyclerView(recyclerView);
+
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
@@ -243,6 +248,8 @@ public class PostDetailActivity extends AppCompatActivity {
                 ALog.d("onPageSelected");
             }
         }));
+
+        initListener();
     }
 
 
@@ -275,7 +282,8 @@ public class PostDetailActivity extends AppCompatActivity {
             case R.id.text_setting:
                 ReadSettingDialog = new MaterialDialog.Builder(this)
                         .customView(R.layout.read_setting, true)
-                        .negativeText("重置")
+                        .neutralText("重置")
+                        .positiveText("确定")
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -286,6 +294,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
                         .show();
 
+                initReadSettingView();
                 initReadSettingListener();
                 break;
 
@@ -294,15 +303,59 @@ public class PostDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //根据现有的设置，恢复布局
+    private void initReadSettingView(){
+        if (ReadSettingDialog.isShowing()){
+            //获取夜间模式
+            if(SkinPreference.getInstance().getSkinName().equals("night")){
+                ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setChecked(true);
+            }else {
+                ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setChecked(false);
+
+            }
+        }
+    }
     private void initReadSettingListener() {
         if (ReadSettingDialog.isShowing()) {
             //字号改变
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.size_setting)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    //
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
 
             //字间距改变
 
             //行间距改变
 
             //切换夜间模式
+
+            ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean isChecked = ((Switch)view).isChecked();
+                    ((Switch)view).setChecked(isChecked);
+
+                    if (((Switch)view).isChecked()){
+                        SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+                        EventBus.getDefault().post(new EventMessage(EventMessage.NIGHT_MODE));
+                    }else {
+                        SkinCompatManager.getInstance().restoreDefaultTheme();
+                        EventBus.getDefault().post(new EventMessage(EventMessage.DAY_MODE));
+                    }
+                }
+            });
         }
     }
 

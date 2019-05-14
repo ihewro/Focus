@@ -1,48 +1,35 @@
 package com.ihewro.focus.activity;
 
-import android.annotation.SuppressLint;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.ihewro.focus.R;
 import com.saber.chentianslideback.SlideBackActivity;
+
+import skin.support.utils.SkinPreference;
 
 /**
  * <pre>
  *     author : hewro
  *     e-mail : ihewro@163.com
- *     time   : 2019/05/06
+ *     time   : 2019/05/14
  *     desc   :
  *     version: 1.0
  * </pre>
  */
-@SuppressLint("Registered")
-public class BaseActivity extends SlideBackActivity {
-
-
+public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        setSlideBackDirection(SlideBackActivity.LEFT);
-    }
-
-
-
-    /**
-     * 点击toolbar上的按钮事件
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            setTheme(R.style.AppTheme_Dark);
+        }else {
+            setTheme(R.style.AppTheme);
         }
-        return super.onOptionsItemSelected(item);
+
+        super.setContentView(layoutResID);
     }
 
-    @Override
-    protected void slideBackSuccess() {
-        onBackPressed();//或者其他
-    }
+
+
 
 }

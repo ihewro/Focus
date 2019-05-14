@@ -30,7 +30,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:background="@color/colorPrimary">
 
             <android.support.v7.widget.ButtonBarLayout
                 android:id="@+id/playButton"
@@ -41,7 +41,7 @@
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:text="测试"
-                    android:textColor="#000"
+                    android:textColor="@color/text_unread"
                     android:textSize="16sp"
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"

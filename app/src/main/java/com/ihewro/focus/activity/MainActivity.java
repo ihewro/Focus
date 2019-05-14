@@ -63,7 +63,7 @@ import butterknife.ButterKnife;
 import skin.support.SkinCompatManager;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         toolbarTitle.setText("全部文章");
         EventBus.getDefault().register(this);
 
-        SkinCompatManager.getInstance().loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
 
         initEmptyView();
 
@@ -159,7 +158,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                         FeedItem item = searchResults.get(position);
-                        PostDetailActivity.activityStart(MainActivity.this, item.getId(), -1);
+                        ArrayList<Integer> list = new ArrayList<>();
+                        for (FeedItem feedItem: searchResults){
+                            list.add(feedItem.getId());
+                        }
+                        PostDetailActivity.activityStart(MainActivity.this, item.getId(), position,list,false);
 
                     }
                 });
@@ -494,6 +497,13 @@ public class MainActivity extends AppCompatActivity {
         if(EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())){
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             updateDrawer();
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DAY_MODE)){
+            //
+            this.setTheme(R.style.AppTheme);
+            recreate();
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.NIGHT_MODE)){
+            this.setTheme(R.style.AppTheme_Dark);
+            recreate();
         }
     }
 

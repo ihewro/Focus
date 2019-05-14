@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
@@ -19,9 +17,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedCategoryLeftAdapter;
 import com.ihewro.focus.adapter.FeedCategoryRightAdapter;
 import com.ihewro.focus.adapter.FeedListAdapter;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
-import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Website;
@@ -31,8 +27,6 @@ import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.view.RequireListPopupView;
 import com.lxj.xpopup.XPopup;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +41,7 @@ import retrofit2.Retrofit;
 
 import static com.ihewro.focus.GlobalConfig.serverUrl;
 
-public class FeedCategoryActivity extends BaseActivity {
+public class FeedCategoryActivity extends BackActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

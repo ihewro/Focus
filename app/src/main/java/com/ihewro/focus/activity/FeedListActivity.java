@@ -6,30 +6,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedListAdapter;
-import com.ihewro.focus.adapter.FeedRequireListAdapter;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
-import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
-import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.RequireListPopupView;
@@ -37,10 +30,6 @@ import com.lxj.xpopup.XPopup;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FeedListActivity extends BaseActivity {
+public class FeedListActivity extends BackActivity {
 
 
     @BindView(R.id.toolbar)

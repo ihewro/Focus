@@ -31,7 +31,8 @@
             android:layout_height="wrap_content"
             android:text="15"/>
 
-        <ProgressBar
+        <SeekBar
+            android:id="@+id/size_setting"
             android:layout_gravity="center_vertical|right"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
@@ -55,7 +56,8 @@
             android:layout_height="wrap_content"
             android:text="15"/>
 
-        <ProgressBar
+        <SeekBar
+            android:id="@+id/font_space_setting"
             android:layout_gravity="center_vertical"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
@@ -78,7 +80,8 @@
             android:layout_height="wrap_content"
             android:text="15"/>
 
-        <ProgressBar
+        <SeekBar
+            android:id="@+id/line_space_setting"
             android:layout_gravity="center_vertical"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
@@ -98,7 +101,7 @@
             android:text="夜间模式：" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/mode_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp" />

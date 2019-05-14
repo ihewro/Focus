@@ -42,6 +42,7 @@ public class PostUtil {
 
 
 
+
         // disable scroll on touch
         textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -68,7 +69,7 @@ public class PostUtil {
 
 
         String meta = "";
-        String body = "<html><header>" + linkCss + meta +css + "</header>" + getContent(article)
+        String body = "<html><header>" + linkCss + meta +css + "</header><body class=\"entry\">" + getContent(article)
                 + "</body></html>";
 
         textView.setBackgroundColor(Color.parseColor("#00000000"));

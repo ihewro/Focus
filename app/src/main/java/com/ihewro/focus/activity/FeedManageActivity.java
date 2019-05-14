@@ -37,7 +37,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 /**
  * 分类管理页面，对分类、分类文件夹增加、删除、修改、排序
  */
-public class FeedManageActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks,FileChooserDialog.FileCallback {
+public class FeedManageActivity extends BackActivity implements EasyPermissions.PermissionCallbacks,FileChooserDialog.FileCallback {
 
 
     @BindView(R.id.toolbar)

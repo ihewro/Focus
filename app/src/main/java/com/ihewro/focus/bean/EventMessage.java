@@ -40,6 +40,10 @@ public class EventMessage {
     public static final String EDIT_FEED_FOLDER_NAME = "EDIT_FEED_FOLDER";//修改feed文件夹名称
     public static final String DELETE_FEED_FOLDER = "DELETE_FEED_FOLDER";//删除feed文件夹
 
+    //改变主题
+    public static final String DAY_MODE = "DAY_MODE";
+    public static final String NIGHT_MODE ="NIGHT_MODE";
+
     //首页的左侧边栏遇到这些通知都会更新
     public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
 
