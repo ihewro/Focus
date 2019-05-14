@@ -8,27 +8,29 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
+import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.helper.WebviewFallback;
-import com.ihewro.focus.util.PostUtil;
 import com.ihewro.focus.util.Constants;
-import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.view.PostFooter;
 import com.ihewro.focus.view.PostHeader;
@@ -37,31 +39,31 @@ import com.like.OnLikeListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class PostDetailActivity extends BaseActivity {
+public class PostDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.post_title)
-    TextView postTitle;
-    @BindView(R.id.post_time)
-    TextView postTime;
-    @BindView(R.id.post_content)
-    WebView postContent;
-    @BindView(R.id.refreshLayout)
-    SmartRefreshLayout refreshLayout;
-    @BindView(R.id.feed_name)
-    TextView feedName;
+
     @BindView(R.id.appbar)
     AppBarLayout appbar;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
+
+    private PostDetailListAdapter adapter;
+
 
     private MaterialDialog ReadSettingDialog;
     private PostSetting postSetting;
@@ -69,14 +71,17 @@ public class PostDetailActivity extends BaseActivity {
 
     private int mId;
     private int mIndex;
-    private FeedItem feedItem;
+    private FeedItem currentFeedItem;
     private MenuItem starItem;
     private LikeButton likeButton;
 
-    public static void activityStart(Activity activity, int feedItemId, int indexInList) {
+    private List<Integer> feedItemIdList;
+
+        public static void activityStart(Activity activity, int feedItemId, int indexInList, ArrayList<Integer> feedItemIdList) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_STRING_FEED_ITEM_ID, feedItemId);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
+        intent.putIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST,feedItemIdList);
         activity.startActivity(intent);
     }
 
@@ -93,16 +98,17 @@ public class PostDetailActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        mId = intent.getIntExtra(Constants.KEY_STRING_FEED_ITEM_ID,0);
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
-
-        //初始化postSetting
-
+        feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
+        mId = feedItemIdList.get(mIndex);
 
 
         initData();
 
+        initRecyclerView();
+
         initView();
+
 
         initListener();
 
@@ -110,8 +116,15 @@ public class PostDetailActivity extends BaseActivity {
 
     private void initView() {
 
-        refreshLayout.setRefreshHeader(new PostHeader(this, feedItem));
-        refreshLayout.setRefreshFooter(new PostFooter(this, feedItem));
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initListener() {
+
+
+        refreshLayout.setRefreshHeader(new PostHeader(this, currentFeedItem));
+        refreshLayout.setRefreshFooter(new PostFooter(this, currentFeedItem));
         //使上拉加载具有弹性效果
         refreshLayout.setEnableAutoLoadMore(false);
         //禁止越界拖动（1.0.4以上版本）
@@ -121,29 +134,25 @@ public class PostDetailActivity extends BaseActivity {
         // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
         refreshLayout.setEnableAutoLoadMore(false);
 
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void initListener() {
-
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                //TODO: 载入文章内容
-
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore();
+                //打开外链
+                openLink(currentFeedItem);
             }
         });
-
 
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 refreshLayout.finishLoadMore();
                 //打开外链
-                openLink();
+                openLink(currentFeedItem);
             }
         });
         //文章的touch事件
+
         final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
             /**
@@ -183,34 +192,58 @@ public class PostDetailActivity extends BaseActivity {
                 return super.onDoubleTapEvent(e);
             }
         });
-
-
-        postContent.setOnTouchListener(new View.OnTouchListener() {
+        adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                v.performClick();
                 return gestureDetector.onTouchEvent(event);
             }
         });
+
+
     }
 
 
     public void initData() {
-        feedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
-        PostUtil.setContent(this, feedItem, postContent);
-        postTitle.setText(feedItem.getTitle());
-        postTime.setText(DateUtil.getTimeStringByInt(feedItem.getDate()));
-        feedName.setText(feedItem.getFeedName());
-        //将该文章标记为已读，并且通知首页修改布局
-        feedItem.setRead(true);
-        feedItem.save();
-        if (mIndex == -1) {//TODO:如果是-1表示不需要传递该修改信息
-            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, mId));
-        } else {
-            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
-        }
+        currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+
     }
 
+    private void initRecyclerView() {
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        long[] ids = new long[feedItemIdList.size()];
+        for (int i = 0; i<feedItemIdList.size();i++){
+            ids[i] = feedItemIdList.get(i);
+        }
+        //获取所有文章的对象
+        List<FeedItem> feedItemList = LitePal.findAll(FeedItem.class,ids);
+        adapter = new PostDetailListAdapter(this,mIndex,postSetting, feedItemList);
+        recyclerView.setAdapter(adapter);
+        PagerSnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+
+
+        recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                ALog.d("onScrollStateChanged");
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                ALog.d("onScrolled");
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ALog.d("onPageSelected");
+            }
+        }));
+    }
 
 
     @Override
@@ -233,10 +266,10 @@ public class PostDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_link://访问外链
-                openLink();
+                openLink(currentFeedItem);
                 break;
             case R.id.action_share://分享
-                ShareUtil.shareBySystem(PostDetailActivity.this, "text", feedItem.getTitle() + "\n" + feedItem.getUrl());
+                ShareUtil.shareBySystem(PostDetailActivity.this, "text", currentFeedItem.getTitle() + "\n" + currentFeedItem.getUrl());
                 break;
 
             case R.id.text_setting:
@@ -261,8 +294,8 @@ public class PostDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initReadSettingListener(){
-        if (ReadSettingDialog.isShowing()){
+    private void initReadSettingListener() {
+        if (ReadSettingDialog.isShowing()) {
             //字号改变
 
             //字间距改变
@@ -270,7 +303,6 @@ public class PostDetailActivity extends BaseActivity {
             //行间距改变
 
             //切换夜间模式
-
         }
     }
 
@@ -290,16 +322,16 @@ public class PostDetailActivity extends BaseActivity {
 
     private void setLikeButton() {
         //设置收藏状态
-        if (feedItem == null) {
-            feedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+        if (currentFeedItem == null) {
+            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
-        likeButton.setLiked(feedItem.isFavorite());
+        likeButton.setLiked(currentFeedItem.isFavorite());
         //收藏的点击事件
         likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                feedItem.setFavorite(true);
-                feedItem.save();
+                currentFeedItem.setFavorite(true);
+                currentFeedItem.save();
                 if (mIndex == -1) {
                     EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, true));
                 } else {
@@ -309,8 +341,8 @@ public class PostDetailActivity extends BaseActivity {
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                feedItem.setFavorite(false);
-                feedItem.save();
+                currentFeedItem.setFavorite(false);
+                currentFeedItem.save();
                 if (mIndex == -1) {
                     EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, false));
                 } else {
@@ -320,8 +352,10 @@ public class PostDetailActivity extends BaseActivity {
         });
     }
 
-    private void openLink() {
-        String url = feedItem.getUrl();
+
+
+    private void openLink(FeedItem feedItem) {
+        String url = currentFeedItem.getUrl();
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
         CustomTabActivityHelper.openCustomTab(
                 PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());

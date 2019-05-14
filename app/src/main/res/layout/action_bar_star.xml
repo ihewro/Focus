@@ -6,5 +6,5 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
     app:icon_type="star"
     app:icon_size="24dp"
     android:id="@+id/star_button"
-    android:layout_width="?android:attr/actionBarSize"
-    android:layout_height="?android:attr/actionBarSize"/>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>

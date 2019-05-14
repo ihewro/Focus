@@ -191,7 +191,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
             boolean flag = eventBusMessage.isFlag();
             eList.get(indexInList).setFavorite(flag);
             adapter.notifyItemChanged(indexInList);
-        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//检查feedid是否在本碎片的内容内
+        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//从搜索的列表中进入的文章详情页面
+
+
+        } else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//检查feedid是否在本碎片的内容内
 
             //如果在，则让这部分
             List<Integer> feedIdList = new ArrayList<>();
@@ -203,9 +206,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     feedIdList.add(feed.getId());
                 }
             }
-
             //TODO: 删除文件夹，移动feed都需要更新这部分内容
-
             //找到当前内容是否有在 标记已读的文件夹
             for (int i = 0; i< eList.size();i++){
                 if (feedIdList.contains(eList.get(i).getFeedId())){
