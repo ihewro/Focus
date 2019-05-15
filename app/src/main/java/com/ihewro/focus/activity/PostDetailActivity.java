@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -30,6 +31,7 @@ import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.helper.WebviewFallback;
@@ -83,6 +85,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private List<Integer> feedItemIdList;
 
+
+
     public static void activityStart(Activity activity,int indexInList, ArrayList<Integer> feedItemIdList,boolean flag) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
@@ -116,6 +120,9 @@ public class PostDetailActivity extends AppCompatActivity {
         initRecyclerView();
 
         initView();
+
+        initListener();
+
 
     }
 
@@ -156,55 +163,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 openLink(currentFeedItem);
             }
         });
-        //文章的touch事件
-
-        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
-
-            /**
-             * 发生确定的单击时执行
-             * @param e
-             * @return
-             */
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
-//                ALog.d("单击");
-//                Toast.makeText(PostDetailActivity.this, "这是单击事件", Toast.LENGTH_SHORT).show();
-                return super.onSingleTapConfirmed(e);
-            }
-
-            /**
-             * 双击发生时的通知
-             * @param e
-             * @return
-             */
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {//双击事件
-                ALog.d("双击");
-                likeButton.performClick();
-//                likeButton.setLiked(!likeButton.isLiked());
-                return super.onDoubleTap(e);
-            }
-
-
-            /**
-             * 双击手势过程中发生的事件，包括按下、移动和抬起事件
-             * @param e
-             * @return
-             */
-            @Override
-            public boolean onDoubleTapEvent(MotionEvent e) {
-                ALog.d("其他");
-                return super.onDoubleTapEvent(e);
-            }
-        });
-
-       /* adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        });*/
-
 
     }
 
@@ -226,7 +184,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
         //获取所有文章的对象
-        List<FeedItem> feedItemList = new ArrayList<>();
+        final List<FeedItem> feedItemList = new ArrayList<>();
         for (Integer id: feedItemIdList){
             feedItemList.add(LitePal.find(FeedItem.class,id));
         }
@@ -235,7 +193,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-
 
 
         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
@@ -247,17 +204,74 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 ALog.d("onScrolled");
-                //修改顶部导航栏的收藏状态
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int position) {
 
             }
 
             @Override
             public void onPageSelected(int position) {
-                ALog.d("onPageSelected");
+                ALog.d("onPageSelected" + position + feedItemList.get(position));
+                mIndex = position;
+                mId = feedItemIdList.get(mIndex);
+                initData();
+                //修改顶部导航栏的收藏状态
+                setLikeButton();
+
+                initPostClickListener();
+
             }
         }));
 
-        initListener();
+    }
+
+    private void initPostClickListener(){
+
+        //文章的touch事件
+        final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
+            /**
+             * 发生确定的单击时执行
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
+                return super.onSingleTapConfirmed(e);
+            }
+
+            /**
+             * 双击发生时的通知
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {//双击事件
+                ALog.d("双击");
+                if (currentFeedItem.isFavorite()){
+                    currentFeedItem.setFavorite(false);
+                }else {
+                    currentFeedItem.setFavorite(true);
+                }
+                currentFeedItem.save();
+                setLikeButton();
+                return true;
+            }
+
+            /**
+             * 双击手势过程中发生的事件，包括按下、移动和抬起事件
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent e) {
+                ALog.d("其他");
+                return super.onDoubleTapEvent(e);
+            }
+        });
+
     }
 
 
@@ -330,12 +344,19 @@ public class PostDetailActivity extends AppCompatActivity {
     //根据现有的设置，恢复布局
     private void initReadSettingView(){
         if (ReadSettingDialog.isShowing()){
-            //获取夜间模式
-            if(SkinPreference.getInstance().getSkinName().equals("night")){
-                ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setChecked(true);
-            }else {
-                ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setChecked(false);
+            if (ReadSettingDialog.isShowing()) {
+                //设置字号
+                ((SeekBar)ReadSettingDialog.findViewById(R.id.size_setting)).setProgress(Integer.parseInt(PostSetting.getFontSize()));
+                ((TextView)ReadSettingDialog.findViewById(R.id.size_setting_info)).setText(PostSetting.getFontSize());
 
+                //设置字间距
+                ((SeekBar)ReadSettingDialog.findViewById(R.id.font_space_setting)).setProgress(Integer.parseInt(PostSetting.getFontSpace()));
+                ((TextView)ReadSettingDialog.findViewById(R.id.font_space_setting_info)).setText(PostSetting.getFontSpace());
+
+
+                //设置行间距
+                ((SeekBar)ReadSettingDialog.findViewById(R.id.line_space_setting)).setProgress(Integer.parseInt(PostSetting.getLineSpace()));
+                ((TextView)ReadSettingDialog.findViewById(R.id.line_space_setting_info)).setText(PostSetting.getLineSpace());
             }
         }
     }
@@ -345,7 +366,9 @@ public class PostDetailActivity extends AppCompatActivity {
             ((SeekBar)ReadSettingDialog.findViewById(R.id.size_setting)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    //
+                    //修改左侧数字
+                    ((TextView)ReadSettingDialog.findViewById(R.id.size_setting_info)).setText(String.valueOf(seekBar.getProgress()));
+
                 }
 
                 @Override
@@ -355,15 +378,59 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
+                    //修改文章配置UI
+                    UserPreference.updateValueByKey(PostSetting.FONT_SIZE, String.valueOf(seekBar.getProgress()));
+                    adapter.notifyItemChanged(mIndex);//更新UI
+
 
                 }
             });
 
             //字间距改变
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.font_space_setting)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    //修改左侧数字
+                    ALog.d("");
+                    ((TextView)ReadSettingDialog.findViewById(R.id.font_space_setting_info)).setText(String.valueOf(seekBar.getProgress()));
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    //修改文章配置UI
+                    UserPreference.updateValueByKey(PostSetting.FONT_SPACING, String.valueOf(seekBar.getProgress()));
+                    adapter.notifyItemChanged(mIndex);//更新UI
+                }
+            });
 
             //行间距改变
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.line_space_setting)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    //修改左侧数字
+                    ((TextView)ReadSettingDialog.findViewById(R.id.line_space_setting_info)).setText(String.valueOf(seekBar.getProgress()));
+                }
 
-            //切换夜间模式
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    ALog.d("");
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    //修改文章配置UI
+                    UserPreference.updateValueByKey(PostSetting.LINE_SPACING, String.valueOf(seekBar.getProgress()));
+                    adapter.notifyItemChanged(mIndex);//更新UI
+                }
+            });
         }
     }
 
@@ -386,7 +453,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void setLikeButton() {
         //设置收藏状态
         if (currentFeedItem == null) {
-//            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
         if (currentFeedItem.isFavorite()){
             starItem.setIcon(R.drawable.star_on);

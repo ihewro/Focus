@@ -88,7 +88,7 @@ public class RequestFeedListDataTask {
 
         //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
         boolean flag = true;
-        String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN);
+        String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, String.valueOf(false));
         /*if (value != null && value.equals("1")){
             flag = true;
         }else {

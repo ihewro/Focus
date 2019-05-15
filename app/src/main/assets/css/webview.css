@@ -121,7 +121,6 @@
 
             /* disqus支持 */
             counter-reset: entry825h2 entry825h3 entry825h4 entry825h5 entry825h6;
-            background: #000;
         }
         .entry div,
         .entry p,
@@ -603,4 +602,6 @@
         }
 .entry-dark{
             color: #c9c9c9;
+            background:##2e2e2e;
         }
+        video{height:auto!important;width:100%;display:block}

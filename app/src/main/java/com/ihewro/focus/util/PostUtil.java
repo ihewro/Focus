@@ -10,11 +10,10 @@ import android.webkit.WebView;
 
 import com.google.common.base.Strings;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.view.MyWebViewClient;
-import com.ihewro.focus.view.htmltextview.HtmlTextView;
-import com.ihewro.focus.other.HtmlImageGetterEx;
 
-import es.dmoral.toasty.Toasty;
+import skin.support.utils.SkinPreference;
 
 /**
  * <pre>
@@ -36,10 +35,7 @@ public class PostUtil {
         webSettings.setDomStorageEnabled(true);
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕        ☆☆
         webSettings.setDisplayZoomControls(false);
-
         webSettings.setJavaScriptEnabled(true);
-
-
 
 
 
@@ -56,20 +52,27 @@ public class PostUtil {
         });
 
 
-        //
         String[] imageUrls = {};
         textView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");
         textView.setWebViewClient(new MyWebViewClient(context));
 
         //加载HTML
-
         String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";
+        String mclass = "";
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            mclass = "entry-dark";
+        }
 
-        String linkCss = "<style>img{max-width:50%}video{height:auto!important;width:100%;display:block}</style>\n";
+        //根据配置加载字体、间距的css
+        String fontSize = "font-size:"+PostSetting.getFontSize() + "px;";
+        String lineSpace = "line-height:" + PostSetting.getLineSpace();
+        String fontSpace = "letter-spacing:" + PostSetting.getFontSpace() + "px;";
+
+        String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+"}</style>\n";
 
 
         String meta = "";
-        String body = "<html><header>" + linkCss + meta +css + "</header><body class=\"entry\">" + getContent(article)
+        String body = "<html><header>"  + meta +css + settingCss+ "</header><body class=\"entry "+mclass+"\">" + getContent(article)
                 + "</body></html>";
 
         textView.setBackgroundColor(Color.parseColor("#00000000"));

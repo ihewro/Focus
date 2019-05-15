@@ -58,7 +58,6 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, final FeedItem item) {
 
-
         //设置文章内容
         PostUtil.setContent(context, item, ((WebView)helper.getView(R.id.post_content)));
         helper.setText(R.id.post_title,item.getTitle());
@@ -74,9 +73,8 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
         } else {
             EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, helper.getAdapterPosition()));
         }
-
-        //根据设置，设置文字的UI
-
     }
+
+
 
 }

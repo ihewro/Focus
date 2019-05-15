@@ -1,6 +1,9 @@
 package com.ihewro.focus.bean;
 
+import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -12,11 +15,35 @@ import org.litepal.crud.LitePalSupport;
  * </pre>
  */
 public class PostSetting  {
-    private static final String FONT_SIZE = "FONT_SIZE";//字大小
-    private static final String WORD_SPACING = "WORD_SPACING";//行间距
-    private static final String LINE_SPACING = "LINE_SPACING";//行间距
-    private static final String THEME_MODE = "THEME_MODE";//主题模式
+    public static final String FONT_SIZE = "FONT_SIZE";//字大小
+    public static final String FONT_SIZE_DEFAULT = "16";//字大小
 
-    private static final String DAY_MODE = "DAY_MODE";//白天
-    private static final String NIGHT_MODE = "NIGHT_MODE";//夜间
+    public static final String FONT_SPACING = "FONT_SPACING";//字间距
+    public static final String FONT_SPACING_DEFAULT = "0";//字间距
+
+    public static final String LINE_SPACING = "LINE_SPACING";//行间距
+    public static final String LINE_SPACING_DEFAULT = "2";//行间距
+    public static final String THEME_MODE = "THEME_MODE";//主题模式
+
+
+
+    public static final String DAY_MODE = "DAY_MODE";//白天
+    public static final String NIGHT_MODE = "NIGHT_MODE";//夜间
+
+
+
+
+    public static String getFontSize() {
+        return UserPreference.queryValueByKey(FONT_SIZE,FONT_SIZE_DEFAULT);
+    }
+
+    public static String getLineSpace() {
+        return UserPreference.queryValueByKey(LINE_SPACING,LINE_SPACING_DEFAULT);
+
+    }
+
+    public static String getFontSpace() {
+        return UserPreference.queryValueByKey(FONT_SPACING,FONT_SPACING_DEFAULT);
+    }
+
 }

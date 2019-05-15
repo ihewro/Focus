@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <TextView
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:text="字号："/>
         <TextView
+            android:id="@+id/size_setting_info"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:text="15"/>
@@ -52,6 +54,7 @@
             android:layout_height="wrap_content"
             android:text="字间距："/>
         <TextView
+            android:id="@+id/font_space_setting_info"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:text="15"/>
@@ -76,6 +79,7 @@
             android:layout_height="wrap_content"
             android:text="行间距："/>
         <TextView
+            android:id="@+id/line_space_setting_info"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:text="15"/>
@@ -87,25 +91,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="75dp"
-            android:layout_height="wrap_content"
-            android:text="夜间模式：" />
-
-        <Switch
-            android:id="@+id/mode_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp" />
-
     </LinearLayout>
 
 </LinearLayout>
