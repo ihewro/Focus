@@ -45,9 +45,12 @@
                     android:textSize="16sp"
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                    />
+                    android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
 
             </android.support.v7.widget.ButtonBarLayout>
 
@@ -63,7 +66,6 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
             android:layout_marginTop="?attr/actionBarSize"
             android:clipToPadding="false"
             android:visibility="gone"

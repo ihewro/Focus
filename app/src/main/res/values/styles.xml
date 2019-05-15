@@ -15,13 +15,11 @@
 
     <!--再写一个是为了左侧边栏-->
     <style name="AppTheme.Dark" parent="MaterialDrawerTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary_night</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_night</item>
+        <item name="colorAccent">@color/colorAccent_night</item>
         <item name="android:windowBackground">@color/colorPrimary_night</item>
     </style>
-
-
 
 
     <style name="Animation_Activity">

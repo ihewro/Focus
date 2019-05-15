@@ -33,7 +33,7 @@
                 android:id="@+id/subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/weak_text"
                 android:text="二级标题"/>
 
         </LinearLayout>

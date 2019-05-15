@@ -340,22 +340,6 @@ public class PostDetailActivity extends AppCompatActivity {
             //行间距改变
 
             //切换夜间模式
-
-            ((Switch)ReadSettingDialog.findViewById(R.id.mode_switch)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    boolean isChecked = ((Switch)view).isChecked();
-                    ((Switch)view).setChecked(isChecked);
-
-                    if (((Switch)view).isChecked()){
-                        SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
-                        EventBus.getDefault().post(new EventMessage(EventMessage.NIGHT_MODE));
-                    }else {
-                        SkinCompatManager.getInstance().restoreDefaultTheme();
-                        EventBus.getDefault().post(new EventMessage(EventMessage.DAY_MODE));
-                    }
-                }
-            });
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,9 +47,11 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,6 +66,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import skin.support.SkinCompatManager;
+import skin.support.utils.SkinPreference;
 
 
 public class MainActivity extends BaseActivity {
@@ -255,6 +261,30 @@ public class MainActivity extends BaseActivity {
     public void createDrawer() {
         //初始化侧边栏
         refreshLeftDrawerFeedList(false);
+
+        //夜间模式控制开关
+        boolean flag = false;
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            flag = true;
+        }
+
+        SwitchDrawerItem mode = new SwitchDrawerItem().withName("夜间").withIcon(GoogleMaterial.Icon.gmd_brightness_medium).withChecked(flag).withOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+                    EventBus.getDefault().post(new EventMessage(EventMessage.NIGHT_MODE));
+                    MainActivity.this.setTheme(R.style.AppTheme_Dark);
+                    recreate();
+                }else {
+                    SkinCompatManager.getInstance().restoreDefaultTheme();
+                    EventBus.getDefault().post(new EventMessage(EventMessage.DAY_MODE));
+                    MainActivity.this.setTheme(R.style.AppTheme);
+                    recreate();
+                }
+            }
+        });
+
         //初始化侧边栏
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
@@ -278,9 +308,7 @@ public class MainActivity extends BaseActivity {
                         new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(FEED_MANAGE).withSelectable(false),
                         new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false),
                         new SecondaryDrawerItem().withName("工具").withIcon(GoogleMaterial.Icon.gmd_pan_tool).withIdentifier(10).withTag(-400).withSelectable(false),
-        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(PAY_SUPPORT).withSelectable(false)
-
-                )
+        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(PAY_SUPPORT).withSelectable(false),mode)
                 .build();
         drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
     }
@@ -453,10 +481,18 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            getMenuInflater().inflate(R.menu.main_night, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.main, menu);
+        }
 
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
+
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+//            item.tin
+        }
 
         return true;
     }
@@ -497,13 +533,6 @@ public class MainActivity extends BaseActivity {
         if(EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())){
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             updateDrawer();
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DAY_MODE)){
-            //
-            this.setTheme(R.style.AppTheme);
-            recreate();
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.NIGHT_MODE)){
-            this.setTheme(R.style.AppTheme_Dark);
-            recreate();
         }
     }
 
@@ -528,5 +557,18 @@ public class MainActivity extends BaseActivity {
                     }
                 })
                 .asCustom(new FilterPopupView(MainActivity.this));
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (currentFragment == null && fragment instanceof UserFeedUpdateContentFragment){
+            currentFragment = fragment;
+        }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
     }
 }

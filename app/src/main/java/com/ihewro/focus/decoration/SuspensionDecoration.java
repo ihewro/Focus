@@ -14,6 +14,8 @@ import android.view.View;
 
 import java.util.List;
 
+import skin.support.utils.SkinPreference;
+
 /**
  * 介绍：分类、悬停的Decoration
  * 作者：zhangxutong
@@ -39,6 +41,13 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
 
     public SuspensionDecoration(Context context, List<? extends ISuspensionInterface> datas) {
         super();
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            COLOR_TITLE_BG = Color.parseColor("#ff2e2e2e");
+            COLOR_TITLE_FONT = Color.parseColor("#dfffffff");
+        }else {
+            COLOR_TITLE_BG = Color.parseColor("#FFDFDFDF");
+            COLOR_TITLE_FONT = Color.parseColor("#FF999999");
+        }
         mDatas = datas;
         mPaint = new Paint();
         mBounds = new Rect();

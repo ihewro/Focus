@@ -158,8 +158,8 @@ public class FilterPopupView extends DrawerPopupView {
         //修改其他项为普通颜色
         for (int i = 0; i < orderOperation.size(); i++){
             if (i != position){
-                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(getResources().getColor(R.color.weak_text));
+                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.weak_text));
 
             }
         }
@@ -180,7 +180,7 @@ public class FilterPopupView extends DrawerPopupView {
         //修改其他项为普通颜色
         for (int i = 0; i < filterOperation.size();i++){
             if (i != position){
-                ((TextView)findViewById(filterTextViews.get(i))).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                ((TextView)findViewById(filterTextViews.get(i))).setTextColor(getResources().getColor(R.color.weak_text));
                 ((CardView)findViewById(filterCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.colorPrimary));
             }
         }

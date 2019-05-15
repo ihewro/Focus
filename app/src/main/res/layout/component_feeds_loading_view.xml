@@ -2,7 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/loading_bg"
     android:layout_height="30dp">
 
     <ProgressBar
@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:progressDrawable="@drawable/progress_bar"
-        android:progress="0"
+        android:progress="30"
         android:max="100"/>
 
     <ProgressBar

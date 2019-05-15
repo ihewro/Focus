@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_search_black"/>
+        android:src="@drawable/ic_search_black_night"/>
 
     <TextView
         android:layout_marginLeft="20dp"
