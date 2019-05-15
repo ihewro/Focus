@@ -168,7 +168,7 @@ public class MainActivity extends BaseActivity {
                         for (FeedItem feedItem: searchResults){
                             list.add(feedItem.getId());
                         }
-                        PostDetailActivity.activityStart(MainActivity.this, item.getId(), position,list,false);
+                        PostDetailActivity.activityStart(MainActivity.this, position,list,false);
 
                     }
                 });

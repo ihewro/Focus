@@ -83,9 +83,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private List<Integer> feedItemIdList;
 
-        public static void activityStart(Activity activity, int feedItemId, int indexInList, ArrayList<Integer> feedItemIdList,boolean flag) {
+    public static void activityStart(Activity activity,int indexInList, ArrayList<Integer> feedItemIdList,boolean flag) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
-        intent.putExtra(Constants.KEY_STRING_FEED_ITEM_ID, feedItemId);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
         intent.putExtra(Constants.IS_UPDATE_MAIN_READ_MARK,flag);
         intent.putIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST,feedItemIdList);
@@ -106,9 +105,12 @@ public class PostDetailActivity extends AppCompatActivity {
         }
         Intent intent = getIntent();
         mIndex = intent.getIntExtra(Constants.KEY_INT_INDEX, 0);
+
         feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
         mId = feedItemIdList.get(mIndex);
         isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
+
+
         initData();
 
         initRecyclerView();
@@ -208,7 +210,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
     public void initData() {
-        currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+        currentFeedItem = LitePal.find(FeedItem.class,mId);
 
     }
 
@@ -218,17 +220,22 @@ public class PostDetailActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        long[] ids = new long[feedItemIdList.size()];
-        for (int i = 0; i<feedItemIdList.size();i++){
-            ids[i] = feedItemIdList.get(i);
-        }
+        //移动到当前文章的位置
+        linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
+        linearLayoutManager.setStackFromEnd(true);
+
+
         //获取所有文章的对象
-        List<FeedItem> feedItemList = LitePal.findAll(FeedItem.class,ids);
+        List<FeedItem> feedItemList = new ArrayList<>();
+        for (Integer id: feedItemIdList){
+            feedItemList.add(LitePal.find(FeedItem.class,id));
+        }
         adapter = new PostDetailListAdapter(this,isUpdateMainReadMark,postSetting, feedItemList);
         adapter.bindToRecyclerView(recyclerView);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
+
 
 
         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
@@ -240,6 +247,7 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 ALog.d("onScrolled");
+                //修改顶部导航栏的收藏状态
 
             }
 
@@ -298,6 +306,22 @@ public class PostDetailActivity extends AppCompatActivity {
                 initReadSettingListener();
                 break;
 
+            case R.id.action_star:
+                currentFeedItem.setFavorite(!currentFeedItem.isFavorite());
+                currentFeedItem.save();
+                if (mIndex == -1) {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, false));
+                } else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, false));
+                }
+                if (currentFeedItem.isFavorite()){
+                    starItem.setIcon(R.drawable.star_on);
+                }else {
+                    starItem.setIcon(R.drawable.star_off);
+                }
+
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -349,44 +373,24 @@ public class PostDetailActivity extends AppCompatActivity {
      */
     private void showStarActionView(MenuItem item) {
         starItem = item;
-        //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
+        setLikeButton();
+
+       /* //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
         likeButton = getLayoutInflater().inflate(R.layout.action_bar_star, null).findViewById(R.id.star_button);
         item.setActionView(likeButton);
 
-        setLikeButton();
+        setLikeButton();*/
 
     }
 
     private void setLikeButton() {
         //设置收藏状态
         if (currentFeedItem == null) {
-            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+//            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
-        likeButton.setLiked(currentFeedItem.isFavorite());
-        //收藏的点击事件
-        likeButton.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-                currentFeedItem.setFavorite(true);
-                currentFeedItem.save();
-                if (mIndex == -1) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, true));
-                } else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, true));
-                }
-            }
-
-            @Override
-            public void unLiked(LikeButton likeButton) {
-                currentFeedItem.setFavorite(false);
-                currentFeedItem.save();
-                if (mIndex == -1) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, false));
-                } else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, false));
-                }
-            }
-        });
+        if (currentFeedItem.isFavorite()){
+            starItem.setIcon(R.drawable.star_on);
+        }
     }
 
 
