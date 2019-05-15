@@ -83,7 +83,7 @@ public class UserPreference extends LitePalSupport {
         }
     }
 
-    public static void setValueByKey(String key,String value){
+    private static void setValueByKey(String key,String value){
         UserPreference userPreference = new UserPreference(key,value);
         userPreference.save();
     }

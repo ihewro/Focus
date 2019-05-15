@@ -17,6 +17,7 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
     private SnapHelper snapHelper;
     private OnPageChangeListener onPageChangeListener;
     private int oldPosition = -1;//防止同一Position多次触发
+    private boolean firstPosition = true;
 
     public RecyclerViewPageChangeListenerHelper(SnapHelper snapHelper, OnPageChangeListener onPageChangeListener) {
         this.snapHelper = snapHelper;
@@ -26,7 +27,12 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
+
         if (onPageChangeListener != null) {
+            if (firstPosition){
+                onPageChangeListener.onFirstScroll();
+                firstPosition = false;
+            }
             onPageChangeListener.onScrolled(recyclerView, dx, dy);
         }
     }
@@ -42,6 +48,7 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
             //获取itemView的position
             position = layoutManager.getPosition(view);
         }
+
         if (onPageChangeListener != null) {
             onPageChangeListener.onScrollStateChanged(recyclerView, newState);
             //newState == RecyclerView.SCROLL_STATE_IDLE 当滚动停止时触发防止在滚动过程中不停触发
@@ -53,10 +60,12 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
     }
 
     public interface OnPageChangeListener {
+
+        void onFirstScroll();
+
         void onScrollStateChanged(RecyclerView recyclerView, int newState);
 
         void onScrolled(RecyclerView recyclerView, int dx, int dy);
-        void onScrolled(RecyclerView recyclerView, int position);
 
         void onPageSelected(int position);
     }

@@ -197,6 +197,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
             @Override
+            public void onFirstScroll() {
+                initPostClickListener();
+                ALog.d("首次加载");
+            }
+
+            @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 ALog.d("onScrollStateChanged");
             }
@@ -208,11 +214,6 @@ public class PostDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int position) {
-
-            }
-
-            @Override
             public void onPageSelected(int position) {
                 ALog.d("onPageSelected" + position + feedItemList.get(position));
                 mIndex = position;
@@ -220,7 +221,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 initData();
                 //修改顶部导航栏的收藏状态
                 setLikeButton();
-
                 initPostClickListener();
 
             }
@@ -256,6 +256,11 @@ public class PostDetailActivity extends AppCompatActivity {
                     currentFeedItem.setFavorite(true);
                 }
                 currentFeedItem.save();
+                if (!isUpdateMainReadMark) {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
+                } else {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
+                }
                 setLikeButton();
                 return true;
             }
@@ -271,6 +276,14 @@ public class PostDetailActivity extends AppCompatActivity {
                 return super.onDoubleTapEvent(e);
             }
         });
+
+         adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
+
 
     }
 
@@ -306,14 +319,16 @@ public class PostDetailActivity extends AppCompatActivity {
                         .customView(R.layout.read_setting, true)
                         .neutralText("重置")
                         .positiveText("确定")
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 //重置设置
-
+                                UserPreference.updateValueByKey(PostSetting.FONT_SIZE, PostSetting.FONT_SIZE_DEFAULT);
+                                UserPreference.updateValueByKey(PostSetting.FONT_SPACING, PostSetting.FONT_SPACING_DEFAULT);
+                                UserPreference.updateValueByKey(PostSetting.LINE_SPACING, PostSetting.LINE_SPACING_DEFAULT);
+                                adapter.notifyItemChanged(mIndex);
                             }
                         })
-
                         .show();
 
                 initReadSettingView();
@@ -323,16 +338,13 @@ public class PostDetailActivity extends AppCompatActivity {
             case R.id.action_star:
                 currentFeedItem.setFavorite(!currentFeedItem.isFavorite());
                 currentFeedItem.save();
-                if (mIndex == -1) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, false));
+
+                if (!isUpdateMainReadMark) {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
                 } else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, false));
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
                 }
-                if (currentFeedItem.isFavorite()){
-                    starItem.setIcon(R.drawable.star_on);
-                }else {
-                    starItem.setIcon(R.drawable.star_off);
-                }
+                setLikeButton();
 
                 break;
 
@@ -429,6 +441,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     //修改文章配置UI
                     UserPreference.updateValueByKey(PostSetting.LINE_SPACING, String.valueOf(seekBar.getProgress()));
                     adapter.notifyItemChanged(mIndex);//更新UI
+
                 }
             });
         }
@@ -441,13 +454,6 @@ public class PostDetailActivity extends AppCompatActivity {
     private void showStarActionView(MenuItem item) {
         starItem = item;
         setLikeButton();
-
-       /* //这里使用一个ImageView设置成MenuItem的ActionView，这样我们就可以使用这个ImageView显示旋转动画了
-        likeButton = getLayoutInflater().inflate(R.layout.action_bar_star, null).findViewById(R.id.star_button);
-        item.setActionView(likeButton);
-
-        setLikeButton();*/
-
     }
 
     private void setLikeButton() {
@@ -457,6 +463,8 @@ public class PostDetailActivity extends AppCompatActivity {
         }
         if (currentFeedItem.isFavorite()){
             starItem.setIcon(R.drawable.star_on);
+        }else {
+            starItem.setIcon(R.drawable.star_off);
         }
     }
 

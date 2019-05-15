@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -32,6 +33,8 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
+import com.ihewro.focus.bean.PostSetting;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
@@ -271,16 +274,23 @@ public class MainActivity extends BaseActivity {
         SwitchDrawerItem mode = new SwitchDrawerItem().withName("夜间").withIcon(GoogleMaterial.Icon.gmd_brightness_medium).withChecked(flag).withOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+                ALog.d("点击状态",isChecked);
                 if (isChecked){
                     SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
-                    EventBus.getDefault().post(new EventMessage(EventMessage.NIGHT_MODE));
-                    MainActivity.this.setTheme(R.style.AppTheme_Dark);
-                    recreate();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    },200); // 延时1秒
                 }else {
                     SkinCompatManager.getInstance().restoreDefaultTheme();
-                    EventBus.getDefault().post(new EventMessage(EventMessage.DAY_MODE));
-                    MainActivity.this.setTheme(R.style.AppTheme);
-                    recreate();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    },200); // 延时1秒
                 }
             }
         });

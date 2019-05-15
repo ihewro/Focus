@@ -65,7 +65,7 @@ public class PostUtil {
 
         //根据配置加载字体、间距的css
         String fontSize = "font-size:"+PostSetting.getFontSize() + "px;";
-        String lineSpace = "line-height:" + PostSetting.getLineSpace();
+        String lineSpace = "line-height:" + PostSetting.getLineSpace() + ";";
         String fontSpace = "letter-spacing:" + PostSetting.getFontSpace() + "px;";
 
         String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+"}</style>\n";

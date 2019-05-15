@@ -25,10 +25,9 @@ public class PostSetting  {
     public static final String LINE_SPACING_DEFAULT = "2";//行间距
     public static final String THEME_MODE = "THEME_MODE";//主题模式
 
-
-
-    public static final String DAY_MODE = "DAY_MODE";//白天
-    public static final String NIGHT_MODE = "NIGHT_MODE";//夜间
+    public static final String DAY_MODE = "";//白天
+    public static final String NIGHT_MODE = "night";//夜间
+    public static final String THEME_MODE_DEFAULT = DAY_MODE;//主题模式
 
 
 
@@ -45,5 +44,11 @@ public class PostSetting  {
     public static String getFontSpace() {
         return UserPreference.queryValueByKey(FONT_SPACING,FONT_SPACING_DEFAULT);
     }
+
+
+    public static String getThemeMode() {
+        return UserPreference.queryValueByKey(THEME_MODE,THEME_MODE_DEFAULT);
+    }
+
 
 }

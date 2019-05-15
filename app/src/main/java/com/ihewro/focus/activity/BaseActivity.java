@@ -3,6 +3,7 @@ package com.ihewro.focus.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.saber.chentianslideback.SlideBackActivity;
 
@@ -20,16 +21,17 @@ import skin.support.utils.SkinPreference;
 public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
-        if(SkinPreference.getInstance().getSkinName().equals("night")){
-            setTheme(R.style.AppTheme_Dark);
-        }else {
-            setTheme(R.style.AppTheme);
-        }
 
         super.setContentView(layoutResID);
     }
 
-
-
-
+    @Override
+    public void setTheme(int resid) {
+        ALog.d("主题名称",SkinPreference.getInstance().getSkinName());
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            super.setTheme(R.style.AppTheme_Dark);
+        }else {
+            super.setTheme(R.style.AppTheme);
+        }
+    }
 }
