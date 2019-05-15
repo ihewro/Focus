@@ -144,4 +144,9 @@ dependencies {
     // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
 
     //简化运行时申请权限的代码
-    implementation 'pub.devrel:easypermissions:2.0.1'}
+    implementation 'pub.devrel:easypermissions:2.0.1'
+
+    //图片加载
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
+}

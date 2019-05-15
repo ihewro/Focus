@@ -19,6 +19,8 @@
 
     <!--组件-->
     <color name="loading_bg_night">#000000</color>
+    <color name="divider">#eeeeee</color>
+
 
 
 </resources>

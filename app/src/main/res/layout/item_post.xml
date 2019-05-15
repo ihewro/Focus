@@ -4,34 +4,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:contentView="@+id/container"
+    app:contentView="@+id/content"
     app:rightMenuView="@+id/right">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/container"
-        android:layout_margin="15dp"
-        app:cardBackgroundColor="@color/white"
+    <LinearLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp">
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        app:elevation="10dp"
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/content"
-            android:paddingBottom="1dp"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackground"
-            app:elevation="10dp">
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:paddingTop="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="20dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:paddingBottom="10dp"
                 android:orientation="vertical"
                 >
@@ -43,14 +41,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16dp"
-                        android:paddingRight="45dp"
+                        android:paddingRight="20dp"
                         android:layout_alignParentLeft="true"
                         android:text="内容标题内容标题内容标题内容标题内容标题"/>
 
                     <ImageView
                         android:id="@+id/operations"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -59,9 +55,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="13dp">
+                    android:layout_marginTop="5dp">
                     <ImageView
                         android:id="@+id/rss_icon"
                         android:layout_width="21dp"
@@ -70,19 +66,20 @@
                         android:src="@drawable/ic_rss_feed_grey_24dp"/>
                     <TextView
                         android:id="@+id/rss_name"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_toRightOf="@id/rss_icon"
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="人民一学的bilibili动态"/>
                 </RelativeLayout>
+
                 <TextView
                     android:id="@+id/post_summay"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lines="2"
+                    android:maxLines="2"
                     android:text="@string/test_summary"/>
 
                 <RelativeLayout
@@ -105,22 +102,26 @@
                         />
 
                 </RelativeLayout>
+
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/post_pic"
-                android:layout_width="100dp"
-                android:layout_height="140dp"
-                android:visibility="gone"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/test"
-                android:scaleType="centerCrop"
-                />
-        </RelativeLayout>
+            <View
+                android:layout_height="1.5px"
+                android:layout_width="match_parent"
+                android:background="@color/divider"/>
 
+        </LinearLayout>
 
+        <ImageView
+            android:id="@+id/post_pic"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/test"
+            android:scaleType="centerCrop"
+            />
+    </LinearLayout>
 
-    </android.support.v7.widget.CardView>
 
 
     <!-- 以下都是侧滑菜单的内容依序排列 -->

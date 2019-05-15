@@ -81,7 +81,7 @@ public class PostUtil {
 
     }
 
-    private static String getContent(FeedItem article) {
+    public static String getContent(FeedItem article) {
         if (!Strings.isNullOrEmpty(article.getContent())) {
             return article.getContent();
         }

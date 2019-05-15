@@ -12,12 +12,19 @@
     <color name="ripple_dark">#40808080</color>
     <color name="weak_text">#c7c7c7</color>
     <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
-    <color name="text_unread">#CB000000</color> <!-- 54% -->
-    <color name="text_read">#6B000000</color> <!-- 54% -->
+
     <color name="color_grey_dark">#f2f2f2</color>
     <color name="main_grey_light">#eeeeee</color>
 
     <!--组件-->
     <color name="loading_bg">#c7c7c7</color>
+
+    <color name="text_unread">#CB000000</color> <!-- 54% -->
+    <color name="text_unread_content">#616161</color> <!-- 54% -->
+
+    <color name="text_read">#757575</color> <!-- 54% -->
+    <color name="text_read_content">#9e9e9e</color>
+
+    <color name="divideLine">#000000</color> <!-- 54% -->
 
 </resources>

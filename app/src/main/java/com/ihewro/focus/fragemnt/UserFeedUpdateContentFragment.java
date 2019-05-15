@@ -18,6 +18,7 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
+import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.ihewro.focus.view.FilterPopupView;

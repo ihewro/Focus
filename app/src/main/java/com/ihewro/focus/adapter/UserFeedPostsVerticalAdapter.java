@@ -3,6 +3,7 @@ package com.ihewro.focus.adapter;
 import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,10 +17,12 @@ import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,29 +64,42 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
         int not_read_color;
         int read_color;
+        int not_read_content_color;
+        int read_content_color;
 
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             not_read_color = R.color.text_unread_night;
             read_color = R.color.text_read_night;
+
+            read_content_color = R.color.text_read_content;
+            not_read_content_color = R.color.text_unread_content;
         }else {
             not_read_color = R.color.text_unread;
             read_color = R.color.text_read;
+            read_content_color = R.color.text_read_content;
+            not_read_content_color = R.color.text_unread_content;
+        }
+
+        String imageUrl = DataUtil.getFeedItemImageUrl(item);
+        if (imageUrl!=null){
+            helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(imageUrl, ((ImageView)helper.getView(R.id.post_pic)));
+        }else {
+            helper.getView(R.id.post_pic).setVisibility(View.GONE);
         }
         if (item.isRead()){
-
             ALog.d("是否已读" + item.isRead());
-
-            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(read_color));
             helper.setTextColor(R.id.post_title,activity.getResources().getColor(read_color));
-            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(read_color));
-            helper.setTextColor(R.id.post_time,activity.getResources().getColor(read_color));
+            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(read_content_color));
+            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(read_content_color));
+            helper.setTextColor(R.id.post_time,activity.getResources().getColor(read_content_color));
             helper.setText(R.id.markRead,"标记未读");
         }else {
-
             helper.setTextColor(R.id.post_title,activity.getResources().getColor(not_read_color));
-            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(not_read_color));
-            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(not_read_color));
-            helper.setTextColor(R.id.post_time,activity.getResources().getColor(not_read_color));
+            helper.setTextColor(R.id.rss_name,activity.getResources().getColor(not_read_content_color));
+            helper.setTextColor(R.id.post_summay,activity.getResources().getColor(not_read_content_color));
+            helper.setTextColor(R.id.post_time,activity.getResources().getColor(not_read_content_color));
             helper.setText(R.id.markRead,"标记已读");
         }
         if (item.isFavorite()){

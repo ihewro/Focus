@@ -1,8 +1,12 @@
 package com.ihewro.focus.util;
 
 import com.google.common.base.Strings;
+import com.ihewro.focus.bean.FeedItem;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * <pre>
@@ -26,5 +30,20 @@ public class DataUtil {
             result = parsedStr.substring(0, showLength - 1);
         }
         return result;
+    }
+
+
+    public static String getFeedItemImageUrl(FeedItem feedItem){
+        String content = PostUtil.getContent(feedItem);
+        if (content!=null && !content.equals("")){
+            Document doc = Jsoup.parse(content);
+            if (doc != null) {
+                Elements images = doc.select("img");
+                if (images.size() > 0) {
+                    return images.get(0).attr("src");
+                }
+            }
+        }
+        return null;
     }
 }

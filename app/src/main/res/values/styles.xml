@@ -10,6 +10,8 @@
         <!--抽屉的风格-->
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
         <item name="material_drawer_selected_text">@color/colorAccent</item>
+
+
     </style>
 
 
@@ -19,6 +21,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_night</item>
         <item name="colorAccent">@color/colorAccent_night</item>
         <item name="android:windowBackground">@color/colorPrimary_night</item>
+
     </style>
 
 
