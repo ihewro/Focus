@@ -1,6 +1,5 @@
 package com.ihewro.focus.util;
 
-import android.util.Log;
 import android.util.Xml;
 
 import com.blankj.ALog;
@@ -19,6 +18,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ihewro.focus.util.AtomParser.FEED;
+import static com.ihewro.focus.util.AtomParser.readFeedForFeed;
+
 /**
  * <pre>
  *     author : hewro
@@ -29,15 +31,22 @@ import java.util.List;
  * </pre>
  */
 public class FeedParser {
-    private static final String RSS = "rss";
-    private static final String ITEM = "item";
-    private static final String CHANNEL = "channel";
-    private static final String TITLE = "title";
+
+    //feed 与 item公用部分
     private static final String LINK = "link";
-    private static final String PUB_DATE = "pubDate";
     private static final String DESC = "description";
-    private static final String CONTENT = "content:encoded";
+    private static final String TITLE = "title";
+
+
+    //feed信息
+    private static final String RSS = "rss";
+    private static final String CHANNEL = "channel";
     private static final String LAST_BUILD_DATE = "lastBuildDate";
+
+    //item信息
+    private static final String ITEM = "item";
+    private static final String CONTENT = "content:encoded";
+    private static final String PUB_DATE = "pubDate";
 
     private static String feedUrl;
 
@@ -58,9 +67,20 @@ public class FeedParser {
         try {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(new StringReader(xmlStr));
-            parser.nextTag();
 
-            return readRssForFeed(parser);
+            //TODO: 这个地方不确定是不是正确的，判断文件的类型，是RSS还是ATOM 格式
+            String name = parser.getName();
+            if (name.equals(RSS)){//RSS格式
+                parser.nextTag();
+                return readRssForFeed(parser);
+
+            }else if (name.equals(FEED)){
+                parser.nextTag();
+                return readFeedForFeed(parser,url);
+            }else {
+                ALog.d("不支持该种格式的文件");
+                return null;
+            }
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
         }
@@ -84,13 +104,14 @@ public class FeedParser {
             String name = parser.getName();
             // Starts by looking for the entry tag
             if (name.equals(CHANNEL)) {
-                return readChannelForFeed(parser);
+                return HandleFeed(readChannelForFeed(parser));
             } else {
                 skip(parser);
             }
         }
         return null;
     }
+
 
 
     /**
@@ -111,52 +132,32 @@ public class FeedParser {
             }
             String name = parser.getName();
             // Starts by looking for the entry tag
-            if (name.equals(TITLE)) {
-                feed.setName(readTitle(parser));
-            } else if (name.equals(LINK)) {
-                feed.setLink(readLink(parser));
-            } else if (name.equals(LAST_BUILD_DATE)) {
-                feed.setTime(readLastBuildDate(parser));
-            } else if (name.equals(DESC)) {
-                feed.setDesc(readDesc(parser));
-            }else if (name.equals(ITEM)) {
-                //获取当前feed最新的文章列表
-                FeedItem feedItem = readItemForArticle(parser);
-                feedItems.add(feedItem);
-            }
-            else {
-                skip(parser);
+            switch (name) {
+                case TITLE:
+                    feed.setName(readTitle(parser));
+                    break;
+                case LINK:
+                    feed.setLink(readLink(parser));
+                    break;
+                case LAST_BUILD_DATE:
+                    feed.setTime(readLastBuildDate(parser));
+                    break;
+                case DESC:
+                    feed.setDesc(readDesc(parser));
+                    break;
+                case ITEM:
+                    //获取当前feed最新的文章列表
+                    FeedItem feedItem = readItemForFeedItem(parser);
+                    feedItems.add(feedItem);
+                    break;
+                default:
+                    skip(parser);
+                    break;
             }
         }
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");
-        //给feed下面所有feedItem设置feedName和feedId;
-        //获取当前feed的iid
-        List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
-        int feedId = 0;
-        if (tempFeeds.size() <= 0){
-            ALog.d("出现未订阅错误"+feed.getUrl());//我们获取feedItem内容是从找数据库的feed，所以不可能feedItem中的feed url 不在数据库中欧冠
-        }else {
-            feedId = tempFeeds.get(0).getId();
-        }
-        feed.setId(feedId);
 
-        //给feed下所有feedItem绑定feed信息
-        for (int i =0;i<feed.getFeedItemList().size();i++){
-            feed.getFeedItemList().get(i).setFeedName(feed.getName());
-            feed.getFeedItemList().get(i).setFeedId(feedId);
-            try{
-                feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
-            }catch (LitePalSupportException exception){
-                ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
-                //此时要对feedItem进行状态字段的恢复，读取数据的状态
-                FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
-                feed.getFeedItemList().get(i).setId(temp.getId());
-                feed.getFeedItemList().get(i).setRead(temp.isRead());
-                feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
-                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
-            }
-        }
 
         return feed;
     }
@@ -169,7 +170,7 @@ public class FeedParser {
      * @throws IOException
      * @throws XmlPullParserException
      */
-    private static FeedItem readItemForArticle(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private static FeedItem readItemForFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, null, ITEM);
         String title = null;
         String link = null;
@@ -227,52 +228,52 @@ public class FeedParser {
 
 
     private static String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, TITLE);
-        String title = Jsoup.parse(readText(parser)).text();
-        parser.require(XmlPullParser.END_TAG, null, TITLE);
-
-        return title;
+        return Jsoup.parse(readTagByTagName(parser,TITLE)).text();
     }
 
     private static String readLink(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, LINK);
-        String link = readText(parser);
-        parser.require(XmlPullParser.END_TAG, null, LINK);
-        return link;
+        return readTagByTagName(parser,LINK);
     }
 
     private static String readPubDate(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, PUB_DATE);
-        String pubData = readText(parser);
-        parser.require(XmlPullParser.END_TAG, null, PUB_DATE);
+        String pubData = readTagByTagName(parser,PUB_DATE);
+        //TODO:对没有时间的feedItem 进行特殊处理
         if (pubData==null){
-            ALog.d("？？？null");
-            pubData ="Tue, 02 Apr 2019 07:43:34 +0000";
+            pubData =DateUtil.getNowDateRFCStr();
         }
+        ALog.d("没有时间！");
         ALog.d(pubData);
         return pubData;
     }
 
     private static String readDesc(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, DESC);
-        String desc = readText(parser);
-        parser.require(XmlPullParser.END_TAG, null, DESC);
-        return desc;
+        return readTagByTagName(parser,DESC);
     }
 
+
     private static String readContent(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, CONTENT);
-        String content = readText(parser);
-        parser.require(XmlPullParser.END_TAG, null, CONTENT);
-        return content;
+        return readTagByTagName(parser,CONTENT);
     }
 
     private static Long readLastBuildDate(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, LAST_BUILD_DATE);
-        String dateStr = readText(parser);
-        parser.require(XmlPullParser.END_TAG, null, LAST_BUILD_DATE);
-
+        String dateStr = readTagByTagName(parser,LAST_BUILD_DATE);
         return DateUtil.date2TimeStamp(dateStr);
+    }
+
+
+    /**
+     * 根据tag名称获取tag内部的数据
+     * @param parser
+     * @param tagName
+     * @return
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public static String readTagByTagName(XmlPullParser parser,String tagName) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, tagName);
+        String dateStr = readText(parser);
+        parser.require(XmlPullParser.END_TAG, null, tagName);
+        return dateStr;
     }
 
     private static String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -282,5 +283,45 @@ public class FeedParser {
             parser.nextTag();
         }
         return result;
+    }
+
+
+
+    /**
+     * 获取到的数据与本地数据库的数据进行比对，重复的则恢复状态信息，不重复则入库
+     * @param feed
+     * @return
+     */
+    public static Feed HandleFeed(Feed feed){
+        //给feed下面所有feedItem设置feedName和feedId;
+        //获取当前feed的iid
+        List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
+        int feedId = 0;
+        if (tempFeeds.size() <= 0){
+            ALog.d("出现未订阅错误"+feed.getUrl());//我们获取feedItem内容是从找数据库的feed，所以不可能feedItem中的feed url 不在数据库中欧冠
+        }else {
+            feedId = tempFeeds.get(0).getId();
+        }
+        feed.setId(feedId);
+
+        //给feed下所有feedItem绑定feed信息
+        for (int i =0;i<feed.getFeedItemList().size();i++){
+            feed.getFeedItemList().get(i).setFeedName(feed.getName());
+            feed.getFeedItemList().get(i).setFeedId(feedId);
+            try{
+                feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
+            }catch (LitePalSupportException exception){
+                ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
+                //此时要对feedItem进行状态字段的恢复，读取数据的状态
+                FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
+                feed.getFeedItemList().get(i).setId(temp.getId());
+                feed.getFeedItemList().get(i).setRead(temp.isRead());
+                feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
+                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
+            }
+        }
+
+        return feed;
+
     }
 }

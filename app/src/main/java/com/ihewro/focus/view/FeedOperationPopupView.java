@@ -1,5 +1,7 @@
 package com.ihewro.focus.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +11,7 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
@@ -138,6 +141,40 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
             }
         }));
 
+
+        operations.add(new Operation("复制RSS地址","",getResources().getDrawable(R.drawable.ic_content_copy_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final Feed item = (Feed)o;
+                ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText(null, item.getUrl()));
+
+            }
+        }));
+
+        operations.add(new Operation("修改RSS地址","",getResources().getDrawable(R.drawable.ic_touch_app_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final Feed item = (Feed)o;
+                new MaterialDialog.Builder(getContext())
+                        .title("修改RSS地址")
+                        .content("输入修改后的RSS地址：")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input(item.getUrl(), item.getUrl(), new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                String name = dialog.getInputEditText().getText().toString().trim();
+                                if (name.equals("")){
+                                    Toasty.info(getContext(),"请勿填写空名字哦😯").show();
+                                }else {
+                                    item.setName(name);
+                                    item.save();
+                                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                }
+                            }
+                        }).show();
+            }
+        }));
 
         return  operations;
     }

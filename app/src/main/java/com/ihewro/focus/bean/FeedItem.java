@@ -25,6 +25,7 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     private String title;//文章标题
     private Long date;//文章发布日期
+
     private String summary;//文章简介
     private String content;//文章内容
     private String feedIid;

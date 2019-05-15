@@ -26,6 +26,11 @@ public class DateUtil {
         return sdf.format(d);
     }
 
+    public static String getNowDateRFCStr() {
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+        return sdf.format(d);
+    }
 
 
     public static String getTimeStringByInt(long time){
@@ -35,7 +40,7 @@ public class DateUtil {
 
 
     public static String getTTimeStringByInt(long time){
-        SimpleDateFormat format =  new SimpleDateFormat( "HH:mm:ss" );
+        SimpleDateFormat format =  new SimpleDateFormat( "HH:mm" );
         return format.format(time);
     }
     public static boolean isTimeout(String now, String last){
@@ -53,8 +58,8 @@ public class DateUtil {
      * @return
      */
     static long date2TimeStamp(String date_str){
-
-        String[] dateFormats = {"yyyy-MM-dd","EEE, dd MMM yyyy HH:mm:ss Z"};
+        //RFC3339
+        String[] dateFormats = {"yyyy-MM-dd","EEE, dd MMM yyyy HH:mm:ss Z","yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"};
 
         long timeStamp = 0L;
 
