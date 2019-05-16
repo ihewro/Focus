@@ -1,7 +1,6 @@
 package com.ihewro.focus.bean;
 
-import org.litepal.annotation.Column;
-import org.litepal.crud.LitePalSupport;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <pre>
@@ -12,8 +11,8 @@ import org.litepal.crud.LitePalSupport;
  *     version: 1.0
  * </pre>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FeedRequire {
-
 
     public static final int SET_URL = 444;//该类型直接设置url
     public static final int JOIN_URL = 787;//该类型的需要拼接url这两个操作只可能有一个出现，参数列表中不可能出现两种
@@ -28,6 +27,7 @@ public class FeedRequire {
     private String desc;//参数描述
     private boolean optional;//true 表示可选，false表示必选
     private int type;//参数的作用是什么，比如url，表示该参数需要拼接成url
+    private String defaultValue;//默认值，使用在输入框中显示默认填好的值
 
 
     public FeedRequire() {
@@ -37,6 +37,13 @@ public class FeedRequire {
         this.chinaName = chinaName;
         this.desc = desc;
         this.type = type;
+    }
+
+    public FeedRequire(String chinaName, String desc, int type, String defaultValue) {
+        this.chinaName = chinaName;
+        this.desc = desc;
+        this.type = type;
+        this.defaultValue = defaultValue;
     }
 
     public String getIid() {
@@ -93,5 +100,13 @@ public class FeedRequire {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

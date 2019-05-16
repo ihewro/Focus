@@ -387,10 +387,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-
-
-
     /**
      * 初始化主fragment
      *

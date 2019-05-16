@@ -17,6 +17,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
@@ -41,6 +42,7 @@
         android:id="@+id/account_unread_count"
         android:text="点击详情"
         android:textSize="16sp"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

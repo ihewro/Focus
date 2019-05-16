@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.blankj.ALog;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -22,6 +23,7 @@ import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.io.IOException;
@@ -178,7 +180,7 @@ public class RequestFeedListDataTask {
                 if (response.isSuccessful()) {
 
                     assert response.body() != null;
-                    Feed feed = FeedParser.parseStr2Feed(response.body(),originUrl);
+                    Feed feed = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
 //                    ALog.dTag("feed233", feed);
                     //feed更新到当前的时间流中。
                     if (feed!=null){
@@ -187,6 +189,8 @@ public class RequestFeedListDataTask {
                     }else {
                         Toasty.success(UIUtil.getContext(),originUrl+"解析失败", Toast.LENGTH_SHORT).show();
                     }
+
+                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
 
 
                 } else {

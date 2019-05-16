@@ -23,6 +23,8 @@ public class EventMessage {
 
     public static final String MARK_FEED_READ = "MARK_FEED_READ";//给一个订阅全部标记已读
     public static final String MARK_FEED_FOLDER_READ = "MARK_FEED_FOLDER_READ";//一个订阅文件夹全部标记已读
+    private static final String REFRESH_FEED_ITEM_LIST = "REFRESH_FEED_ITEM_LIST";//刷新订阅列表
+
 
     //点击事件
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
@@ -45,7 +47,7 @@ public class EventMessage {
     public static final String NIGHT_MODE ="NIGHT_MODE";
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);

@@ -1,7 +1,10 @@
 package com.ihewro.focus.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Patterns;
@@ -64,19 +67,21 @@ public class RequireListPopupView extends BottomPopupView {
 
     private Help help;
     private Feed feed;
+    private FragmentManager fragmentManager;
 
 
     public RequireListPopupView(@NonNull Context context) {
         super(context);
     }
 
-    public RequireListPopupView(@NonNull Context context, List<FeedRequire> feedRequireList,String title,String info,Help help,Feed feed) {
+    public RequireListPopupView(@NonNull Context context, List<FeedRequire> feedRequireList,String title,String info,Help help,Feed feed,FragmentManager fragmentManager) {
         super(context);
         this.feedRequireList = feedRequireList;
         this.title = title;
         this.info = info;
         this.help = help;
         this.feed = feed;
+        this.fragmentManager =fragmentManager;
     }
 
 
@@ -113,7 +118,9 @@ public class RequireListPopupView extends BottomPopupView {
                 @Override
                 public void onClick(View view) {
                     //打开帮助页面。是一个网页
-
+                    //webview的dialog
+                    int accentColor = ContextCompat.getColor(getContext(), R.color.accent);
+                    HelpDialog.create(false, accentColor, help.getContent()).show(fragmentManager, "changelog");
                 }
             });
         }

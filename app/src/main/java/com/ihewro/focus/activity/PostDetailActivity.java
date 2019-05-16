@@ -188,7 +188,7 @@ public class PostDetailActivity extends AppCompatActivity {
         for (Integer id: feedItemIdList){
             feedItemList.add(LitePal.find(FeedItem.class,id));
         }
-        adapter = new PostDetailListAdapter(this,isUpdateMainReadMark,postSetting, feedItemList);
+        adapter = new PostDetailListAdapter(PostDetailActivity.this,isUpdateMainReadMark,postSetting, feedItemList);
         adapter.bindToRecyclerView(recyclerView);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
@@ -239,6 +239,7 @@ public class PostDetailActivity extends AppCompatActivity {
              */
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
+                ALog.d("单击");
                 return super.onSingleTapConfirmed(e);
             }
 

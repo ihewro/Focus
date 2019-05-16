@@ -11,11 +11,11 @@ package com.ihewro.focus.bean;
  */
 public class Help {
     private boolean isHelp;
-    private String url;
+    private String content;
 
     public Help(boolean isHelp, String url) {
         this.isHelp = isHelp;
-        this.url = url;
+        this.content = url;
     }
 
     public Help(boolean isHelp) {
@@ -30,11 +30,11 @@ public class Help {
         isHelp = help;
     }
 
-    public String getUrl() {
-        return url;
+    public String getContent() {
+        return content;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

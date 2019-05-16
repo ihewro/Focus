@@ -24,6 +24,7 @@ import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.Constants;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.RequireListPopupView;
 import com.lxj.xpopup.XPopup;
@@ -172,13 +173,26 @@ public class FeedListActivity extends BackActivity {
                     feedRequireList.clear();
                     //feed更新到当前的时间流中。
                     feedRequireList.addAll(response.body());
-                    feedRequireList.add(new FeedRequire("订阅名称","取一个名字吧",FeedRequire.SET_NAME));
+                    feedRequireList.add(new FeedRequire("订阅名称","取一个名字吧",FeedRequire.SET_NAME,feedList.get(position).getName()));
 
                     Feed feed = feedList.get(position);
+                    String url = feed.getUrl();
+                    if (feed.getUrl().charAt(0) != '/'){
+                        url = "/"+url;
+                    }
+                    feed.setUrl(GlobalConfig.Rsshub + url);
+
+                    Help help;
+                    if (!StringUtil.trim(feed.getExtra()).equals("")){
+                        help = new Help(true,feed.getExtra());
+                    }else {
+                        help = new Help(false);
+                    }
                     //用一个弹窗显示参数列表
                     new XPopup.Builder(FeedListActivity.this)
-                            .asCustom(new RequireListPopupView(FeedListActivity.this,feedRequireList,"订阅参数填写","",new Help(false),feed))
+                            .asCustom(new RequireListPopupView(FeedListActivity.this,feedRequireList,"订阅参数填写","",help,feed,getSupportFragmentManager()))
                             .show();
+
 
                 } else {
                     ALog.d("请求失败" + response.errorBody());

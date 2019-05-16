@@ -1,4 +1,4 @@
-package com.ihewro.focus.view;
+package com.ihewro.focus.helper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -53,18 +53,19 @@ public class MyWebViewClient extends WebViewClient {
 
     private void addImageClickListener(WebView webView) {
 
-     /*   //设置图片的点击事件
+        //设置图片的点击事件
         webView.loadUrl("javascript:(function(){" +
                 "var objs = document.getElementsByTagName(\"img\"); " +
                 "for(var i=0;i<objs.length;i++)  " +
-                "{"
+                "{" +
+                "window.imagelistener.test('哈哈哈哈');"
                 + "    objs[i].onclick=function()  " +
                 "    {  "
                 + "        window.imagelistener.openImage(this.src);  " +//通过js代码找到标签为img的代码块，设置点击的监听方法与本地的openImage方法进行连接
                 "    }  " +
                 "}" +
+                "window.imagelistener.test('哈哈哈哈');" +
                 "})()");
-*/
 
         //图片自适应大小
 

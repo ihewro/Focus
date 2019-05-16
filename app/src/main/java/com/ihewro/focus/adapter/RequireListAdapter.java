@@ -10,6 +10,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.bean.FeedRequire;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <pre>
@@ -31,5 +32,8 @@ public class RequireListAdapter extends BaseQuickAdapter<FeedRequire, BaseViewHo
     protected void convert(BaseViewHolder helper, FeedRequire item) {
         helper.setText(R.id.info,item.getChinaName());
         ((EditText)helper.getView(R.id.input)).setHint(item.getDesc());
+        if (!Objects.equals(item.getDefaultValue(),"")){
+            ((EditText)helper.getView(R.id.input)).setText(item.getDefaultValue());
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.ihewro.focus.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
@@ -15,9 +17,12 @@ import java.util.List;
  *     version: 1.0
  * </pre>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Feed extends LitePalSupport {
 
+    @Column(unique = true)
     private int id;//真实主键
+
     @Column(unique = true)
     private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id，这个字段需要保留，以便获取服务器上对应的参数列表，该字段仅仅在获取参数列表使用，其他任何使用禁止使用！
 
@@ -25,12 +30,13 @@ public class Feed extends LitePalSupport {
     private String desc;
 
     @Column(unique = true)
-    private String url;//包括参数
+    private String url;//feed的URL，包括参数
     private String link;// 订阅指向的网站
     private String websiteName;
     private String websiteCategoryName;
     private Long time;
     private int feedFolderId;//feed文件夹id
+    private String type;
 
     @Column(ignore = true)
     private int totalNum;//总文章数
@@ -42,6 +48,9 @@ public class Feed extends LitePalSupport {
     private List<FeedItem> feedItemList = new ArrayList<>();
     @Column(ignore = true)
     private List<FeedRequire> feedRequireList = new ArrayList<>();//当前feed所需要的参数
+
+    @Column(ignore = true)
+    private String extra;//feed的订阅参数额外信息，只会在在线订阅的时候会使用到该参数
 
     @Override
     public String toString() {
@@ -174,5 +183,29 @@ public class Feed extends LitePalSupport {
 
     public Long getTime() {
         return time;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 }

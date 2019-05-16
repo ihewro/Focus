@@ -18,4 +18,9 @@ public class GlobalConfig {
     public static final String storageFolderName = "focus";//所有表情包都在此目录下建立子目录
     public static final String appDirPath = Environment.getExternalStorageDirectory() + "/" + GlobalConfig.storageFolderName + "/";
     public static final String appXMLPath = Environment.getExternalStorageDirectory() + "/" + GlobalConfig.storageFolderName + "/" + "xml/";
+
+    public static final String OfficialRSSHUB = "https://rsshub.app";
+    public static final String moeratsRsshub = "https://rsshub.moerats.com";
+    public static final String Rsshub = moeratsRsshub;
+
 }

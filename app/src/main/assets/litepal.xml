@@ -3,7 +3,7 @@
 
     <dbname value="focus" />
 
-    <version value="5" />
+    <version value="6" />
 
     <!--
     	Define your models in the list with mapping tag, LitePal will

@@ -2,10 +2,12 @@ package com.ihewro.focus.adapter;
 
 import android.support.annotation.Nullable;
 
+import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Website;
+import com.ihewro.focus.util.StringUtil;
 
 import java.util.List;
 
@@ -27,7 +29,13 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
     protected void convert(BaseViewHolder helper, Website item) {
         bindItemListener(helper,item);
         helper.setText(R.id.name,item.getName());
-        helper.setText(R.id.desc,item.getDesc());
+        if (StringUtil.trim(item.getDesc()).equals("")){
+            helper.setGone(R.id.desc,true);
+            ALog.d("怎么回事？？"+ StringUtil.trim(item.getDesc()));
+        }else {
+            helper.setGone(R.id.desc,false);
+            helper.setText(R.id.desc,item.getDesc());
+        }
 
     }
 

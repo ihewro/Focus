@@ -131,7 +131,7 @@ dependencies {
     implementation project(':likebutton')
 
     //pup弹窗，即将启用
-    implementation 'com.lxj:xpopup:1.7.6'
+    implementation 'com.lxj:xpopup:1.7.8'
     implementation 'com.github.razerdp:BasePopup:2.1.9'
 
     //多主题

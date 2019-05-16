@@ -68,18 +68,17 @@ public class FeedParser {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(new StringReader(xmlStr));
 
-            //TODO: 这个地方不确定是不是正确的，判断文件的类型，是RSS还是ATOM 格式
-            String name = parser.getName();
-            if (name.equals(RSS)){//RSS格式
-                parser.nextTag();
-                return readRssForFeed(parser);
+            while (parser.next() != XmlPullParser.END_TAG){
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+                String name = parser.getName();
+                if (name.equals(RSS)){//RSS格式
+                    return readRssForFeed(parser);
 
-            }else if (name.equals(FEED)){
-                parser.nextTag();
-                return readFeedForFeed(parser,url);
-            }else {
-                ALog.d("不支持该种格式的文件");
-                return null;
+                }else if (name.equals(FEED)){
+                    return readFeedForFeed(parser,url);
+                }
             }
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
@@ -104,15 +103,13 @@ public class FeedParser {
             String name = parser.getName();
             // Starts by looking for the entry tag
             if (name.equals(CHANNEL)) {
-                return HandleFeed(readChannelForFeed(parser));
+                return readChannelForFeed(parser);
             } else {
                 skip(parser);
             }
         }
         return null;
     }
-
-
 
     /**
      * 从channel标志开始构建feed类。
@@ -133,9 +130,10 @@ public class FeedParser {
             String name = parser.getName();
             // Starts by looking for the entry tag
             switch (name) {
-                case TITLE:
-                    feed.setName(readTitle(parser));
-                    break;
+                /*case TITLE:
+                    //使用用户设置的title
+//                    feed.setName(readTitle(parser));
+                    break;*/
                 case LINK:
                     feed.setLink(readLink(parser));
                     break;
@@ -293,31 +291,38 @@ public class FeedParser {
      * @return
      */
     public static Feed HandleFeed(Feed feed){
-        //给feed下面所有feedItem设置feedName和feedId;
-        //获取当前feed的iid
-        List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
-        int feedId = 0;
-        if (tempFeeds.size() <= 0){
-            ALog.d("出现未订阅错误"+feed.getUrl());//我们获取feedItem内容是从找数据库的feed，所以不可能feedItem中的feed url 不在数据库中欧冠
-        }else {
-            feedId = tempFeeds.get(0).getId();
-        }
-        feed.setId(feedId);
+        if (feed !=null){
+            //给feed下面所有feedItem设置feedName和feedId;
+            //获取当前feed的iid
+            List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
+            int feedId = 0;
+            if (tempFeeds.size() <= 0){
+                ALog.d("出现未订阅错误"+feed.getUrl());//我们获取feedItem内容是从找数据库的feed，所以不可能feedItem中的feed url 不在数据库中欧冠
+            }else {
+                feedId = tempFeeds.get(0).getId();
+            }
+            feed.setId(feedId);
+//        tempFeeds.get(0).setLink(feed.getLink());
+//        tempFeeds.get(0).setDesc(feed.getDesc());
+//        tempFeeds.get(0).save();
+            feed.update(feedId);
+//        feed.save();//更新数据！
 
-        //给feed下所有feedItem绑定feed信息
-        for (int i =0;i<feed.getFeedItemList().size();i++){
-            feed.getFeedItemList().get(i).setFeedName(feed.getName());
-            feed.getFeedItemList().get(i).setFeedId(feedId);
-            try{
-                feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
-            }catch (LitePalSupportException exception){
-                ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
-                //此时要对feedItem进行状态字段的恢复，读取数据的状态
-                FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
-                feed.getFeedItemList().get(i).setId(temp.getId());
-                feed.getFeedItemList().get(i).setRead(temp.isRead());
-                feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
-                feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
+            //给feed下所有feedItem绑定feed信息
+            for (int i =0;i<feed.getFeedItemList().size();i++){
+                feed.getFeedItemList().get(i).setFeedName(feed.getName());
+                feed.getFeedItemList().get(i).setFeedId(feedId);
+                try{
+                    feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
+                }catch (LitePalSupportException exception){
+                    ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
+                    //此时要对feedItem进行状态字段的恢复，读取数据的状态
+                    FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
+                    feed.getFeedItemList().get(i).setId(temp.getId());
+                    feed.getFeedItemList().get(i).setRead(temp.isRead());
+                    feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
+                    feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
+                }
             }
         }
 

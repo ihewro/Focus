@@ -220,10 +220,10 @@ public class FeedCategoryActivity extends BackActivity {
                 //弹窗
                 List<FeedRequire> list = new ArrayList<>();
                 list.add(new FeedRequire("订阅地址","举例：https://www.ihewro.com/feed",FeedRequire.SET_URL));
-                list.add(new FeedRequire("订阅名称","随意给订阅取一个名字，选填",FeedRequire.SET_NAME));
+                list.add(new FeedRequire("订阅名称","随意给订阅取一个名字",FeedRequire.SET_NAME));
                 new XPopup.Builder(FeedCategoryActivity.this)
 //                        .moveUpToKeyboard(false) //如果不加这个，评论弹窗会移动到软键盘上面
-                        .asCustom(new RequireListPopupView(FeedCategoryActivity.this,list,"手动订阅","适用于高级玩家",new Help(false),new Feed()))
+                        .asCustom(new RequireListPopupView(FeedCategoryActivity.this,list,"手动订阅","适用于高级玩家",new Help(false),new Feed(),getSupportFragmentManager()))
                         .show();
 
                 break;

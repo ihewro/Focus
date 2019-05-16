@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ihewro.focus.util.FeedParser.HandleFeed;
 import static com.ihewro.focus.util.FeedParser.readTagByTagName;
 import static com.ihewro.focus.util.FeedParser.skip;
 
@@ -74,7 +73,7 @@ public class AtomParser {
                     feed.setTime(readLastBuildDate(parser));
                     break;
                 case SUBTITLE:
-                    feed.setDesc(readDesc(parser));
+                    feed.setDesc(readSubtitle(parser));
                     break;
                 case ENTRY:
                     //获取当前feed最新的文章列表
@@ -88,7 +87,7 @@ public class AtomParser {
         }
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");
-        return HandleFeed(feed);
+        return feed;
     }
 
     /**
@@ -155,6 +154,9 @@ public class AtomParser {
         return pubData;
     }
 
+    private static String readSubtitle(XmlPullParser parser) throws IOException, XmlPullParserException {
+        return readTagByTagName(parser,SUBTITLE);
+    }
     private static String readDesc(XmlPullParser parser) throws IOException, XmlPullParserException {
         return readTagByTagName(parser,SUMMARY);
     }
