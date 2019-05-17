@@ -1,6 +1,7 @@
 package com.ihewro.focus.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ihewro.focus.util.StringUtil;
 
 /**
  * <pre>
@@ -63,7 +64,7 @@ public class FeedRequire {
     }
 
     public String getName() {
-        return name;
+        return StringUtil.trim(name);
     }
 
     public void setName(String name) {
@@ -79,7 +80,7 @@ public class FeedRequire {
     }
 
     public String getDesc() {
-        return desc;
+        return StringUtil.trim(desc);
     }
 
     public void setDesc(String desc) {

@@ -79,7 +79,7 @@ public class AtomParser {
                     //获取当前feed最新的文章列表
                     FeedItem feedItem = readEntryForFeedItem(parser);
                     if (feedItem.isNotHaveExtractTime()){
-                        feedItem.setDate(feedItem.getDate() - feedItems.size() *100);//越往后的时间越小，保证前面的时间大，后面的时间小
+                        feedItem.setDate(feedItem.getDate() - feedItems.size() *1000);//越往后的时间越小，保证前面的时间大，后面的时间小
                     }
                     feedItems.add(feedItem);
                     break;
