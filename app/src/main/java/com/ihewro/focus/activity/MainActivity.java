@@ -372,7 +372,7 @@ public class MainActivity extends BaseActivity {
                 case DRAWER_FOLDER:
                     //获取到这个文件夹的数据
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),((SecondaryDrawerItem)drawerItem).getName().toString(),"",new Help(false)))
+                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),((ExpandableBadgeDrawerItem)drawerItem).getName().toString(),"",new Help(false)))
                             .show();
 
 
