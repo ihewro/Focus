@@ -245,6 +245,7 @@ public class RequireListPopupView extends BottomPopupView {
             public void onFinish(MaterialDialog dialog, View view, int which, CharSequence text, int targetId) {
                 //移动到指定的目录下
                 feed.setFeedFolderId(targetId);
+                feed.setTimeout(Feed.DEFAULT_TIMEOUT);
                 try{
                     feed.save();
                     Toasty.success(UIUtil.getContext(),"订阅成功").show();

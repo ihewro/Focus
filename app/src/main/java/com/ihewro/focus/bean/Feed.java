@@ -20,6 +20,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Feed extends LitePalSupport {
 
+    public static final int DEFAULT_TIMEOUT = 15;
+
     @Column(unique = true)
     private int id;//真实主键
 
@@ -51,6 +53,9 @@ public class Feed extends LitePalSupport {
 
     @Column(ignore = true)
     private String extra;//feed的订阅参数额外信息，只会在在线订阅的时候会使用到该参数
+
+    @Column(defaultValue = "15")
+    private int timeout;//feed拉取的超时时间
 
     @Override
     public String toString() {
@@ -207,5 +212,13 @@ public class Feed extends LitePalSupport {
 
     public void setExtra(String extra) {
         this.extra = extra;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }

@@ -1,5 +1,6 @@
 package com.ihewro.focus.view;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
@@ -57,7 +58,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         .title("修改订阅名称")
                         .content("输入新的名称：")
                         .inputType(InputType.TYPE_CLASS_TEXT)
-                        .input(item.getName(), "", new MaterialDialog.InputCallback() {
+                        .input(item.getName(), item.getName(), new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                                 String name = dialog.getInputEditText().getText().toString().trim();
@@ -163,11 +164,11 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         .input(item.getUrl(), item.getUrl(), new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                String name = dialog.getInputEditText().getText().toString().trim();
-                                if (name.equals("")){
-                                    Toasty.info(getContext(),"请勿填写空名字哦😯").show();
+                                String url = dialog.getInputEditText().getText().toString().trim();
+                                if (url.equals("")){
+                                    Toasty.info(getContext(),"请勿为空😯").show();
                                 }else {
-                                    item.setName(name);
+                                    item.setUrl(url);
                                     item.save();
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
                                 }
@@ -175,6 +176,32 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         }).show();
             }
         }));
+
+
+        operations.add(new Operation("设置超时时间","",getResources().getDrawable(R.drawable.ic_touch_app_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final Feed item = (Feed)o;
+                new MaterialDialog.Builder(getContext())
+                        .title("设置超时时间")
+                        .content("单位是秒，默认15s，时间太短可能会导致部分源无法获取最新数据：")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input(item.getTimeout()+"", item.getTimeout()+"", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                String timeout = dialog.getInputEditText().getText().toString().trim();
+                                if (timeout.equals("")){
+                                    Toasty.info(getContext(),"请勿为空😯").show();
+                                }else {
+                                    item.setTimeout(Integer.parseInt(timeout));
+                                    item.save();
+                                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                }
+                            }
+                        }).show();
+            }
+        }));
+
 
         return  operations;
     }

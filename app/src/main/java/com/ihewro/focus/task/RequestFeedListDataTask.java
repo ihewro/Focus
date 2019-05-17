@@ -108,12 +108,12 @@ public class RequestFeedListDataTask {
                 for (int i = 0; i <feedList.size() ; i++) {
                     Feed temp = feedList.get(i);
                     String url = temp.getUrl();
-                    requestData(url);
+                    ALog.d("超时时间" + temp.getTimeout());
+                    requestData(url,temp.getTimeout());
                 }
             }
         }
     }
-
     /**
      *
      * @param index 已经完成了的任务个数
@@ -152,7 +152,10 @@ public class RequestFeedListDataTask {
         }
     }
 
-    private void requestData(String url) {
+    private void requestData(String url, int timeout) {
+        if (timeout == 0){
+            timeout = Feed.DEFAULT_TIMEOUT;//默认值
+        }
         final String originUrl = url;
         if (url.charAt(url.length() -1) == '/'){//去掉末尾的/
             url = url.substring(0,url.length()-1);
@@ -162,14 +165,14 @@ public class RequestFeedListDataTask {
         int pos1 = url.lastIndexOf("/");
         if (pos1 == 7 || pos1 == 6){//说明这/是协议头的,比如https://www.ihewro.com
             url = url + "/";
-            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 10, 10, 10);
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, timeout, timeout, timeout);
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSData();
         }else {
             String with = url.substring(pos1+1);
             url = url.substring(0,pos1) + "/";
             ALog.d("根域名" + url + "参数" + with);
-            Retrofit retrofit = HttpUtil.getRetrofit("String", url, 10, 10, 10);
+            Retrofit retrofit = HttpUtil.getRetrofit("String", url, timeout, timeout, timeout);
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSDataWith(with);
         }
