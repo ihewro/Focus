@@ -21,6 +21,7 @@ import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.Constants;
@@ -180,8 +181,7 @@ public class FeedListActivity extends BackActivity {
                     if (feed.getUrl().charAt(0) != '/'){
                         url = "/"+url;
                     }
-                    feed.setUrl(GlobalConfig.Rsshub + url);
-
+                    feed.setUrl(UserPreference.getRssHubUrl() + url);
                     Help help;
                     if (!StringUtil.trim(feed.getExtra()).equals("")){
                         help = new Help(true,feed.getExtra());

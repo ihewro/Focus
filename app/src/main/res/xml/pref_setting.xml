@@ -7,7 +7,7 @@
     <Preference
         android:key="@string/pref_key_feed_num"
         android:title="@string/pref_title_feed_num"
-        android:summary="20/50"/>
+        android:summary="20"/>
 
 
     <PreferenceCategory
@@ -24,16 +24,10 @@
         android:title="@string/pref_title_load_choice"
         android:summary="@string/pref_summary_load_choice"/>
 
-
     <Preference
-        android:key="@string/pref_key_font_size"
-        android:title="@string/pref_title_font_size"
-        android:summary="@string/pref_summary_font_size"/>
-
-    <Preference
-        android:key="@string/pref_key_theme"
-        android:title="@string/pref_title_theme"
-        android:summary="@string/pref_summary_theme"/>
+        android:key="@string/pref_key_rsshub_choice"
+        android:title="@string/pref_title_rsshub_choice"
+        android:summary="@string/pref_summary_rsshub_choice"/>
 
 
     <PreferenceCategory
@@ -44,10 +38,6 @@
         android:key="@string/pref_key_backup"
         android:title="@string/pref_title_backup"
         android:summary="@string/pref_summary_backup"/>
-
-
-
-
 
     <Preference
         android:key="@string/pref_key_recover"

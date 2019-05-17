@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.blankj.ALog;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
@@ -69,7 +70,8 @@ public class RequestFeedListDataTask {
     private ProgressBar pbProgress;
     private int orderChoice = FilterPopupView.ORDER_BY_NEW;
     private int filterChoice = FilterPopupView.SHOW_ALL;
-
+    //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
+    boolean flag;
 
     public RequestFeedListDataTask(int oderChoice, int filterChoice,Activity activity,View view,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
         this.activity = activity;
@@ -88,23 +90,20 @@ public class RequestFeedListDataTask {
         callback.onBegin();
         this.num = feedList.size();
 
-        //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
-        boolean flag = true;
-        String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, String.valueOf(false));
-        /*if (value != null && value.equals("1")){
+        String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, "0");
+        if (value != null && value.equals("1")){//强制刷新数据
             flag = true;
         }else {
             flag = false;
-        }*/
+        }
         this.okNum = 0;
         if (num>0){//请求总数大于1才会进行请求
-            if (flag && !isForce){
+            if (!flag && !isForce){
                 this.okNum = num;
                 setUI();
             }else {
                 //显示进度通知
                 ShowProgress();
-
                 for (int i = 0; i <feedList.size() ; i++) {
                     Feed temp = feedList.get(i);
                     String url = temp.getUrl();
@@ -119,7 +118,7 @@ public class RequestFeedListDataTask {
      * @param index 已经完成了的任务个数
      */
     private void updateTextInAlter(int index){
-        if (isForce){//当有网络请求的时候，才有进度通知条
+        if (isForce || flag){//当有网络请求的时候，才有进度通知条
             if (index == 9999){
                 if (popupView!=null && popupView.isShow()){
                     popupView.getProgressBar().setProgress(100);
@@ -157,6 +156,15 @@ public class RequestFeedListDataTask {
             timeout = Feed.DEFAULT_TIMEOUT;//默认值
         }
         final String originUrl = url;
+
+        //判断RSSHUB的源地址，替换成现在的地址
+        for (int i = 0; i< GlobalConfig.rssHub.size(); i++){
+            if (url.contains(GlobalConfig.rssHub.get(i))){
+                url = url.replace(GlobalConfig.rssHub.get(i),UserPreference.getRssHubUrl());
+                break;
+            }
+        }
+
         if (url.charAt(url.length() -1) == '/'){//去掉末尾的/
             url = url.substring(0,url.length()-1);
         }
@@ -176,6 +184,9 @@ public class RequestFeedListDataTask {
             HttpInterface request = retrofit.create(HttpInterface.class);
             call = request.getRSSDataWith(with);
         }
+
+
+
         call.enqueue(new Callback<String>() {
             @SuppressLint("CheckResult")
             @Override

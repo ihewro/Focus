@@ -111,8 +111,8 @@
     <string name="pref_key_feed_num">pref_key_feed_num</string>
     <string name="pref_title_feed_num">订阅数目</string>
     <string name="pref_key_use_internet_while_open">pref_key_use_internet_while_open</string>
-    <string name="pref_title_use_internet_while_open">快速启动</string>
-    <string name="pref_summary_lower_flow_mode">初次启动app时，自动获取最新数据，选择否，则先加载本地数据</string>
+    <string name="pref_title_use_internet_while_open">首次打开自动获取数据</string>
+    <string name="pref_summary_lower_flow_mode">初次启动app时，自动获取最新数据，选择否，则只加载本地数据，需要手动刷新</string>
     <string name="pref_key_licence">pref_key_licence</string>
     <string name="pref_title_licence">开源许可</string>
     <string name="pref_key_update">pref_key_update</string>
@@ -126,7 +126,7 @@
     <string name="pref_title_backup">备份</string>
     <string name="pref_key_recover">pref_key_recover</string>
     <string name="pref_title_recover">恢复订阅</string>
-    <string name="pref_summary_backup">备份你的订阅数据，以便恢复</string>
+    <string name="pref_summary_backup">备份你的订阅数据，以便恢复。（导出为OPML格式）</string>
     <string name="pref_summary_recover">恢复数据</string>
     <string name="pref_key_font_size">pref_key_font_size</string>
     <string name="pref_title_font_size">字体大小</string>
@@ -135,7 +135,10 @@
     <string name="pref_title_theme">主题选择</string>
     <string name="pref_summary_theme">多种主题选择你喜欢的😍</string>
     <string name="pref_key_load_choice">pref_key_load_choice</string>
-    <string name="pref_title_load_choice">非快速启动加载项</string>
-    <string name="pref_summary_load_choice">非快速启动模式下，选择首次打开软件更新的订阅列表</string>
+    <string name="pref_title_load_choice">选择自动加载项</string>
+    <string name="pref_summary_load_choice">上面设置选择否，这里可以选择首次打开应用获取数据的订阅列表</string>
+    <string name="pref_title_rsshub_choice">RssHub源选择</string>
+    <string name="pref_key_rsshub_choice">pref_key_rsshub_choice</string>
+    <string name="pref_summary_rsshub_choice">官方RssHub可能不够稳定，可以使用moerats大佬自建的RssHub源</string>
 
 </resources>

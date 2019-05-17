@@ -1,5 +1,7 @@
 package com.ihewro.focus.bean;
 
+import com.ihewro.focus.GlobalConfig;
+
 import org.litepal.LitePal;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
@@ -18,6 +20,7 @@ import java.util.List;
 public class UserPreference extends LitePalSupport {
 
     public static final String  USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
+    public static final String  RSS_HUB =  "rsshub";
     private int id;//主键
 
 
@@ -73,15 +76,6 @@ public class UserPreference extends LitePalSupport {
         }
     }
 
-    public static String queryDefaultValueByKey(String key ,String defaultValue){
-        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
-        if (userPreferences.size()>0){
-            UserPreference temp = userPreferences.get(0);
-            return temp.getDefaultValue();
-        }else {
-            return defaultValue;
-        }
-    }
 
     private static void setValueByKey(String key,String value){
         UserPreference userPreference = new UserPreference(key,value);
@@ -98,6 +92,11 @@ public class UserPreference extends LitePalSupport {
         }else {
             setValueByKey(key,value);
         }
+    }
+
+
+    public static String getRssHubUrl(){
+        return queryValueByKey(RSS_HUB, GlobalConfig.OfficialRSSHUB);
     }
 
 

@@ -2,6 +2,9 @@ package com.ihewro.focus;
 
 import android.os.Environment;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -20,7 +23,10 @@ public class GlobalConfig {
     public static final String appXMLPath = Environment.getExternalStorageDirectory() + "/" + GlobalConfig.storageFolderName + "/" + "xml/";
 
     public static final String OfficialRSSHUB = "https://rsshub.app";
-    public static final String moeratsRsshub = "https://rsshub.moerats.com";
-    public static final String Rsshub = moeratsRsshub;
+    public static final String MoeratsRsshub = "https://rsshub.moerats.com";
+    public static final List<String> rssHub = Arrays.asList(OfficialRSSHUB, MoeratsRsshub);
+
+
+
 
 }
