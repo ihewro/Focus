@@ -1,6 +1,7 @@
 package com.ihewro.focus.adapter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,12 +13,17 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.callback.ImageLoaderCallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
+import com.ihewro.focus.util.ImageLoaderManager;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -51,7 +57,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, FeedItem item) {
+    protected void convert(final BaseViewHolder helper, FeedItem item) {
         //绑定事件
         bindListener(helper,item);
 
@@ -81,10 +87,21 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         }
 
         String imageUrl = DataUtil.getFeedItemImageUrl(item);
-        if (imageUrl!=null){
+        if (!StringUtil.trim(imageUrl).equals("")){
             helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
-            ImageLoader imageLoader = ImageLoader.getInstance();
-            imageLoader.displayImage(imageUrl, ((ImageView)helper.getView(R.id.post_pic)));
+            ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
+                @Override
+                public void onFailed(ImageView imageView, FailReason failReason) {
+                    imageView.setVisibility(View.GONE);
+                    ALog.d("图片加载失败！！");
+                }
+
+                @Override
+                public void onSuccess(ImageView imageView, Bitmap bitmap) {
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setImageBitmap(bitmap);
+                }
+            });
         }else {
             helper.getView(R.id.post_pic).setVisibility(View.GONE);
         }

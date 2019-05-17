@@ -152,6 +152,8 @@ public class FeedParser {
                     skip(parser);
                     break;
             }
+
+            ALog.d();
         }
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");

@@ -146,14 +146,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
         refreshLayout.setEnableAutoLoadMore(false);
 
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.finishLoadMore();
-                //打开外链
-                openLink(currentFeedItem);
-            }
-        });
+        refreshLayout.setEnableRefresh(false);//禁止下拉动作
 
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override

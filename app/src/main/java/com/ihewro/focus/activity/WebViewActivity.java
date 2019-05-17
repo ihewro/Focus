@@ -41,8 +41,9 @@ public class WebViewActivity extends BackActivity {
         setSupportActionBar(toolbar);
         String url = getIntent().getStringExtra(EXTRA_URL);
         toolbar.setTitle(url);
-
+        webView.requestDisallowInterceptTouchEvent(false);
         webView.setWebViewClient(new WebViewClient());
+
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         setTitle(url);

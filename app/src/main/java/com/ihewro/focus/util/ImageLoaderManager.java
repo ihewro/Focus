@@ -1,14 +1,21 @@
 package com.ihewro.focus.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.ihewro.focus.R;
+import com.ihewro.focus.callback.ImageLoaderCallback;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 /**
  * @description:
@@ -30,7 +37,6 @@ public class ImageLoaderManager {
                 .cacheOnDisk(true)
                 .build();
 
-        // TODO: 1/28/17 dependent on device performance
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
                 .defaultDisplayImageOptions(options)
                 .memoryCache(new LruMemoryCache(8 * 1024 * 1024))
@@ -42,17 +48,35 @@ public class ImageLoaderManager {
         ImageLoader.getInstance().init(config);
     }
 
-    public static DisplayImageOptions getSubsciptionIconOptions(Context context) {
-        Drawable defaultDrawable = context.getResources().getDrawable(R.drawable.ic_rss_feed_grey_24dp);
+    public static void loadImageUrlToImageView(String imageUrl, final ImageView imageView, final ImageLoaderCallback imageLoaderCallback){
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(defaultDrawable)
-                .showImageForEmptyUri(defaultDrawable)
-                .showImageOnFail(defaultDrawable)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
+        //TODO: 根据夜间模式，加载中的图片不同
+        DisplayImageOptions simpleOptions = new DisplayImageOptions.Builder()
+//                .showImageOnLoading(R.drawable.bj_weixianshi)//加载中的等待图片
                 .build();
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.loadImage(imageUrl, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
 
-        return options;
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                imageLoaderCallback.onFailed(imageView,failReason);
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                imageLoaderCallback.onSuccess(imageView,loadedImage);
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+
+            }
+        });
     }
+
+
 }

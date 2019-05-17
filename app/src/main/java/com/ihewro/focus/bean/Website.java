@@ -26,6 +26,7 @@ public class Website extends LitePalSupport {
     private String name;
     private String desc;
     private String cate_name;//分类名称
+    private String icon;//图标地址
 
     @Column(ignore = true)
     private List<Feed> feedList = new ArrayList<>();
@@ -69,5 +70,13 @@ public class Website extends LitePalSupport {
 
     public void setFeedList(List<Feed> feedList) {
         this.feedList = feedList;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

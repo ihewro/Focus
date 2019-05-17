@@ -31,6 +31,8 @@ public class WebViewUtil {
         webSettings.setDisplayZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
 
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setHorizontalScrollBarEnabled(false);
 
         String[] imageUrls = {};
         webView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");

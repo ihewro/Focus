@@ -1,13 +1,20 @@
 package com.ihewro.focus.adapter;
 
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Website;
+import com.ihewro.focus.callback.ImageLoaderCallback;
+import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.StringUtil;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.List;
 
@@ -26,16 +33,33 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, Website item) {
+    protected void convert(final BaseViewHolder helper, Website item) {
         bindItemListener(helper,item);
         helper.setText(R.id.name,item.getName());
         if (StringUtil.trim(item.getDesc()).equals("")){
-            helper.setGone(R.id.desc,true);
-            ALog.d("怎么回事？？"+ StringUtil.trim(item.getDesc()));
-        }else {
             helper.setGone(R.id.desc,false);
+        }else {
+            helper.setGone(R.id.desc,true);
             helper.setText(R.id.desc,item.getDesc());
         }
+
+        if (StringUtil.trim(item.getIcon()).equals("")){
+            helper.setImageResource(R.id.icon,R.drawable.ic_rss_feed_grey_24dp);
+        }else {
+            ALog.d("ico图片地址"+item.getIcon());
+            ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(item.getIcon()), (ImageView) helper.getView(R.id.icon), new ImageLoaderCallback() {
+                @Override
+                public void onFailed(ImageView imageView, FailReason failReason) {
+                    imageView.setImageResource(R.drawable.ic_rss_feed_grey_24dp);
+                }
+
+                @Override
+                public void onSuccess(ImageView imageView, Bitmap bitmap) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            });
+        }
+
 
     }
 
