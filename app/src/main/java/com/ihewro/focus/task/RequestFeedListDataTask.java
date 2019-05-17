@@ -316,8 +316,6 @@ public class RequestFeedListDataTask {
                 });
             }
 
-
-
             ALog.d("结束数据按时间排序");
             updateTextInAlter(9999);
             callback.onFinish(list);

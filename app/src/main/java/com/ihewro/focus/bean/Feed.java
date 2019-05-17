@@ -57,6 +57,9 @@ public class Feed extends LitePalSupport {
     @Column(defaultValue = "15")
     private int timeout;//feed拉取的超时时间
 
+    @Column(ignore = true)
+    private boolean errorGet;//获取信息失败
+
     @Override
     public String toString() {
         return "feedId" + iid + "\n"
@@ -220,5 +223,13 @@ public class Feed extends LitePalSupport {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isErrorGet() {
+        return errorGet;
+    }
+
+    public void setErrorGet(boolean errorGet) {
+        this.errorGet = errorGet;
     }
 }
