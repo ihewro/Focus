@@ -96,7 +96,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                                 //3.删除文件夹
                                 LitePal.delete(FeedFolder.class,id);
 
-                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER, (int) id));
                             }
                         })
                         .show();

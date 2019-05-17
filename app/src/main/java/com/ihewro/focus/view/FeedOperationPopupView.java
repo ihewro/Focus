@@ -92,7 +92,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 //再删除feed
                                 LitePal.delete(Feed.class,id);
 
-                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED));
+                                EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED,id));
                             }
                         })
                         .show();

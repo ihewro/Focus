@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -207,7 +208,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     feedIdList.add(feed.getId());
                 }
             }
-            //TODO: 删除文件夹，移动feed都需要更新这部分内容
             //找到当前内容是否有在 标记已读的文件夹
             for (int i = 0; i< eList.size();i++){
                 if (feedIdList.contains(eList.get(i).getFeedId())){
@@ -215,6 +215,29 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     adapter.notifyItemChanged(i);//修改UI
                 }
             }
+
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){
+
+            //TODO: 写在子线程中
+            //如果在，删除这部分的文章显示
+            List<Integer> feedIdList = new ArrayList<>();
+            if (Objects.equals(eventBusMessage.getType(), EventMessage.DELETE_FEED)){
+                feedIdList.add(eventBusMessage.getInteger());
+            }else{//整个文件夹都标记为已读
+                List<Feed>feedList = LitePal.where("feedfolderid = ?", String.valueOf(eventBusMessage.getInteger())).find(Feed.class);
+                for(Feed feed:feedList){
+                    feedIdList.add(feed.getId());
+                }
+            }
+
+            //删除对应的文章，更新界面
+            for (Iterator iterator = this.feedIdList.iterator(); iterator.hasNext();) {
+                int id = Integer.valueOf((String)iterator.next());
+                if (feedIdList.contains(id)){
+                    iterator.remove();
+                }
+            }
+            updateData(this.feedIdList,this.orderChoice,this.filterChoice);
 
         }
     }

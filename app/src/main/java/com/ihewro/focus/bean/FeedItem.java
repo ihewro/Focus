@@ -28,7 +28,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     private String summary;//文章简介
     private String content;//文章内容
-    private String feedIid;
     private int feedId;
     private String feedName;
 
@@ -37,6 +36,9 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     private boolean read;//是否已经阅读,true 表示已阅读
     private boolean favorite;//是否收藏，true 表示已收藏
+
+    @Column(ignore = true)
+    private boolean notHaveExtractTime;//feedItem 获取的时候，没有时间这个字段
 
 
     @NonNull
@@ -108,13 +110,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         this.content = content;
     }
 
-    public String getFeedIid() {
-        return feedIid;
-    }
-
-    public void setFeedId(String feedId) {
-        this.feedIid = feedId;
-    }
 
     public boolean isRead() {
         return read;
@@ -183,5 +178,13 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     @Override
     public int hashCode() {
         return this.getUrl().hashCode();
+    }
+
+    public boolean isNotHaveExtractTime() {
+        return notHaveExtractTime;
+    }
+
+    public void setNotHaveExtractTime(boolean notHaveExtractTime) {
+        this.notHaveExtractTime = notHaveExtractTime;
     }
 }

@@ -80,6 +80,7 @@ public class DateUtil {
 
     private static Message isDateString(String datevalue, String dateFormat) {
         if (datevalue == null){
+            //先访问这个地方的，反而时间要更大！
             return new Message(true,new Date().getTime()+"");
         }
 

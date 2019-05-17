@@ -78,6 +78,9 @@ public class AtomParser {
                 case ENTRY:
                     //获取当前feed最新的文章列表
                     FeedItem feedItem = readEntryForFeedItem(parser);
+                    if (feedItem.isNotHaveExtractTime()){
+                        feedItem.setDate(feedItem.getDate() - feedItems.size() *100);//越往后的时间越小，保证前面的时间大，后面的时间小
+                    }
                     feedItems.add(feedItem);
                     break;
                 default:
@@ -130,9 +133,12 @@ public class AtomParser {
                     break;
             }
         }
-
         ALog.d("item名称：" + title + "时间为" + pubDate);
-        return new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
+        FeedItem  feedItem = new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
+        if (pubDate == null){
+            feedItem.setNotHaveExtractTime(true);
+        }
+        return feedItem;
     }
 
 

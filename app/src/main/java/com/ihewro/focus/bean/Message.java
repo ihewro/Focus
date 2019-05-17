@@ -5,7 +5,7 @@ package com.ihewro.focus.bean;
  *     author : hewro
  *     e-mail : ihewro@163.com
  *     time   : 2019/05/05
- *     desc   :
+ *     desc   : 一个简单的信息类，作用是作为返回参数，返回多个信息
  *     version: 1.0
  * </pre>
  */
