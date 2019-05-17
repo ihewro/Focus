@@ -58,7 +58,7 @@ import skin.support.SkinCompatManager;
 import skin.support.utils.SkinPreference;
 
 
-public class PostDetailActivity extends AppCompatActivity {
+public class PostDetailActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -285,7 +285,11 @@ public class PostDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.post, menu);
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            getMenuInflater().inflate(R.menu.post_night, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.post, menu);
+        }
 
         starItem = menu.findItem(R.id.action_star);
         showStarActionView(starItem);
@@ -341,6 +345,10 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
                 setLikeButton();
 
+                break;
+
+            case android.R.id.home:
+                finish();
                 break;
 
         }
@@ -459,7 +467,11 @@ public class PostDetailActivity extends AppCompatActivity {
         if (currentFeedItem.isFavorite()){
             starItem.setIcon(R.drawable.star_on);
         }else {
-            starItem.setIcon(R.drawable.star_off);
+            if(SkinPreference.getInstance().getSkinName().equals("night")){
+                starItem.setIcon(R.drawable.star_off_night);
+            }else {
+                starItem.setIcon(R.drawable.star_off);
+            }
         }
     }
 

@@ -13,6 +13,8 @@ import com.lxj.xpopup.core.DrawerPopupView;
 import java.util.Arrays;
 import java.util.List;
 
+import skin.support.utils.SkinPreference;
+
 /**
  * <pre>
  *     author : hewro
@@ -59,13 +61,19 @@ public class FilterPopupView extends DrawerPopupView {
     List<Integer> filterCardViews = Arrays.asList(R.id.all_card, R.id.read_card, R.id.star_card);
     List<Integer> filterTextViews = Arrays.asList(R.id.all_tv, R.id.read_tv, R.id.star_tv);
 
+    int normalTextColor;
+    int normalBGColor;
+    int highlightTextColor;
+    int highlightBGColor;
+
+
     public FilterPopupView(@NonNull Context context) {
         super(context);
     }
 
     @Override
     protected int getImplLayoutId() {
-        return R.layout.component_filder_drawer;
+        return R.layout.component_filter_drawer;
     }
 
     @Override
@@ -76,14 +84,27 @@ public class FilterPopupView extends DrawerPopupView {
 
         initView();
 
+        //初始化颜色
+
+        if (SkinPreference.getInstance().getSkinName().equals("night")){
+            normalTextColor = getResources().getColor(R.color.material_drawer_dark_selected_text);
+            normalBGColor = getResources().getColor(R.color.material_drawer_dark_selected);
+
+            highlightTextColor = getResources().getColor(R.color.material_drawer_dark_primary_text);
+            highlightBGColor = getResources().getColor(R.color.material_drawer_dark_background);
+
+        }else {
+            normalTextColor = getResources().getColor(R.color.colorAccent);
+            normalBGColor = getResources().getColor(R.color.material_drawer_selected);
+
+            highlightTextColor = getResources().getColor(R.color.material_drawer_primary_text);
+            highlightBGColor = getResources().getColor(R.color.material_drawer_background);
+        }
+
         //初始化选项
         clickOrderList(0);
-        clickOrderList(0);
+        clickFilterList(0);
 
-
-        //默认选择显示全部
-        allTv.setTextColor(getResources().getColor(R.color.text_unread));
-        allCard.setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
 
         initListener();
     }
@@ -152,14 +173,14 @@ public class FilterPopupView extends DrawerPopupView {
         orderChoice = orderOperation.get(position);
 
         //修改当前项为高亮
-        ((TextView)findViewById(orderTextViews.get(position))).setTextColor(getResources().getColor(R.color.text_unread));
-        ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
+        ((TextView)findViewById(orderTextViews.get(position))).setTextColor(normalTextColor);
+        ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(normalBGColor);
 
         //修改其他项为普通颜色
         for (int i = 0; i < orderOperation.size(); i++){
             if (i != position){
-                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(getResources().getColor(R.color.weak_text));
-                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.weak_text));
+                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(highlightTextColor);
+                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
 
             }
         }
@@ -174,14 +195,14 @@ public class FilterPopupView extends DrawerPopupView {
         filterChoice = filterOperation.get(position);
 
         //修改当前项为高亮
-        ((TextView)findViewById(filterTextViews.get(position))).setTextColor(getResources().getColor(R.color.text_unread));
-        ((CardView)findViewById(filterCardViews.get(position))).setCardBackgroundColor(getResources().getColor(R.color.material_drawer_selected));
+        ((TextView)findViewById(filterTextViews.get(position))).setTextColor(normalTextColor);
+        ((CardView)findViewById(filterCardViews.get(position))).setCardBackgroundColor(normalBGColor);
 
         //修改其他项为普通颜色
         for (int i = 0; i < filterOperation.size();i++){
             if (i != position){
-                ((TextView)findViewById(filterTextViews.get(i))).setTextColor(getResources().getColor(R.color.weak_text));
-                ((CardView)findViewById(filterCardViews.get(i))).setCardBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                ((TextView)findViewById(filterTextViews.get(i))).setTextColor(highlightTextColor);
+                ((CardView)findViewById(filterCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
             }
         }
     }

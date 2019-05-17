@@ -5,7 +5,7 @@ import android.view.MenuItem;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
-import com.jaeger.library.StatusBarUtil;
+import com.ihewro.focus.util.StatusBarUtil;
 import com.saber.chentianslideback.SlideBackActivity;
 
 import skin.support.utils.SkinPreference;

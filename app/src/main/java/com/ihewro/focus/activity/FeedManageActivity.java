@@ -139,6 +139,7 @@ public class FeedManageActivity extends BackActivity implements EasyPermissions.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.add, menu);
         return true;
     }

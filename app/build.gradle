@@ -151,7 +151,4 @@ dependencies {
 
     implementation 'ren.yale.android:scrollviewslipping:0.0.5'
 
-    //状态栏沉浸
-    implementation 'com.jaeger.statusbarutil:library:1.5.1'
-
 }

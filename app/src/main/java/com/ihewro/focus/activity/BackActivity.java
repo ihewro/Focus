@@ -1,10 +1,17 @@
 package com.ihewro.focus.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.ihewro.focus.R;
-import com.jaeger.library.StatusBarUtil;
+import com.ihewro.focus.util.StatusBarUtil;
 import com.saber.chentianslideback.SlideBackActivity;
 
 import skin.support.utils.SkinPreference;

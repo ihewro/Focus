@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- 填充的颜色 -->
+    <solid android:color="@color/text_unread_night" />
+
+    <!-- 圆角的半径 -->
+    <corners android:radius="5dp" />
+</shape>
