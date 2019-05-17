@@ -175,7 +175,7 @@ public class RequireListPopupView extends BottomPopupView {
 
             if (feedRequire.getType() == FeedRequire.SET_URL){
                 //TODO:需要判断一下这个url正确性
-                if (editText.trim().equals("")){
+                if (!feedRequire.isOptional() && editText.trim().equals("")){
                     editTextView.setError("不能为空哦");
                     isValidate = false;
                 }else if (!likeRssAddr(editText)){
@@ -194,14 +194,14 @@ public class RequireListPopupView extends BottomPopupView {
                     feed.setUrl(editText);
                 }
             }else if (feedRequire.getType() == FeedRequire.SET_NAME){
-                if (editText.trim().equals("")){
+                if (!feedRequire.isOptional() && editText.trim().equals("")){
                     editTextView.setError("不能为空哦");
                     isValidate = false;
                 }else {
                     feed.setName(editText);
                 }
             }else {
-                if (editText.trim().equals("")){
+                if (!feedRequire.isOptional() && editText.trim().equals("")){
                     editTextView.setError("不能为空哦");
                     isValidate = false;
                 }else {
