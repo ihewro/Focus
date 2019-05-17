@@ -37,6 +37,7 @@ import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.helper.WebviewFallback;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
+import com.ihewro.focus.util.WebViewUtil;
 import com.ihewro.focus.view.PostFooter;
 import com.ihewro.focus.view.PostHeader;
 import com.like.LikeButton;
@@ -466,8 +467,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private void openLink(FeedItem feedItem) {
         String url = currentFeedItem.getUrl();
-        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-        CustomTabActivityHelper.openCustomTab(
-                PostDetailActivity.this, customTabsIntent, Uri.parse(url), new WebviewFallback());
+        WebViewUtil.openLink(url,PostDetailActivity.this);
     }
 }

@@ -1,13 +1,19 @@
 package com.ihewro.focus.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.PostSetting;
+import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.MyWebViewClient;
+import com.ihewro.focus.helper.WebviewFallback;
 
 import skin.support.utils.SkinPreference;
 
@@ -23,7 +29,7 @@ import skin.support.utils.SkinPreference;
 public class WebViewUtil {
 
     @SuppressLint("SetJavaScriptEnabled")
-    public static void LoadHtmlIntoWebView(WebView webView, String html, Context context){
+    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context){
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setDomStorageEnabled(true);
@@ -59,6 +65,14 @@ public class WebViewUtil {
 
         webView.setBackgroundColor(Color.parseColor("#00000000"));
         webView.loadData( body, "text/html; charset=UTF-8", null);
+
+    }
+
+
+    public static void openLink(String url, Activity activity){
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+        CustomTabActivityHelper.openCustomTab(
+                activity, customTabsIntent, Uri.parse(url), new WebviewFallback());
 
     }
 }

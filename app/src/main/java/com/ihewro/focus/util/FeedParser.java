@@ -304,7 +304,9 @@ public class FeedParser {
                 feedId = tempFeeds.get(0).getId();
             }
             feed.setId(feedId);
-//        tempFeeds.get(0).setLink(feed.getLink());
+            feed.setName(tempFeeds.get(0).getName());//因为在线请求的时候没有拉取Titile这个字段
+
+            //        tempFeeds.get(0).setLink(feed.getLink());
 //        tempFeeds.get(0).setDesc(feed.getDesc());
 //        tempFeeds.get(0).save();
             feed.update(feedId);

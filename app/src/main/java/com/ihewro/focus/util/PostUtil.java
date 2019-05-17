@@ -1,6 +1,7 @@
 package com.ihewro.focus.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.webkit.WebView;
 
@@ -18,7 +19,7 @@ import com.ihewro.focus.bean.FeedItem;
  */
 public class PostUtil {
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
-    public static void setContent(Context context, FeedItem article, WebView textView) {
+    public static void setContent(Activity context, FeedItem article, WebView textView) {
         if (article == null || textView == null) {
             return;
         }

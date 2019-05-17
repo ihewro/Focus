@@ -1,5 +1,6 @@
 package com.ihewro.focus.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.PostDetailActivity;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.ImageViewerPopupView;
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener;
@@ -32,11 +34,11 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class MJavascriptInterface {
-    private Context context;
+    private Activity activity;
     private String[] imageUrls;
 
-    public MJavascriptInterface(Context context, String[] imageUrls) {
-        this.context = context;
+    MJavascriptInterface(Activity context, String[] imageUrls) {
+        this.activity = context;
         this.imageUrls = imageUrls;
     }
 
@@ -45,10 +47,19 @@ public class MJavascriptInterface {
 
         ALog.d("点击了图片" +img);
         // 单张图片场景
-        ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(context)
+        ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(activity)
                 .asImageViewer(null, img, new ImageLoader());
         imageViewerPopupView.show();
     }
+
+
+    @android.webkit.JavascriptInterface
+    public void openUrl(String url) {
+        WebViewUtil.openLink(url, activity);
+
+    }
+
+
 
     class ImageLoader implements XPopupImageLoader {
         @Override
@@ -69,8 +80,4 @@ public class MJavascriptInterface {
         }
     }
 
-    @android.webkit.JavascriptInterface
-    public void test(String str){
-        ALog.d("testtesttest");
-    }
 }

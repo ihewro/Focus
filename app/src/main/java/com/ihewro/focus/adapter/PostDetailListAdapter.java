@@ -1,5 +1,6 @@
 package com.ihewro.focus.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.webkit.WebView;
@@ -44,11 +45,11 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
     @BindView(R.id.feed_name)
     TextView feedName;
 
-    private Context context;
+    private Activity context;
     private boolean flag;
     private PostSetting postSetting;
 
-    public PostDetailListAdapter(Context context, boolean flag, PostSetting postSetting, @Nullable List<FeedItem> data) {
+    public PostDetailListAdapter(Activity context, boolean flag, PostSetting postSetting, @Nullable List<FeedItem> data) {
         super(R.layout.item_post_detail,data);
         this.context = context;
         this.flag = flag;
