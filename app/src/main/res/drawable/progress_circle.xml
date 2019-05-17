@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:pivotX="50%" android:pivotY="50%"
     android:fromDegrees="90"
-    android:toDegrees="270">
+    android:toDegrees="360">
 
     <shape
         android:shape="ring"
         android:innerRadiusRatio="3"
-        android:thicknessRatio="8"
+        android:thicknessRatio="10"
         android:useLevel="false">
         <gradient
             android:type="sweep"
@@ -16,7 +16,7 @@
             android:startColor="#000000"
             android:centerColor="#000000"
             android:centerY="0.5"
-            android:endColor="#000000" />
+            android:endColor="#ffffff" />
     </shape>
 
 </animated-rotate>

@@ -40,8 +40,8 @@ public class BackActivity extends SlideBackActivity {
         setSlideBackDirection(SlideBackActivity.LEFT);
 
         if(!SkinPreference.getInstance().getSkinName().equals("night")){
-            StatusBarUtil.setLightMode(this);
-            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
+//            StatusBarUtil.setLightMode(this);
+            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary),0);
         }
     }
 

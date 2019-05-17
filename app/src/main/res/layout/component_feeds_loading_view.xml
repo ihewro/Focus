@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@android:style/Widget.ProgressBar.Horizontal"
-        android:progressDrawable="@drawable/progress_bar_night"
+        android:progressDrawable="@drawable/progress_bar"
         android:progress="30"
         android:max="100"/>
 
@@ -20,7 +20,7 @@
         android:paddingBottom="6dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:indeterminateDrawable="@drawable/progress_circle_night"
+        android:indeterminateDrawable="@drawable/progress_circle"
         android:max="100"/>
 
     <TextView

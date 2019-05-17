@@ -25,8 +25,9 @@ public class BaseActivity extends AppCompatActivity {
         super.setContentView(layoutResID);
 
         if(!SkinPreference.getInstance().getSkinName().equals("night")){
-            StatusBarUtil.setLightMode(this);
-            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
+//            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
+//            StatusBarUtil.setLightMode(this);
+            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary),0);
         }
     }
 
