@@ -42,8 +42,8 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
     public SuspensionDecoration(Context context, List<? extends ISuspensionInterface> datas) {
         super();
         if(SkinPreference.getInstance().getSkinName().equals("night")){
-            COLOR_TITLE_BG = Color.parseColor("#ffeeeeee");
-            COLOR_TITLE_FONT = Color.parseColor("#dfffffff");
+            COLOR_TITLE_BG = Color.parseColor("#424242");
+            COLOR_TITLE_FONT = Color.parseColor("#eeeeee");
         }else {
             COLOR_TITLE_BG = Color.parseColor("#FFDFDFDF");
             COLOR_TITLE_FONT = Color.parseColor("#FF999999");

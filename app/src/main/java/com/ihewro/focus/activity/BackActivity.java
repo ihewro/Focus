@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.MenuItem;
 
 import com.ihewro.focus.R;
+import com.jaeger.library.StatusBarUtil;
 import com.saber.chentianslideback.SlideBackActivity;
 
 import skin.support.utils.SkinPreference;
@@ -30,6 +31,11 @@ public class BackActivity extends SlideBackActivity {
         }
         super.setContentView(layoutResID);
         setSlideBackDirection(SlideBackActivity.LEFT);
+
+        if(!SkinPreference.getInstance().getSkinName().equals("night")){
+            StatusBarUtil.setLightMode(this);
+            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
+        }
     }
 
 

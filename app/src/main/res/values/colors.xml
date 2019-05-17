@@ -4,20 +4,20 @@
     <color name="colorPrimary">#fafafa</color>
     <color name="colorPrimaryDark">#fafafa</color>
     <color name="colorAccent">#000000</color>
-    <color name="white">#FFFFFF</color>
 
+    <!--基准色-->
+    <color name="white">#FFFFFF</color>
 
     <!--页面渲染-->
     <color name="ripple_light">#99ffffff</color>
     <color name="ripple_dark">#40808080</color>
     <color name="weak_text">#c7c7c7</color>
     <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
-
     <color name="color_grey_dark">#f2f2f2</color>
     <color name="main_grey_light">#eeeeee</color>
 
     <!--组件-->
-    <color name="loading_bg">#c7c7c7</color>
+    <color name="loading_bg">#e0e0e0</color>
 
     <color name="text_unread">#CB000000</color> <!-- 54% -->
     <color name="text_unread_content">#616161</color> <!-- 54% -->
@@ -25,6 +25,6 @@
     <color name="text_read">#757575</color> <!-- 54% -->
     <color name="text_read_content">#9e9e9e</color>
 
-    <color name="divideLine">#000000</color> <!-- 54% -->
+    <color name="divider">#eeeeee</color>
 
 </resources>

@@ -74,15 +74,17 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         int read_content_color;
 
         if(SkinPreference.getInstance().getSkinName().equals("night")){
-            not_read_color = R.color.text_unread_night;
             read_color = R.color.text_read_night;
+            read_content_color = R.color.text_read_content_night;
 
-            read_content_color = R.color.text_read_content;
-            not_read_content_color = R.color.text_unread_content;
+            not_read_color = R.color.text_unread_night;
+            not_read_content_color = R.color.text_unread_content_night;
+
         }else {
-            not_read_color = R.color.text_unread;
             read_color = R.color.text_read;
             read_content_color = R.color.text_read_content;
+
+            not_read_color = R.color.text_unread;
             not_read_content_color = R.color.text_unread_content;
         }
 

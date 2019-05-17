@@ -1,6 +1,5 @@
 package com.ihewro.focus.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -15,31 +14,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.blankj.ALog;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.R;
-import com.ihewro.focus.activity.FeedListActivity;
-import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.adapter.RequireListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
-import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.core.BottomPopupView;
-import com.nostra13.universalimageloader.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
-import org.litepal.LitePal;
 import org.litepal.exceptions.LitePalSupportException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import es.dmoral.toasty.Toasty;
 
 /**

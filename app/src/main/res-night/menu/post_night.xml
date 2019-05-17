@@ -3,25 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_link"
-        android:icon="@drawable/ic_public_black_24dp"
+        android:icon="@drawable/ic_public_black_24dp_night"
         android:orderInCategory="100"
         android:title="访问链接"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_star"
-        android:icon="@drawable/star_off"
+        android:icon="@drawable/star_off_night"
         android:orderInCategory="100"
         android:title="收藏"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_black_24dp"
+        android:icon="@drawable/ic_share_black_24dp_night"
         android:orderInCategory="100"
         android:title="分享"
         app:showAsAction="always" />
     <item
         android:id="@+id/text_setting"
-        android:icon="@drawable/ic_text_fields_black_24dp"
+        android:icon="@drawable/ic_text_fields_black_24dp_night"
         android:orderInCategory="100"
         android:title="分享"
         app:showAsAction="always" />

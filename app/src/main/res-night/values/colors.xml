@@ -6,20 +6,28 @@
     <color name="colorAccent_night">#dfffffff</color>
 
 
-    <!--页面渲染-->
+    <!--基准色-->
     <color name="white_night">#000000</color>
+
+    <!--页面渲染-->
     <color name="ripple_light_night">#99000000</color>
     <color name="ripple_dark_night">#40808080</color>
     <color name="weak_text_night">#c7c7c7</color>
     <color name="text_secondary_dark_night">#8affffff</color> <!-- 54% -->
-    <color name="text_unread_night">#CBffffff</color> <!-- 54% -->
-    <color name="text_read_night">#B4B4B4</color> <!-- 54% -->
-    <color name="color_grey_dark_night">#f2f2f2</color>
+    <color name="color_grey_dark_night">#000000</color>
     <color name="main_grey_light_night">#eeeeee</color>
 
     <!--组件-->
+
     <color name="loading_bg_night">#000000</color>
-    <color name="divider">#eeeeee</color>
+
+    <color name="text_read_night">#B4B4B4</color> <!-- 54% -->
+    <color name="text_read_content_night">#B4B4B4</color> <!-- 54% -->
+
+    <color name="text_unread_night">#CBffffff</color> <!-- 54% -->
+    <color name="text_unread_content_night">#CBffffff</color> <!-- 54% -->
+
+    <color name="divider_night">#424242</color>
 
 
 

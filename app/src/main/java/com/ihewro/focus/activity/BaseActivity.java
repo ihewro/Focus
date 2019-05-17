@@ -5,6 +5,7 @@ import android.view.MenuItem;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.jaeger.library.StatusBarUtil;
 import com.saber.chentianslideback.SlideBackActivity;
 
 import skin.support.utils.SkinPreference;
@@ -21,8 +22,12 @@ import skin.support.utils.SkinPreference;
 public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
-
         super.setContentView(layoutResID);
+
+        if(!SkinPreference.getInstance().getSkinName().equals("night")){
+            StatusBarUtil.setLightMode(this);
+            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
+        }
     }
 
     @Override
