@@ -25,6 +25,7 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.Constants;
+import com.ihewro.focus.util.RSSUtil;
 import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.RequireListPopupView;
@@ -177,11 +178,15 @@ public class FeedListActivity extends BackActivity {
                     feedRequireList.add(new FeedRequire("订阅名称","取一个名字吧",FeedRequire.SET_NAME,feedList.get(position).getName()));
 
                     Feed feed = feedList.get(position);
+
                     String url = feed.getUrl();
                     if (feed.getUrl().charAt(0) != '/'){
                         url = "/"+url;
                     }
-                    feed.setUrl(UserPreference.getRssHubUrl() + url);
+                    if (feed.getType().equals("rsshub") && RSSUtil.urlIsContainsRSSHub(feed.getUrl()) == -1){//只有当在线市场的源标记为rsshub，且url中没有rsshub前缀，才会添加当前选择的前缀。
+                        feed.setUrl(UserPreference.getRssHubUrl() + url);
+                    }
+
                     Help help;
                     if (!StringUtil.trim(feed.getExtra()).equals("")){
                         help = new Help(true,feed.getExtra());

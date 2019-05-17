@@ -1,6 +1,10 @@
 package com.ihewro.focus.util;
 
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.UserPreference;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -12,7 +16,19 @@ import com.ihewro.focus.bean.Feed;
  * </pre>
  */
 public class RSSUtil {
-    public static Feed convertStringToFeed(String data){
-        return  null;
+
+    /**
+     * url是否包含rsshub的头，来判断当前url是否需要加
+     * @param url
+     * @return
+     */
+    public static int urlIsContainsRSSHub(String url){
+        List<String> list = GlobalConfig.rssHub;
+        for(int i = 0; i<list.size();i++){
+            if (url.contains(list.get(i))){
+                return i;
+            }
+        }
+        return  -1;
     }
 }

@@ -14,6 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.util.RSSUtil;
 
 import java.util.List;
 
@@ -61,15 +62,8 @@ public class SettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 //显示弹窗
-                int select = -1;
+                int select = RSSUtil.urlIsContainsRSSHub(UserPreference.getRssHubUrl());
                 List<String> list = GlobalConfig.rssHub;
-                for(int i = 0; i<list.size();i++){
-                    if (list.get(i).equals(UserPreference.getRssHubUrl())){
-                        select = i;
-                        break;
-                    }
-                }
-
                 new MaterialDialog.Builder(getActivity())
                         .title("源管理")
                         .items(list)
