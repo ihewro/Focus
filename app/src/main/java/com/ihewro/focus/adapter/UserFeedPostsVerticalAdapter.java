@@ -191,7 +191,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
                 new XPopup.Builder(activity)
                         .atView(helper.getView(R.id.operations))  // 依附于所点击的View，内部会自动判断在上方或者下方显示
-                        .asAttachList(new String[]{"将以上部分标记为已读", "将以下部分标记为未读"},
+                        .asAttachList(new String[]{"将以上部分标记为已读", "将以下部分标记为已读"},
                                 new int[]{},
                                 new OnSelectListener() {
                                     @Override
