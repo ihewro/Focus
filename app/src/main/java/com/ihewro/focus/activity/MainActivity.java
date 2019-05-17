@@ -439,7 +439,11 @@ public class MainActivity extends BaseActivity {
             for (int j = 0; j < feedList.size(); j++) {
                 Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId()).withBadge(current_notReadNum + "");
+
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
+                if (current_notReadNum!=0){
+                    secondaryDrawerItem.withBadge(current_notReadNum + "");
+                }
                 if (isUpdate){
                     drawer.updateItem(secondaryDrawerItem);
                 }
@@ -448,10 +452,12 @@ public class MainActivity extends BaseActivity {
                 notReadNum += current_notReadNum;
             }
 
-            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge(notReadNum + "").withSubItems(
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
                     feedItems
             );
-
+            if (notReadNum!=0){
+                one.withBadge(notReadNum + "");
+            }
             //添加文件夹
             subItems.add(one);
         }
