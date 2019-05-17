@@ -1,5 +1,6 @@
 package com.ihewro.focus.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -107,7 +108,7 @@ public class MainActivity extends BaseActivity {
     private FeedSearchAdapter adapter;
     private FeedListShadowPopupView popupView;//点击顶部标题的弹窗
     private FilterPopupView drawerPopupView;//右侧边栏弹窗
-
+    private List<String> errorFeedIdList = new ArrayList<>();
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -370,9 +371,8 @@ public class MainActivity extends BaseActivity {
             switch ((int)drawerItem.getTag()){
                 case DRAWER_FOLDER:
                     //获取到这个文件夹的数据
-
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),"订阅文件夹名称","未读数目",new Help(false)))
+                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),((SecondaryDrawerItem)drawerItem).getName().toString(),"",new Help(false)))
                             .show();
 
 
@@ -380,7 +380,7 @@ public class MainActivity extends BaseActivity {
                 case DRAWER_FOLDER_ITEM:
                     //获取到这个feed的数据
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new FeedOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),"订阅名称","未读数目",new Help(false)))
+                            .asCustom(new FeedOperationPopupView(MainActivity.this, drawerItem.getIdentifier(),((SecondaryDrawerItem)drawerItem).getName().toString(),"",new Help(false)))
                             .show();
                     break;
             }
@@ -440,7 +440,12 @@ public class MainActivity extends BaseActivity {
                 Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
 
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withIcon(GoogleMaterial.Icon.gmd_rss_feed).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
+                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
+                if (feedList.get(j).isErrorGet()){
+                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
+                }else {
+                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+                }
                 if (current_notReadNum!=0){
                     secondaryDrawerItem.withBadge(current_notReadNum + "");
                 }
@@ -461,6 +466,10 @@ public class MainActivity extends BaseActivity {
             //添加文件夹
             subItems.add(one);
         }
+
+        //要记得把这个list置空
+        errorFeedIdList.clear();;
+
     }
 
 
@@ -544,7 +553,16 @@ public class MainActivity extends BaseActivity {
     public void refreshUI(EventMessage eventBusMessage) {
         if(EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())){
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
-            updateDrawer();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateDrawer();
+                }
+            },800); // 延迟一下，因为数据异步存储需要时间
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.FEED_PULL_DATA_ERROR)){
+            ALog.d("收到错误FeedId List");
+//            errorFeedIdList = eventBusMessage.getIds();
         }
     }
 
@@ -579,6 +597,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);

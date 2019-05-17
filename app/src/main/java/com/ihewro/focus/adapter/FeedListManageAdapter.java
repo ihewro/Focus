@@ -68,7 +68,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
             @Override
             public boolean onLongClick(View view) {
                 new XPopup.Builder(activity)
-                        .asCustom(new FeedOperationPopupView(activity, item.getId(),item.getName(),"",new Help(false)))
+                        .asCustom(new FeedOperationPopupView(activity, item.getId(),item.getName(),item.getDesc(),new Help(false)))
                         .show();
                 return true;
             }

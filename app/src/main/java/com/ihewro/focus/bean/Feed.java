@@ -54,10 +54,8 @@ public class Feed extends LitePalSupport {
     @Column(ignore = true)
     private String extra;//feed的订阅参数额外信息，只会在在线订阅的时候会使用到该参数
 
-    @Column(defaultValue = "15")
     private int timeout;//feed拉取的超时时间
 
-    @Column(ignore = true)
     private boolean errorGet;//获取信息失败
 
     @Override

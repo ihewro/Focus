@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Operation;
+import com.ihewro.focus.util.StringUtil;
 
 import java.util.List;
 
@@ -29,8 +30,10 @@ public class OperationListAdapter extends BaseQuickAdapter<Operation, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, Operation item) {
         helper.setText(R.id.name,item.getName());
-        if (!item.getInfo().equals("")){
+        if (StringUtil.trim(item.getInfo()).equals("")){
             helper.setText(R.id.info,item.getInfo());
+        }else {
+            helper.setGone(R.id.text_info,true);
         }
         helper.setImageDrawable(R.id.icon, item.getDrawable());
     }

@@ -35,6 +35,7 @@ import es.dmoral.toasty.Toasty;
  */
 public class FeedFolderOperationPopupView extends OperationBottomPopupView {
 
+    private FeedFolder feedFolder;
 
     public FeedFolderOperationPopupView(@NonNull Context context, long id, String title, String subtitle, Help help) {
         super(context, null, title, subtitle, help);
@@ -42,8 +43,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
     }
 
     private List<Operation> getFeedFolderOperationList(final long id){
-        FeedFolder feedFolder = LitePal.find(FeedFolder.class,id);
-
+        feedFolder = LitePal.find(FeedFolder.class,id);
         List<Operation> operations = new ArrayList<>();
         operations.add(new Operation("重命名文件夹","", getResources().getDrawable(R.drawable.ic_rate_review_black_24dp),feedFolder, new OperationCallback() {
             @Override

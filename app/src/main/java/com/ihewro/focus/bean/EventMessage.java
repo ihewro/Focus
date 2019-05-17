@@ -46,8 +46,11 @@ public class EventMessage {
     public static final String DAY_MODE = "DAY_MODE";
     public static final String NIGHT_MODE ="NIGHT_MODE";
 
+    public static final String FEED_PULL_DATA_ERROR = "FEED_PULL_DATA_ERROR";
+
+
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
@@ -60,12 +63,14 @@ public class EventMessage {
 
 
 
+
     private String type;
     private String message;
     private int integer;
     private String message2;
     private String message3;
     private boolean flag;
+    private List<String> ids;
 
 
     public EventMessage(String type) {
@@ -90,6 +95,11 @@ public class EventMessage {
         this.message = message;
     }
 
+
+    public EventMessage(String type,List<String> ids){
+        this.type = type;
+        this.ids = ids;
+    }
 
     public EventMessage(String type, String message, String message2) {
         this.type = type;
@@ -153,6 +163,15 @@ public class EventMessage {
 
     public void setInteger(int integer) {
         this.integer = integer;
+    }
+
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<String> ids) {
+        this.ids = ids;
     }
 
     @Override

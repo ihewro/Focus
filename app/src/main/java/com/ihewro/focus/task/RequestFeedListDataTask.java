@@ -56,6 +56,7 @@ public class RequestFeedListDataTask {
     private List<Feed> feedList = new ArrayList<>();
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
+    private List<String> errorFeedIdList = new ArrayList<>();
 
     private FeedsLoadingPopupView popupView;
     private View view;
@@ -87,6 +88,7 @@ public class RequestFeedListDataTask {
 
 
     public void run(){
+        errorFeedIdList.clear();
         callback.onBegin();
         this.num = feedList.size();
 
@@ -108,7 +110,7 @@ public class RequestFeedListDataTask {
                     Feed temp = feedList.get(i);
                     String url = temp.getUrl();
                     ALog.d("超时时间" + temp.getTimeout());
-                    requestData(url,temp.getTimeout());
+                    requestData(temp,i);
                 }
             }
         }
@@ -151,7 +153,10 @@ public class RequestFeedListDataTask {
         }
     }
 
-    private void requestData(String url, int timeout) {
+    private void requestData(final Feed feed,final int pos) {
+        String url = feed.getUrl();
+        int timeout = feed.getTimeout();
+
         if (timeout == 0){
             timeout = Feed.DEFAULT_TIMEOUT;//默认值
         }
@@ -192,13 +197,13 @@ public class RequestFeedListDataTask {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
-
-                    assert response.body() != null;
-                    Feed feed = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
+                    feed.setErrorGet(false);
+                    feed.save();
+                    Feed feed2 = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
 //                    ALog.dTag("feed233", feed);
                     //feed更新到当前的时间流中。
-                    if (feed!=null){
-                        eList.addAll(feed.getFeedItemList());
+                    if (feed2!=null){
+                        eList.addAll(feed2.getFeedItemList());
                         Toasty.success(UIUtil.getContext(),originUrl+"请求成功", Toast.LENGTH_SHORT).show();
                     }else {
                         Toasty.success(UIUtil.getContext(),originUrl+"解析失败", Toast.LENGTH_SHORT).show();
@@ -208,7 +213,8 @@ public class RequestFeedListDataTask {
 
 
                 } else {
-
+                    feed.setErrorGet(true);
+                    feed.save();
                     try {
                         ALog.d("请求失败" + response.code() + response.errorBody().string());
                     } catch (IOException e) {
@@ -220,6 +226,7 @@ public class RequestFeedListDataTask {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 }
                 setUI();
             }
@@ -228,6 +235,8 @@ public class RequestFeedListDataTask {
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ALog.d("请求失败2" + t.toString());
+                feed.setErrorGet(true);
+                feed.save();
                 Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
                 setUI();
             }
@@ -253,6 +262,20 @@ public class RequestFeedListDataTask {
     private void setUI(){
         okNum++;
         updateTextInAlter(okNum);
+        //对所有feed的请求情况进行保存。
+      /*  for (Feed feed: feedList){
+            if (errorFeedIdList.contains(feed.getId()+"")){
+                feed.setErrorGet(true);
+                feed.save();
+            }else {
+                feed.setErrorGet(false);
+                feed.save();
+            }
+        }
+*/
+        //要把这个list传到MainActivity中去，因为这个保存是异步的，那边更新来不及更新
+        EventBus.getDefault().post(new EventMessage(EventMessage.FEED_PULL_DATA_ERROR));
+
         if (this.okNum >= num){//数据全部请求完毕
             //合并旧数据
             for (int i = 0; i < num;i++){
@@ -345,7 +368,6 @@ public class RequestFeedListDataTask {
         //初始化
         popupView.getProgressBar().setProgress(0);
         popupView.getProgressInfo().setText(returnProgressText(0));
-
 
     }
 

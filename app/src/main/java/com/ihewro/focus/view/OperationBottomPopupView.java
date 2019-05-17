@@ -23,6 +23,7 @@ import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Operation;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.core.BottomPopupView;
 
@@ -98,6 +99,21 @@ public class OperationBottomPopupView  extends BottomPopupView {
         actionClose = findViewById(R.id.action_close);
         recyclerView = findViewById(R.id.recycler_view);
 
+        tvTitle.setText(title);
+        if (!StringUtil.trim(subtitle).trim().equals("")){
+            tvSubTitle.setText(subtitle);
+            tvSubTitle.setVisibility(View.VISIBLE);
+        }else {
+            tvSubTitle.setVisibility(View.GONE);
+        }
+
+        if (!help.isHelp()){
+            actionHelp.setVisibility(View.GONE);
+        }else {
+            actionHelp.setVisibility(View.VISIBLE);
+            //点击事件，这个地方功能扩展
+        }
+
     }
 
     private void initRecycler() {
@@ -147,5 +163,21 @@ public class OperationBottomPopupView  extends BottomPopupView {
 
     public void setOperationList(List<Operation> operationList) {
         this.operationList = operationList;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
     }
 }
