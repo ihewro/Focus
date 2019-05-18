@@ -60,24 +60,28 @@ public class FeedListActivity extends BackActivity {
     private List<Feed> feedList = new ArrayList<>();
     private List<FeedRequire> feedRequireList = new ArrayList<>();
 
-    public static void activityStart(Activity activity, String websiteId) {
+    public static void activityStart(Activity activity, String websiteName) {
         Intent intent = new Intent(activity, FeedListActivity.class);
-        intent.putExtra(Constants.KEY_STRING_WEBSITE_ID, websiteId);
+        intent.putExtra(Constants.KEY_STRING_WEBSITE_ID, websiteName);
         activity.startActivity(intent);
     }
 
 
-    String mId;
+    String mName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_list);
         ButterKnife.bind(this);
         Intent intent = getIntent();
-        mId = intent.getStringExtra(Constants.KEY_STRING_WEBSITE_ID);
+        mName = intent.getStringExtra(Constants.KEY_STRING_WEBSITE_ID);
+
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(mName+"的可订阅列表");
         initView();
         bindListener();
         refreshLayout.autoRefresh();
+        refreshLayout.setEnableLoadMore(false);
     }
 
 
@@ -101,8 +105,8 @@ public class FeedListActivity extends BackActivity {
      */
     public void requestData(){
         Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl,10,10,10);
-        ALog.d("名称为" + mId);
-        Call<List<Feed>> request = retrofit.create(HttpInterface.class).getFeedListByWebsite(mId);
+        ALog.d("名称为" + mName);
+        Call<List<Feed>> request = retrofit.create(HttpInterface.class).getFeedListByWebsite(mName);
 
         request.enqueue(new Callback<List<Feed>>() {
             @Override
@@ -175,7 +179,7 @@ public class FeedListActivity extends BackActivity {
                     feedRequireList.clear();
                     //feed更新到当前的时间流中。
                     feedRequireList.addAll(response.body());
-                    feedRequireList.add(new FeedRequire("订阅名称","取一个名字吧",FeedRequire.SET_NAME,feedList.get(position).getName()));
+                    feedRequireList.add(new FeedRequire("订阅名称","取一个名字吧",FeedRequire.SET_NAME,mName+"的"+feedList.get(position).getName()));
 
                     Feed feed = feedList.get(position);
 
