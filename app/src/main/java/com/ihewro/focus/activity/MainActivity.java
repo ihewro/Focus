@@ -217,6 +217,7 @@ public class MainActivity extends BaseActivity {
                                                 }
                                                 //切换到指定文件夹下
                                                 clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                                                popupView.dismiss();//关闭弹窗
                                             }
                                         }
                                     });

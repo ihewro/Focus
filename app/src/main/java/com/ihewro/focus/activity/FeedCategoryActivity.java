@@ -209,7 +209,7 @@ public class FeedCategoryActivity extends BackActivity {
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             getMenuInflater().inflate(R.menu.feed_night, menu);
         }else {
-            getMenuInflater().inflate(R.menu.feed_night, menu);
+            getMenuInflater().inflate(R.menu.feed, menu);
         }
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
