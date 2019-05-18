@@ -2,6 +2,9 @@ package com.ihewro.focus.task;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Service;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -14,6 +17,7 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.callback.RequestDataCallback;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
@@ -50,12 +54,12 @@ import retrofit2.Retrofit;
  *     version: 1.0
  * </pre>
  */
-public class RequestFeedListDataTask {
+public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer> {
 
 
     private List<Feed> feedList = new ArrayList<>();
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
-    private RequestFeedItemListCallback callback;
+    private RequestDataCallback callback;
     private List<String> errorFeedIdList = new ArrayList<>();
 
     private FeedsLoadingPopupView popupView;
@@ -66,15 +70,14 @@ public class RequestFeedListDataTask {
     private int num;//总共需要请求的数目
     private int okNum = 0;//已经请求的数目
     private boolean isForce;//isForce为true的时候表明不是一开始打开页面，所以此时的刷新请求数据必须请求
+    @SuppressLint("StaticFieldLeak")
     private Activity activity;
-    private boolean is_use_internet;//是否使用网络请求
-    private ProgressBar pbProgress;
     private int orderChoice = FilterPopupView.ORDER_BY_NEW;
     private int filterChoice = FilterPopupView.SHOW_ALL;
     //查询用户设置，如果开启了快速启动，则不请求数据，直接显示本地数据
-    boolean flag;
+    private boolean flag;
 
-    public RequestFeedListDataTask(int oderChoice, int filterChoice,Activity activity,View view,boolean flag,List<Feed> feedList, RequestFeedItemListCallback callback) {
+    RequestFeedListDataTask(int oderChoice, int filterChoice, Activity activity, View view, boolean flag, List<Feed> feedList, RequestDataCallback callback) {
         this.activity = activity;
         this.feedList = feedList;
         this.callback = callback;
@@ -82,9 +85,8 @@ public class RequestFeedListDataTask {
         this.view = view;
         this.orderChoice = oderChoice;
         this.filterChoice = filterChoice;
+
     }
-
-
 
 
     public void run(){
@@ -121,8 +123,9 @@ public class RequestFeedListDataTask {
      */
     private void updateTextInAlter(int index){
         if (isForce || flag){//当有网络请求的时候，才有进度通知条
-            if (index == 9999){
+            if (index >= num){
                 if (popupView!=null && popupView.isShow()){
+
                     popupView.getProgressBar().setProgress(100);
                     popupView.getProgressInfo().setText("任务完成");
                     popupView.getCircle().setVisibility(View.GONE);
@@ -133,26 +136,23 @@ public class RequestFeedListDataTask {
                         }
                     },1000); // 延时1秒
                 }
-            }else {
-                if (index >= num){
-                    if (popupView!=null && popupView.isShow()){
-                        popupView.getProgressBar().setProgress(100);
-                        popupView.getProgressInfo().setText("请求完毕，数据整理中……");
-                    }
-
-                }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
-                    ALog.d("怎么回事吗？？");
-                    if (popupView!=null && popupView.isShow()){
-                        ALog.d("怎么回事吗？？2333");
-                        int progress = (int) ((index*1.0)/num *100);
-                        popupView.getProgressBar().setProgress(progress);
-                        popupView.getProgressInfo().setText(returnProgressText(index));
-                    }
+            }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
+                ALog.d("怎么回事吗？？");
+                if (popupView!=null && popupView.isShow()){
+                    ALog.d("怎么回事吗？？2333");
+                    int progress = (int) ((index*1.0)/num *100);
+                    popupView.getProgressBar().setProgress(progress);
+                    popupView.getProgressInfo().setText(returnProgressText(index));
                 }
             }
         }
     }
 
+    /**
+     * 该代码函数为子线程，禁止操作UI内容
+     * @param feed
+     * @param pos
+     */
     private void requestData(final Feed feed,final int pos) {
         String url = feed.getUrl();
         int timeout = feed.getTimeout();
@@ -190,54 +190,34 @@ public class RequestFeedListDataTask {
             call = request.getRSSDataWith(with);
         }
 
-
-
-        call.enqueue(new Callback<String>() {
-            @SuppressLint("CheckResult")
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (response.isSuccessful()) {
-                    feed.setErrorGet(false);
-                    feed.save();
-                    Feed feed2 = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
+        try {
+            Response<String> response = call.execute();
+            if (response != null && response.isSuccessful()){
+                feed.setErrorGet(false);
+                feed.save();
+                Feed feed2 = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
 //                    ALog.dTag("feed233", feed);
-                    //feed更新到当前的时间流中。
-                    if (feed2!=null){
-                        eList.addAll(feed2.getFeedItemList());
-                        Toasty.success(UIUtil.getContext(),originUrl+"请求成功", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toasty.success(UIUtil.getContext(),originUrl+"解析失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
-                } else {
-                    feed.setErrorGet(true);
-                    feed.save();
-                    try {
-                        ALog.d("请求失败" + response.code() + response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                //feed更新到当前的时间流中。
+                if (feed2!=null){
+                    eList.addAll(feed2.getFeedItemList());
+                }else {
+                    //当前解析的内容为空你
+                    ALog.d("当前解析的内容为空");
                 }
-                setUI();
-            }
-
-            @SuppressLint("CheckResult")
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                ALog.d("请求失败2" + t.toString());
+                EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
+            }else {
                 feed.setErrorGet(true);
                 feed.save();
-                Toasty.info(UIUtil.getContext(),"请求失败2" + t.toString(), Toast.LENGTH_SHORT).show();
-                setUI();
+                try {
+                    ALog.d("请求失败" + response.code() + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setUI();
     }
 
     private void mergeOldItems(String url){
@@ -258,18 +238,9 @@ public class RequestFeedListDataTask {
      */
     private void setUI(){
         okNum++;
-        updateTextInAlter(okNum);
-        //对所有feed的请求情况进行保存。
-      /*  for (Feed feed: feedList){
-            if (errorFeedIdList.contains(feed.getId()+"")){
-                feed.setErrorGet(true);
-                feed.save();
-            }else {
-                feed.setErrorGet(false);
-                feed.save();
-            }
-        }
-*/
+
+        publishProgress(okNum);
+
         //要把这个list传到MainActivity中去，因为这个保存是异步的，那边更新来不及更新
         EventBus.getDefault().post(new EventMessage(EventMessage.FEED_PULL_DATA_ERROR));
 
@@ -280,12 +251,8 @@ public class RequestFeedListDataTask {
                 String url = temp.getUrl();
                 mergeOldItems(url);
             }
-
-
-
             ALog.d("开始对数据排序");
             List<FeedItem> list = new ArrayList<>(eList);
-
 
             //对数据进行过滤
             if (filterChoice == FilterPopupView.SHOW_STAR){
@@ -337,8 +304,8 @@ public class RequestFeedListDataTask {
             }
 
             ALog.d("结束数据按时间排序");
-            updateTextInAlter(9999);
-            callback.onFinish(list);
+//            updateTextInAlter(9999);
+            callback.onSuccess(list);
         }
     }
 
@@ -365,11 +332,38 @@ public class RequestFeedListDataTask {
         //初始化
         popupView.getProgressBar().setProgress(0);
         popupView.getProgressInfo().setText(returnProgressText(0));
-
     }
 
     private String returnProgressText(int index){
         int order = index + 1;
         return  "正在请求第" + order +"/" + num+"个订阅数据："+feedList.get(index).getName();
+    }
+
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected Integer doInBackground(String... strings) {
+        run();
+        return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+
+        //更新进度条
+        updateTextInAlter(values[0]);
+
+        //调用service的回调函数
+        callback.onProgress((int) ((values[0]*1.0/num)*100));
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
     }
 }

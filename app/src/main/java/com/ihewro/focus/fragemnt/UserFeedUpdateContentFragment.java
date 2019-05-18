@@ -2,8 +2,12 @@ package com.ihewro.focus.fragemnt;
 
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.blankj.ALog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
@@ -24,8 +30,10 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
+import com.ihewro.focus.task.RequestFeedListDataService;
 import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.ihewro.focus.view.FilterPopupView;
+import com.mikepenz.materialize.util.UIUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -44,6 +52,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 /**
  * 用户的最新订阅信息文章列表的碎片
  */
@@ -59,7 +69,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     RecyclerView recyclerView;
     Unbinder unbinder;
 
-    private View view;
+    private View view;//toolbar的view,用来显示列表依存的view
     private boolean isFirstOpen = true;//首次打开
     ArrayList<String> feedIdList = new ArrayList<>();
 
@@ -141,31 +151,60 @@ public class UserFeedUpdateContentFragment extends Fragment {
      * 获取用户的所有订阅的文章
      */
     public void requestAllData(){
-        List<Feed> feedList = new ArrayList<>();
-        if (feedIdList.size() >0){
-            for (int i = 0; i < feedIdList.size(); i++) {
-                feedList.add(LitePal.find(Feed.class,Integer.parseInt(feedIdList.get(i))));
-            }
-        }else {//为空表示显示所有的feedId
-            feedList = LitePal.findAll(Feed.class);
-        }
-        RequestFeedListDataTask task = new RequestFeedListDataTask(orderChoice,filterChoice,getActivity(),view,isFirstOpen,feedList, new RequestFeedItemListCallback() {
-            @Override
-            public void onBegin() {
-                refreshLayout.finishRefresh(true);
-            }
+        Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
+        getActivity().startService(intent);
+        getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
 
-            @Override
-            public void onFinish(List<FeedItem> feedList) {
-                eList.clear();
-                eList.addAll(feedList);
-                adapter.setNewData(eList);
-                isFirstOpen = false;
-
-            }
-        });
-        task.run();
     }
+
+
+    private RequestFeedListDataService.MyBinder myBinder;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            myBinder = (RequestFeedListDataService.MyBinder) iBinder;
+
+            List<Feed> feedList = new ArrayList<>();
+            if (feedIdList.size() >0){
+                for (int i = 0; i < feedIdList.size(); i++) {
+                    feedList.add(LitePal.find(Feed.class,Integer.parseInt(feedIdList.get(i))));
+                }
+            }else {//为空表示显示所有的feedId
+                feedList = LitePal.findAll(Feed.class);
+            }
+
+            myBinder.initParameter(orderChoice, filterChoice, getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
+                @Override
+                public void onBegin() {
+                    refreshLayout.finishRefresh(true);
+                }
+                @Override
+                public void onFinish(List<FeedItem> feedList) {
+                    eList.clear();
+                    eList.addAll(feedList);
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.setNewData(eList);
+                            isFirstOpen = false;
+                        }
+                    });
+
+                    //解除绑定
+                    Objects.requireNonNull(getActivity()).unbindService(connection);
+                }
+            });
+
+            myBinder.startTask();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            ALog.d("活动与服务解除了绑定");
+        }
+    };
 
     public void bindListener(){
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
