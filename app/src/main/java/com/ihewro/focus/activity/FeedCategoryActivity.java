@@ -172,6 +172,8 @@ public class FeedCategoryActivity extends BackActivity {
     }
 
     public void requestRightData(String categoryName) {
+        rightAdapter.setNewData(null);
+        rightAdapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
         Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl, 10, 10, 10);
         Call<List<Website>> request = retrofit.create(HttpInterface.class).getWebsiteListByCategory(categoryName);
 
@@ -182,6 +184,11 @@ public class FeedCategoryActivity extends BackActivity {
                     websiteList.clear();
                     websiteList.addAll(response.body());
                     rightAdapter.setNewData(websiteList);
+                    if (websiteList.size() == 0){
+                        rightAdapter.setNewData(null);
+                        rightAdapter.setEmptyView(R.layout.simple_empty_view);
+                    }
+
                 } else {
                     ALog.d("请求失败" + response.errorBody());
                 }

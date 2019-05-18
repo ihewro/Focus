@@ -117,7 +117,6 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:src="@drawable/test"
             android:scaleType="centerCrop"
             />
     </LinearLayout>

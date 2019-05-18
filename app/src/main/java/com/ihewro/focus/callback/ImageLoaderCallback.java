@@ -17,4 +17,5 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 public interface ImageLoaderCallback {
     void onFailed(ImageView imageView, FailReason failReason);
     void onSuccess(ImageView imageView, Bitmap bitmap);
+    void onStart(ImageView imageView);
 }

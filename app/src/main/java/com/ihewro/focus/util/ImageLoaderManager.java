@@ -17,6 +17,8 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import skin.support.utils.SkinPreference;
+
 /**
  * @description:
  * @author: Match
@@ -58,6 +60,7 @@ public class ImageLoaderManager {
         imageLoader.loadImage(imageUrl, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
+                imageLoaderCallback.onStart(imageView);
 
             }
 

@@ -106,6 +106,16 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                     imageView.setVisibility(View.VISIBLE);
                     imageView.setImageBitmap(bitmap);
                 }
+
+                @Override
+                public void onStart(ImageView imageView) {
+                    if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                        imageView.setImageResource(R.drawable.ic_night_loading);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_day_loading);
+                    }
+
+                }
             });
         }else {
             helper.getView(R.id.post_pic).setVisibility(View.GONE);

@@ -18,6 +18,8 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.List;
 
+import skin.support.utils.SkinPreference;
+
 /**
  * <pre>
  *     author : hewro
@@ -56,6 +58,15 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
                 @Override
                 public void onSuccess(ImageView imageView, Bitmap bitmap) {
                     imageView.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onStart(ImageView imageView) {
+                    if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                        imageView.setImageResource(R.drawable.ic_night_loading);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_day_loading);
+                    }
                 }
             });
         }
