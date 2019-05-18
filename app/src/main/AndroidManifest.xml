@@ -37,7 +37,6 @@
         <activity android:name=".activity.FeedManageActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.FeedListActivity" />
-        <activity android:name=".activity.PicActivity" />
         <activity android:name=".activity.LoginRegisterActivity" />
         <activity android:name=".activity.StarActivity" />
         <activity android:name=".activity.FeedCategoryActivity" />

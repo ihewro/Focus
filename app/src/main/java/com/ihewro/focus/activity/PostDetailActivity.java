@@ -33,7 +33,6 @@ import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.WebViewUtil;
 import com.ihewro.focus.view.PostFooter;
 import com.ihewro.focus.view.PostHeader;
-import com.like.LikeButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -72,7 +71,6 @@ public class PostDetailActivity extends BaseActivity {
     private int mIndex;
     private FeedItem currentFeedItem;
     private MenuItem starItem;
-    private LikeButton likeButton;
     private boolean isUpdateMainReadMark;
 
     private List<Integer> feedItemIdList;

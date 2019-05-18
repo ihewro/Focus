@@ -2,26 +2,16 @@ package com.ihewro.focus.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
-import com.ihewro.focus.R;
-import com.ihewro.focus.activity.PostDetailActivity;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.ImageViewerPopupView;
-import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener;
 import com.lxj.xpopup.interfaces.XPopupImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
-
-import es.dmoral.toasty.Toasty;
 
 /**
  * <pre>
@@ -48,7 +38,7 @@ public class MJavascriptInterface {
         ALog.d("点击了图片" +img);
         // 单张图片场景
         ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(activity)
-                .asImageViewer(null, img, new ImageLoader());
+                .asImageViewer(null, img, new MyImageLoader());
         imageViewerPopupView.show();
     }
 
@@ -61,18 +51,20 @@ public class MJavascriptInterface {
 
 
 
-    class ImageLoader implements XPopupImageLoader {
+    class MyImageLoader implements XPopupImageLoader {
         @Override
         public void loadImage(int position, @NonNull Object url, @NonNull ImageView imageView) {
             //必须指定Target.SIZE_ORIGINAL，否则无法拿到原图，就无法享用天衣无缝的动画
-
-            Glide.with(imageView).load(url).apply(new RequestOptions().placeholder(R.mipmap.ic_launcher_round).override(Target.SIZE_ORIGINAL)).into(imageView);
+            ImageLoader.getInstance().displayImage(String.valueOf(url), imageView);
+//            Glide.with(imageView).load(url).apply(new RequestOptions().placeholder(R.mipmap.ic_launcher_round).override(Target.SIZE_ORIGINAL)).into(imageView);
         }
 
         @Override
         public File getImageFile(@NonNull Context context, @NonNull Object uri) {
             try {
-                return Glide.with(context).downloadOnly().load(uri).submit().get();
+                return ImageLoader.getInstance().getDiskCache().get(String.valueOf(uri));
+//                return              com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(String.valueOf(url), imageView);
+//                return Glide.with(context).downloadOnly().load(uri).submit().get();
             } catch (Exception e) {
                 e.printStackTrace();
             }
