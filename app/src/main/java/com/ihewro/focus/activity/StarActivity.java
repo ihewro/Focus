@@ -57,7 +57,11 @@ public class StarActivity extends BackActivity {
         adapter = new UserFeedPostsVerticalAdapter(eList,StarActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+        adapter.bindToRecyclerView(recyclerView);
+
+        if (eList.size()==0){
+            adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+        }
 
 //        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(new SuspensionDecoration(this, eList));

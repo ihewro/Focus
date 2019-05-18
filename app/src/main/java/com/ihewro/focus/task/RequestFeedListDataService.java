@@ -80,8 +80,12 @@ public class RequestFeedListDataService extends Service {
             RequestFeedListDataTask task = new RequestFeedListDataTask(orderChoice,filterChoice,activity,view,flag,feedList, new RequestDataCallback() {
 
                 @Override
-                public void onBegin() {
+                public void onBegin() {//代码开始执行
                     callback.onBegin();
+                }
+
+                @Override
+                public void onStart() {//有网络请求的开始
                     //发送通知
                     startForeground(1,createNotice("开始获取数据中……",0));
                 }
@@ -93,13 +97,11 @@ public class RequestFeedListDataService extends Service {
                 }
 
                 @Override
-                public void onSuccess(List<FeedItem> list) {
+                public void onSuccess(List<FeedItem> list) {//又网络请求的结束
                     //通知显示已完成
                     //结束
                     stopForeground(true);
-
                     mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
-
                     //通知activity修改数据
                     callback.onFinish(list);
                     //结束自己
@@ -107,8 +109,11 @@ public class RequestFeedListDataService extends Service {
                 }
 
                 @Override
-                public void onFailed() {
-                    //这个地方暂时不需要的，等待扩展
+                public void onFinish(List<FeedItem> list) {//没有网络的时候结束
+                    //通知activity修改数据
+                    callback.onFinish(list);
+                    //结束自己
+                    stopSelf();
                 }
             });
 

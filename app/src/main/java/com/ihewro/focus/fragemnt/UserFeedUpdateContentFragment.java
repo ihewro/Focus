@@ -188,6 +188,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
                         @Override
                         public void run() {
                             adapter.setNewData(eList);
+                            if (eList.size()==0){
+                                adapter.setNewData(null);
+                                adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                            }
                             isFirstOpen = false;
                         }
                     });

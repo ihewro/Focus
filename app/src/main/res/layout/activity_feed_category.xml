@@ -43,7 +43,7 @@
         android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="140dp"
+            android:layout_width="125dp"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
@@ -64,13 +64,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Powered by RSSHub"/>
+                    android:text="RSSHub Powered"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:text="Thx moerats"/>
+                    android:text="moerats support"/>
 
             </LinearLayout>
 

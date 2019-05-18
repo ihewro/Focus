@@ -102,8 +102,8 @@ public class FeedCategoryActivity extends BackActivity {
         leftAdapter.bindToRecyclerView(recyclerLeft);
         rightAdapter.bindToRecyclerView(recyclerRight);
 
-        leftAdapter.setEmptyView(R.layout.simple_empty_view);
-        rightAdapter.setEmptyView(R.layout.simple_empty_view);
+        leftAdapter.setEmptyView(R.layout.simple_loading_view,recyclerLeft);
+        rightAdapter.setEmptyView(R.layout.simple_loading_view,recyclerRight);
 
         initSearchAdapter();
     }

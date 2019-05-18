@@ -97,7 +97,7 @@ public class FeedListActivity extends BackActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         feedListAdapter = new FeedListAdapter(feedList);
         feedListAdapter.bindToRecyclerView(recyclerView);
-        feedListAdapter.setEmptyView(R.layout.simple_empty_view);
+//        feedListAdapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
     }
 
     /**
@@ -114,7 +114,12 @@ public class FeedListActivity extends BackActivity {
                 if (response.isSuccessful()){
                     feedList.clear();
                     feedList.addAll(response.body());
+
                     feedListAdapter.setNewData(feedList);
+
+                    if (feedList.size()==0){
+                        feedListAdapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                    }
                     Toasty.success(UIUtil.getContext(),"请求成功", Toast.LENGTH_SHORT).show();
                 }else {
                     Toasty.error(UIUtil.getContext(),"请求失败2" + response.errorBody(), Toast.LENGTH_SHORT).show();

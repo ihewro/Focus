@@ -90,8 +90,9 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
 
 
     public void run(){
-        errorFeedIdList.clear();
         callback.onBegin();
+
+        errorFeedIdList.clear();
         this.num = feedList.size();
 
         String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, "0");
@@ -106,6 +107,7 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
                 this.okNum = num;
                 setUI();
             }else {
+                callback.onStart();
                 //显示进度通知
                 ShowProgress();
                 for (int i = 0; i <feedList.size() ; i++) {
@@ -115,6 +117,8 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
                     requestData(temp,i);
                 }
             }
+        }else {//也必须返回一个空数组
+            callback.onFinish(new ArrayList<FeedItem>());
         }
     }
     /**
@@ -239,7 +243,9 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
     private void setUI(){
         okNum++;
 
-        publishProgress(okNum);
+        if (isForce || flag){//有网络请求才会修改进度
+            publishProgress(okNum);
+        }
 
         //要把这个list传到MainActivity中去，因为这个保存是异步的，那边更新来不及更新
         EventBus.getDefault().post(new EventMessage(EventMessage.FEED_PULL_DATA_ERROR));
@@ -305,7 +311,11 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
 
             ALog.d("结束数据按时间排序");
 //            updateTextInAlter(9999);
-            callback.onSuccess(list);
+            if (flag || isForce){
+                callback.onSuccess(list);
+            }else {
+                callback.onFinish(list);
+            }
         }
     }
 

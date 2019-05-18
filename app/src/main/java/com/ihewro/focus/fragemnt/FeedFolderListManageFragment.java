@@ -119,6 +119,9 @@ public class FeedFolderListManageFragment extends Fragment {
         feedFolders = LitePal.findAll(FeedFolder.class);
         adapter = new FeedFolderListAdapter(feedFolders,getActivity());
         adapter.bindToRecyclerView(recyclerView);
+        if (feedFolders.size() == 0){
+            adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+        }
 
     }
 
