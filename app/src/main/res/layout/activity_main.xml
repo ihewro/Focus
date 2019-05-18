@@ -59,14 +59,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <LinearLayout
+            android:id="@+id/recycler_view_wrap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
-            android:clipToPadding="false"
             android:visibility="gone"
-            android:divider="@null" />
+            android:background="@color/colorPrimary">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:visibility="gone"
+                android:divider="@null" />
+        </LinearLayout>
+
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

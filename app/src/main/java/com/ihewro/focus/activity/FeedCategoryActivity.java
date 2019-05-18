@@ -38,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import skin.support.utils.SkinPreference;
 
 import static com.ihewro.focus.GlobalConfig.serverUrl;
 
@@ -205,7 +206,11 @@ public class FeedCategoryActivity extends BackActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.feed, menu);
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            getMenuInflater().inflate(R.menu.feed_night, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.feed_night, menu);
+        }
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
         return true;
@@ -213,8 +218,7 @@ public class FeedCategoryActivity extends BackActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
+        super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.action_add_by_url:
                 //弹窗
