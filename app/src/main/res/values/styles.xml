@@ -22,6 +22,16 @@
         <item name="colorAccent">@color/colorAccent_night</item>
         <item name="android:windowBackground">@color/colorPrimary_night</item>
 
+
+
+        <!--搜索框-->
+        <!-- Background for the search bar -->
+        <item name="searchBackground">@color/colorPrimary_night</item>
+        <item name="searchBackIcon">@drawable/ic_action_navigation_arrow_back_inverted</item>
+        <item name="searchSuggestionBackground">@color/colorPrimary_night</item>
+        <item name="android:textColor">@color/colorAccent_night</item>
+
+
     </style>
 
 

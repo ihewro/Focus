@@ -210,8 +210,6 @@ public class RequestFeedListDataTask {
                     }
 
                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
-
-
                 } else {
                     feed.setErrorGet(true);
                     feed.save();
@@ -220,7 +218,6 @@ public class RequestFeedListDataTask {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    
                     try {
                         Toasty.info(UIUtil.getContext(),"请求失败" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {

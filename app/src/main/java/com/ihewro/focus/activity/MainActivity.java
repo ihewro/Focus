@@ -436,12 +436,14 @@ public class MainActivity extends BaseActivity {
             List<IDrawerItem> feedItems = new ArrayList<>();
             List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).find(Feed.class);
 
+            boolean haveErrorFeedInCurrentFolder = false;
             for (int j = 0; j < feedList.size(); j++) {
                 Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
 
                 SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
                 if (feedList.get(j).isErrorGet()) {
+                    haveErrorFeedInCurrentFolder = true;
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
                 } else {
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
@@ -456,10 +458,13 @@ public class MainActivity extends BaseActivity {
 
                 notReadNum += current_notReadNum;
             }
-
             ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
                     feedItems
             );
+
+            if (haveErrorFeedInCurrentFolder){
+                one.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
+            }
             if (notReadNum != 0) {
                 one.withBadge(notReadNum + "");
             }
