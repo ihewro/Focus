@@ -70,7 +70,7 @@ public class SettingFragment extends PreferenceFragment {
                         .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                UserPreference.updateValueByKey(UserPreference.RSS_HUB,GlobalConfig.rssHub.get(which));
+                                UserPreference.updateOrSaveValueByKey(UserPreference.RSS_HUB,GlobalConfig.rssHub.get(which));
                                 return true;
                             }
                         })
@@ -85,9 +85,9 @@ public class SettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (use_internet_while_open.isChecked()){
-                    UserPreference.updateValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN,"1");
+                    UserPreference.updateOrSaveValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN,"1");
                 }else {
-                    UserPreference.updateValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN,"0");
+                    UserPreference.updateOrSaveValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN,"0");
                 }
                 return false;
             }

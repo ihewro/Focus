@@ -2,6 +2,7 @@ package com.ihewro.focus.fragemnt;
 
 
 import android.annotation.SuppressLint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,11 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
@@ -118,14 +122,17 @@ public class UserFeedUpdateContentFragment extends Fragment {
         refreshLayout.setEnableOverScrollBounce(false);
         // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
         refreshLayout.setEnableAutoLoadMore(false);
+
     }
+
 
     public void initEmptyView() {
         //初始化列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
-        recyclerView.setAdapter(adapter);
+        adapter.bindToRecyclerView(recyclerView);
+//        recyclerView.setAdapter(adapter);
 //        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
     }
@@ -154,6 +161,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 eList.addAll(feedList);
                 adapter.setNewData(eList);
                 isFirstOpen = false;
+
             }
         });
         task.run();

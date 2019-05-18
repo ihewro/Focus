@@ -3,12 +3,9 @@ package com.ihewro.focus.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -32,16 +27,13 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.bean.UserPreference;
-import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
-import com.ihewro.focus.helper.WebviewFallback;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.WebViewUtil;
 import com.ihewro.focus.view.PostFooter;
 import com.ihewro.focus.view.PostHeader;
 import com.like.LikeButton;
-import com.like.OnLikeListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -54,7 +46,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import skin.support.SkinCompatManager;
 import skin.support.utils.SkinPreference;
 
 
@@ -322,9 +313,9 @@ public class PostDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 //重置设置
-                                UserPreference.updateValueByKey(PostSetting.FONT_SIZE, PostSetting.FONT_SIZE_DEFAULT);
-                                UserPreference.updateValueByKey(PostSetting.FONT_SPACING, PostSetting.FONT_SPACING_DEFAULT);
-                                UserPreference.updateValueByKey(PostSetting.LINE_SPACING, PostSetting.LINE_SPACING_DEFAULT);
+                                UserPreference.updateOrSaveValueByKey(PostSetting.FONT_SIZE, PostSetting.FONT_SIZE_DEFAULT);
+                                UserPreference.updateOrSaveValueByKey(PostSetting.FONT_SPACING, PostSetting.FONT_SPACING_DEFAULT);
+                                UserPreference.updateOrSaveValueByKey(PostSetting.LINE_SPACING, PostSetting.LINE_SPACING_DEFAULT);
                                 adapter.notifyItemChanged(mIndex);
                             }
                         })
@@ -394,7 +385,7 @@ public class PostDetailActivity extends BaseActivity {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     //修改文章配置UI
-                    UserPreference.updateValueByKey(PostSetting.FONT_SIZE, String.valueOf(seekBar.getProgress()));
+                    UserPreference.updateOrSaveValueByKey(PostSetting.FONT_SIZE, String.valueOf(seekBar.getProgress()));
                     adapter.notifyItemChanged(mIndex);//更新UI
 
 
@@ -420,7 +411,7 @@ public class PostDetailActivity extends BaseActivity {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     //修改文章配置UI
-                    UserPreference.updateValueByKey(PostSetting.FONT_SPACING, String.valueOf(seekBar.getProgress()));
+                    UserPreference.updateOrSaveValueByKey(PostSetting.FONT_SPACING, String.valueOf(seekBar.getProgress()));
                     adapter.notifyItemChanged(mIndex);//更新UI
                 }
             });
@@ -442,7 +433,7 @@ public class PostDetailActivity extends BaseActivity {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     //修改文章配置UI
-                    UserPreference.updateValueByKey(PostSetting.LINE_SPACING, String.valueOf(seekBar.getProgress()));
+                    UserPreference.updateOrSaveValueByKey(PostSetting.LINE_SPACING, String.valueOf(seekBar.getProgress()));
                     adapter.notifyItemChanged(mIndex);//更新UI
 
                 }

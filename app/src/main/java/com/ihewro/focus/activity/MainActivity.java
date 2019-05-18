@@ -25,6 +25,8 @@ import com.blankj.ALog;
 import com.canking.minipay.Config;
 import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -32,6 +34,7 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
@@ -116,6 +119,13 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            toolbar.inflateMenu(R.menu.main_night);
+        } else {
+            toolbar.inflateMenu(R.menu.main);
+        }
+
         setSupportActionBar(toolbar);
         toolbarTitle.setText("全部文章");
         EventBus.getDefault().register(this);
@@ -128,8 +138,65 @@ public class MainActivity extends BaseActivity {
         initListener();
 
         initSearchAdapter();
+
+
+        initTapView();
+
     }
 
+
+    /**
+     * 新手教程，第一次打开app，会自动弹出教程
+     */
+    private void initTapView(){
+        if (UserPreference.queryValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER, "0").equals("0")){
+            if (LitePal.count(FeedItem.class) >0){
+                new TapTargetSequence(this)
+                        .targets(TapTarget.forToolbarMenuItem(toolbar,R.id.action_search,"搜索","在这里，搜索本地内容的一切。")
+                                .cancelable(false)
+                                .drawShadow(true)
+                                .titleTextColor(R.color.colorAccent)
+                                .descriptionTextColor(R.color.text_secondary_dark)
+                                .tintTarget(true)
+                                .targetCircleColor(android.R.color.black)//内圈的颜色
+                                .id(1),
+
+                                TapTarget.forToolbarMenuItem(toolbar,R.id.action_filter,"过滤设置","开始按照你想要的方式显示内容吧！")
+                                .cancelable(false)
+                                .drawShadow(true)
+                                .titleTextColor(R.color.colorAccent)
+                                .descriptionTextColor(R.color.text_secondary_dark)
+                                .tintTarget(true)
+                                .targetCircleColor(android.R.color.black)//内圈的颜色
+                                .id(2))
+                        .listener(new TapTargetSequence.Listener() {
+                            @Override
+                            public void onSequenceFinish() {
+                                //设置该功能已经使用过了
+                                UserPreference.updateOrSaveValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER,"1");
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                                switch (lastTarget.id()){
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        drawerPopupView.toggle();
+                                        break;
+                                }
+                            }
+                            @Override
+                            public void onSequenceCanceled(TapTarget lastTarget) {
+                                // Boo
+                            }
+                        }).start();
+            }
+
+        }
+
+
+    }
 
     /**
      * 初始化
@@ -198,40 +265,46 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 //显示弹窗
-                if (popupView == null) {
-                    popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
-                            .atView(playButton)
-                            .setPopupCallback(new XPopupCallback() {
-                                @Override
-                                public void onShow() {
-                                    popupView.getAdapter().setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-                                        @Override
-                                        public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                                            if (view.getId() == R.id.long_click) {
-                                                int feedFolderId = popupView.getFeedFolders().get(position).getId();
-                                                List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
-                                                ArrayList<String> list = new ArrayList<>();
-
-                                                for (int i = 0; i < feeds.size(); i++) {
-                                                    list.add(String.valueOf(feeds.get(i).getId()));
-                                                }
-                                                //切换到指定文件夹下
-                                                clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
-                                                popupView.dismiss();//关闭弹窗
-                                            }
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onDismiss() {
-                                }
-                            })
-                            .asCustom(new FeedListShadowPopupView(MainActivity.this));
-                }
-                popupView.toggle();
+                toggleFeedListPopupView();
             }
         });
+    }
+
+
+    private void toggleFeedListPopupView(){
+        //显示弹窗
+        if (popupView == null) {
+            popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
+                    .atView(playButton)
+                    .setPopupCallback(new XPopupCallback() {
+                        @Override
+                        public void onShow() {
+                            popupView.getAdapter().setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                                @Override
+                                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                                    if (view.getId() == R.id.long_click) {
+                                        int feedFolderId = popupView.getFeedFolders().get(position).getId();
+                                        List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
+                                        ArrayList<String> list = new ArrayList<>();
+
+                                        for (int i = 0; i < feeds.size(); i++) {
+                                            list.add(String.valueOf(feeds.get(i).getId()));
+                                        }
+                                        //切换到指定文件夹下
+                                        clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                                        popupView.dismiss();//关闭弹窗
+                                    }
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onDismiss() {
+                        }
+                    })
+                    .asCustom(new FeedListShadowPopupView(MainActivity.this));
+        }
+        popupView.toggle();
     }
 
 
@@ -319,7 +392,6 @@ public class MainActivity extends BaseActivity {
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(FEED_MANAGE).withSelectable(false),
                         new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false),
-                        new SecondaryDrawerItem().withName("工具").withIcon(GoogleMaterial.Icon.gmd_pan_tool).withIdentifier(10).withTag(-400).withSelectable(false),
                         new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(PAY_SUPPORT).withSelectable(false), mode)
                 .build();
         drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
@@ -518,9 +590,6 @@ public class MainActivity extends BaseActivity {
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
 
-        if (SkinPreference.getInstance().getSkinName().equals("night")) {
-//            item.tin
-        }
 
         return true;
     }

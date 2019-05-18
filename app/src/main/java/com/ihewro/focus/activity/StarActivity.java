@@ -59,7 +59,7 @@ public class StarActivity extends BackActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
 
-        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this), DividerItemDecoration.VERTICAL_LIST));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(new SuspensionDecoration(this, eList));
     }
 }

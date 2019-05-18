@@ -9,10 +9,13 @@ import android.widget.ImageView;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.ImageLoaderCallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
@@ -173,15 +176,18 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             }
         });
 
-
         helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Integer> list = new ArrayList<>();
-                for (FeedItem feedItem: feedItemList){
-                    list.add(feedItem.getId());
+                if (UserPreference.queryValueByKey(UserPreference.FIRST_INTRO_MAIN_FEED_ITEM, "0").equals("0")){
+                    initTapView(helper.getView(R.id.operations));
+                }else {
+                    ArrayList<Integer> list = new ArrayList<>();
+                    for (FeedItem feedItem: feedItemList){
+                        list.add(feedItem.getId());
+                    }
+                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),list,true);
                 }
-                PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),list,true);
             }
         });
 
@@ -224,4 +230,25 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             notifyItemChanged(i);
         }
     }
+
+
+    private void initTapView(View view){
+        TapTargetView.showFor(activity,                 // `this` is an Activity
+                TapTarget.forView(view, "触发新手教程！", "先别急的进入！点击该图标也可以快速标记已读哦，文章左滑也可以快速标记收藏和已读哦！\n")
+                        .cancelable(false)
+                        .drawShadow(true)
+                        .titleTextColor(R.color.colorAccent)
+                        .descriptionTextColor(R.color.text_secondary_dark)
+                        .tintTarget(true)
+                        .targetCircleColor(android.R.color.black),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        UserPreference.updateOrSaveValueByKey(UserPreference.FIRST_INTRO_MAIN_FEED_ITEM,"1");
+                    }
+                });
+
+    }
+
 }
