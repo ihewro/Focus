@@ -42,13 +42,13 @@ public class AboutActivity extends AbsAboutActivity {
 
 
         items.add(new Category("支持"));
-//        items.add(new Contributor(R.drawable.avatar_drakeet, "moerats", "提供自建源", "https://www.moerats.com"));
+        items.add(new Contributor(R.drawable.moecats, "moerats", "提供自建源", "https://www.moerats.com"));
 
 
         items.add(new Category("Open Source Licenses"));
         items.add(new License("MultiType", "drakeet", License.APACHE_2, "https://github.com/drakeet/MultiType"));
         items.add(new License("about-page", "drakeet", License.APACHE_2, "https://github.com/drakeet/about-page"));
-
+        items.add(new License("其他", "待添加", License.MIT, "https://github.com/ihewro"));
     }
 
     @Override
