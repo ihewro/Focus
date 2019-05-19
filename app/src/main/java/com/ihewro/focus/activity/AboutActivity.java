@@ -41,6 +41,10 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new Card(getString(R.string.card_content)));
 
 
+        items.add(new Category("支持"));
+//        items.add(new Contributor(R.drawable.avatar_drakeet, "moerats", "提供自建源", "https://www.moerats.com"));
+
+
         items.add(new Category("Open Source Licenses"));
         items.add(new License("MultiType", "drakeet", License.APACHE_2, "https://github.com/drakeet/MultiType"));
         items.add(new License("about-page", "drakeet", License.APACHE_2, "https://github.com/drakeet/about-page"));

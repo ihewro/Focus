@@ -182,7 +182,7 @@ public class FeedCategoryActivity extends BackActivity {
 
 
         leftAdapter = new FeedCategoryLeftAdapter(websiteCategoryList);
-        rightAdapter = new FeedCategoryRightAdapter(websiteList);
+        rightAdapter = new FeedCategoryRightAdapter(websiteList,FeedCategoryActivity.this);
 
 
         leftAdapter.bindToRecyclerView(recyclerLeft);
@@ -238,12 +238,6 @@ public class FeedCategoryActivity extends BackActivity {
             }
         });
 
-        rightAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FeedListActivity.activityStart(FeedCategoryActivity.this, websiteList.get(position).getName());
-            }
-        });
     }
 
     public void requestLeftData() {

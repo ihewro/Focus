@@ -66,7 +66,7 @@ public class SearchWebListFragment extends Fragment {
         //初始化列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new FeedCategoryRightAdapter(list);
+        adapter = new FeedCategoryRightAdapter(list,activity);
         adapter.bindToRecyclerView(recyclerView);
     }
 
