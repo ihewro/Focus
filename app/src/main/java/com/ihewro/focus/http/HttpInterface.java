@@ -40,4 +40,11 @@ public interface HttpInterface {
 
     @GET("?action=feedRequireList")
     Call<List<FeedRequire>> getFeedRequireListByWebsite(@Query("id") String id);
+
+    @GET("?action=searchFeedListByName")
+    Call<List<Feed>> searchFeedListByName(@Query("name") String name);
+
+    @GET("?action=searchWebsiteByName")
+    Call<List<Website>> searchWebsiteByName(@Query("name") String name);
+
 }

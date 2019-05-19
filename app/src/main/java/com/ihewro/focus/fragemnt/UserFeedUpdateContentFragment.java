@@ -201,8 +201,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     });
 
                     //解除绑定
-                    Objects.requireNonNull(getActivity()).unbindService(connection);
-                    isconnet = false;
+                    if (isconnet){
+                        Objects.requireNonNull(getActivity()).unbindService(connection);
+                        isconnet = false;
+                    }
                 }
             });
 
@@ -322,8 +324,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity()!=null){//当活动被回收的时候，服务也必须停止
+        if (getActivity()!=null && isconnet){//当活动被回收的时候，服务也必须停止
             getActivity().unbindService(connection);
+            isconnet = false;
         }
         if (EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);

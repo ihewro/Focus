@@ -6,36 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/toolbar_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            app:title="发现市场"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:clipToPadding="false"
-            android:visibility="gone"
-            android:divider="@null" />
-
-    </FrameLayout>
-
-
     <LinearLayout
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
@@ -86,5 +56,47 @@
             android:paddingStart="10dp"
             android:paddingTop="8dp" />
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            app:title="发现市场"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/search_view_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="?attr/actionBarSize"
+            >
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_height="wrap_content"
+                app:textAllCaps="false"
+                android:background="@color/colorPrimary"
+                app:tabSelectedTextColor="@color/colorAccent"
+                app:tabTextColor="@color/text_secondary_dark"
+                android:layout_width="match_parent" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </FrameLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

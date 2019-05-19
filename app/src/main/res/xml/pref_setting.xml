@@ -57,11 +57,11 @@
 <!--    <Preference
         android:key="@string/pref_key_licence"
         android:title="@string/pref_title_licence"/>-->
-
+<!--
     <Preference
         android:key="@string/pref_key_update"
         android:title="@string/pref_title_update"
-        android:summary="@string/pref_summary_update"/>
+        android:summary="@string/pref_summary_update"/>-->
 
     <Preference
         android:key="@string/pref_key_about"

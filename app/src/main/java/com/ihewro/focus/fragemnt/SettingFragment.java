@@ -44,6 +44,8 @@ public class SettingFragment extends PreferenceFragment {
     private SwitchPreference auto_name;
     private Preference back_up;
     private Preference recover_data;
+    private Preference aboot;
+
 
     public SettingFragment() {
         // Required empty public constructor
@@ -71,6 +73,7 @@ public class SettingFragment extends PreferenceFragment {
 
         back_up =  preferenceManager.findPreference(getString(R.string.pref_key_backup));
         recover_data =  preferenceManager.findPreference(getString(R.string.pref_key_recover));
+        aboot =  preferenceManager.findPreference(getString(R.string.pref_key_about));
 
     }
 
@@ -174,6 +177,15 @@ public class SettingFragment extends PreferenceFragment {
                 return false;
             }
         });
+
+
+        aboot.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                return false;
+            }
+        });
+
 
     }
 

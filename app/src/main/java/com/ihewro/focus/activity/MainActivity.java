@@ -6,11 +6,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.ihewro.focus.R;
+import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
@@ -36,6 +38,11 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
+import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
+import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
+import com.ihewro.focus.fragemnt.search.SearchWebFeedListFragment;
+import com.ihewro.focus.fragemnt.search.SearchWebListFragment;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -76,8 +83,6 @@ public class MainActivity extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.search_view)
     MaterialSearchView searchView;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
     @BindView(R.id.playButton)
     ButtonBarLayout playButton;
     @BindView(R.id.fl_main_body)
@@ -95,19 +100,27 @@ public class MainActivity extends BaseActivity {
     private static final int FEED_MANAGE = 460;
     private static final int SETTING = 911;
     private static final int PAY_SUPPORT = 71;
-    @BindView(R.id.recycler_view_wrap)
-    LinearLayout recyclerViewWrap;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
+    @BindView(R.id.search_view_content)
+    LinearLayout searchViewContent;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
     private Fragment currentFragment = null;
     private List<IDrawerItem> subItems = new ArrayList<>();
     private Drawer drawer;
-    private List<FeedItem> searchResults = new ArrayList<>();
-    private FeedSearchAdapter adapter;
     private FeedListShadowPopupView popupView;//点击顶部标题的弹窗
     private FilterPopupView drawerPopupView;//右侧边栏弹窗
     private List<String> errorFeedIdList = new ArrayList<>();
+
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private SearchLocalFeedListFragment searchLocalFeedListFragment;
+    private SearchFeedFolderFragment searchFeedFolderFragment;
+    private SearchFeedItemListFragment searchFeedItemListFragment;
+
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -137,10 +150,10 @@ public class MainActivity extends BaseActivity {
 
         initListener();
 
-        initSearchAdapter();
-
-
         initTapView();
+
+        createTabLayout();
+
 
     }
 
@@ -148,37 +161,37 @@ public class MainActivity extends BaseActivity {
     /**
      * 新手教程，第一次打开app，会自动弹出教程
      */
-    private void initTapView(){
-        if (UserPreference.queryValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER, "0").equals("0")){
-            if (LitePal.count(FeedItem.class) >0){
+    private void initTapView() {
+        if (UserPreference.queryValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER, "0").equals("0")) {
+            if (LitePal.count(FeedItem.class) > 0) {
                 new TapTargetSequence(this)
-                        .targets(TapTarget.forToolbarMenuItem(toolbar,R.id.action_search,"搜索","在这里，搜索本地内容的一切。")
-                                .cancelable(false)
-                                .drawShadow(true)
-                                .titleTextColor(R.color.colorAccent)
-                                .descriptionTextColor(R.color.text_secondary_dark)
-                                .tintTarget(true)
-                                .targetCircleColor(android.R.color.black)//内圈的颜色
-                                .id(1),
+                        .targets(TapTarget.forToolbarMenuItem(toolbar, R.id.action_search, "搜索", "在这里，搜索本地内容的一切。")
+                                        .cancelable(false)
+                                        .drawShadow(true)
+                                        .titleTextColor(R.color.colorAccent)
+                                        .descriptionTextColor(R.color.text_secondary_dark)
+                                        .tintTarget(true)
+                                        .targetCircleColor(android.R.color.black)//内圈的颜色
+                                        .id(1),
 
-                                TapTarget.forToolbarMenuItem(toolbar,R.id.action_filter,"过滤设置","开始按照你想要的方式显示内容吧！")
-                                .cancelable(false)
-                                .drawShadow(true)
-                                .titleTextColor(R.color.colorAccent)
-                                .descriptionTextColor(R.color.text_secondary_dark)
-                                .tintTarget(true)
-                                .targetCircleColor(android.R.color.black)//内圈的颜色
-                                .id(2))
+                                TapTarget.forToolbarMenuItem(toolbar, R.id.action_filter, "过滤设置", "开始按照你想要的方式显示内容吧！")
+                                        .cancelable(false)
+                                        .drawShadow(true)
+                                        .titleTextColor(R.color.colorAccent)
+                                        .descriptionTextColor(R.color.text_secondary_dark)
+                                        .tintTarget(true)
+                                        .targetCircleColor(android.R.color.black)//内圈的颜色
+                                        .id(2))
                         .listener(new TapTargetSequence.Listener() {
                             @Override
                             public void onSequenceFinish() {
                                 //设置该功能已经使用过了
-                                UserPreference.updateOrSaveValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER,"1");
+                                UserPreference.updateOrSaveValueByKey(UserPreference.FIRST_USE_LOCAL_SEARCH_AND_FILTER, "1");
                             }
 
                             @Override
                             public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-                                switch (lastTarget.id()){
+                                switch (lastTarget.id()) {
                                     case 1:
                                         break;
                                     case 2:
@@ -186,6 +199,7 @@ public class MainActivity extends BaseActivity {
                                         break;
                                 }
                             }
+
                             @Override
                             public void onSequenceCanceled(TapTarget lastTarget) {
                                 // Boo
@@ -198,16 +212,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    /**
-     * 初始化
-     */
-    private void initSearchAdapter() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new FeedSearchAdapter(searchResults);
-        adapter.bindToRecyclerView(recyclerView);
-        adapter.setEmptyView(R.layout.simple_empty_view);
-    }
+
 
     private void initListener() {
 
@@ -215,33 +220,21 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
-                recyclerView.setVisibility(View.GONE);
-                recyclerViewWrap.setVisibility(View.GONE);
-                return false;
+//                searchViewContent.setVisibility(View.GONE);
+                if (!query.equals("")){
+                    updateTabLayout(query);
+                }
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
                 //开始同步搜索
-                queryFeedItemByText(newText);
-                adapter.setNewData(searchResults);
-                recyclerView.setVisibility(View.VISIBLE);
-                recyclerViewWrap.setVisibility(View.VISIBLE);
-
-                adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        FeedItem item = searchResults.get(position);
-                        ArrayList<Integer> list = new ArrayList<>();
-                        for (FeedItem feedItem : searchResults) {
-                            list.add(feedItem.getId());
-                        }
-                        PostDetailActivity.activityStart(MainActivity.this, position, list, false);
-
-                    }
-                });
-                return false;
+                if (!newText.equals("")){
+                    updateTabLayout(newText);
+                }
+                return true;
             }
 
         });
@@ -250,14 +243,12 @@ public class MainActivity extends BaseActivity {
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
-                //Do some magic
+                searchViewContent.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onSearchViewClosed() {
-                //Do some magic
-                recyclerView.setVisibility(View.GONE);
-                recyclerViewWrap.setVisibility(View.GONE);
+                searchViewContent.setVisibility(View.GONE);
             }
         });
 
@@ -270,8 +261,105 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void createTabLayout() {
+        //碎片列表
+        fragmentList.clear();
+        searchFeedFolderFragment = new SearchFeedFolderFragment(this);
+        searchLocalFeedListFragment = new SearchLocalFeedListFragment(this);
+        searchFeedItemListFragment = new SearchFeedItemListFragment(this);
+        fragmentList.add(searchFeedFolderFragment);
+        fragmentList.add(searchLocalFeedListFragment);
+        fragmentList.add(searchFeedItemListFragment);
 
-    private void toggleFeedListPopupView(){
+        //标题列表
+        List<String> pageTitleList = new ArrayList<>();
+        pageTitleList.add("文件夹");
+        pageTitleList.add("订阅");
+        pageTitleList.add("文章");
+
+        //新建适配器
+        BaseViewPagerAdapter adapter = new BaseViewPagerAdapter(getSupportFragmentManager(), fragmentList, pageTitleList);
+
+        //设置ViewPager
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
+    }
+
+    private void updateTabLayout(final String text) {
+
+        //显示动画
+        searchFeedItemListFragment.showLoading();
+        searchLocalFeedListFragment.showLoading();
+        searchFeedFolderFragment.showLoading();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<FeedItem> searchResults;
+                String text2 = "%" + text + "%";
+                searchResults = LitePal.where("title like ? or summary like ?", text2, text2).find(FeedItem.class);
+
+                final List<Feed> searchResults2;
+                text2 = "%" + text + "%";
+                searchResults2 = LitePal.where("name like ? or desc like ?", text2, text2).find(Feed.class);
+
+                final List<FeedFolder> searchResult3s;
+                text2 = "%" + text + "%";
+                searchResult3s = LitePal.where("name like ?", text2).find(FeedFolder.class);
+
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchFeedItemListFragment.updateData(searchResults);
+                        searchLocalFeedListFragment.updateData(searchResults2);
+                        searchFeedFolderFragment.updateData(searchResult3s);
+                    }
+                });
+            }
+        }).run();
+
+
+
+
+
+    }
+
+
+    /**
+     * 全文搜索🔍
+     *
+     * @param text
+     * @return
+     */
+    public void queryFeedItemByText(String text) {
+        List<FeedItem> searchResults;
+        text = "%" + text + "%";
+        searchResults = LitePal.where("title like ? or summary like ?", text, text).find(FeedItem.class);
+        searchFeedItemListFragment.updateData(searchResults);
+    }
+
+
+    public void queryFeedByText(String text) {
+        List<Feed> searchResults;
+        text = "%" + text + "%";
+        searchResults = LitePal.where("name like ? or desc like ?", text, text).find(Feed.class);
+        searchLocalFeedListFragment.updateData(searchResults);
+    }
+
+    public void queryFeedFolderByText(String text) {
+        List<FeedFolder> searchResults;
+        text = "%" + text + "%";
+        searchResults = LitePal.where("name like ?", text).find(FeedFolder.class);
+        searchFeedFolderFragment.updateData(searchResults);
+    }
+
+
+    private void toggleFeedListPopupView() {
         //显示弹窗
         if (popupView == null) {
             popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
@@ -308,17 +396,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    /**
-     * 全文搜索🔍
-     *
-     * @param text
-     * @return
-     */
-    public void queryFeedItemByText(String text) {
-        text = "%" + text + "%";
-        searchResults.clear();
-        searchResults = LitePal.where("title like ? or summary like ?", text, text).find(FeedItem.class);
-    }
 
     public void initEmptyView() {
         initDrawer();
@@ -535,7 +612,7 @@ public class MainActivity extends BaseActivity {
                     feedItems
             );
 
-            if (haveErrorFeedInCurrentFolder){
+            if (haveErrorFeedInCurrentFolder) {
                 one.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
             }
             if (notReadNum != 0) {
@@ -683,7 +760,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         ALog.d("mainActivity 被销毁");
-        if (EventBus.getDefault().isRegistered(this)){
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
     }

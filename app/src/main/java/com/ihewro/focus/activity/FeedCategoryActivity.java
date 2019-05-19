@@ -3,17 +3,22 @@ package com.ihewro.focus.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
+import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.adapter.FeedCategoryLeftAdapter;
 import com.ihewro.focus.adapter.FeedCategoryRightAdapter;
 import com.ihewro.focus.adapter.FeedListAdapter;
@@ -22,6 +27,8 @@ import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Website;
 import com.ihewro.focus.bean.WebsiteCategory;
+import com.ihewro.focus.fragemnt.search.SearchWebFeedListFragment;
+import com.ihewro.focus.fragemnt.search.SearchWebListFragment;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.view.RequireListPopupView;
@@ -34,6 +41,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,12 +65,19 @@ public class FeedCategoryActivity extends BackActivity {
     List<Website> websiteList = new ArrayList<>();
     @BindView(R.id.search_view)
     MaterialSearchView searchView;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    SearchWebListFragment searchWebListFragment;
+    SearchWebFeedListFragment searchFeedListFragment;
+
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
+    @BindView(R.id.search_view_content)
+    LinearLayout searchViewContent;
 
     private FeedListAdapter adapter;
     private List<Feed> feedList = new ArrayList<>();
-
+    private List<Fragment> fragmentList = new ArrayList<>();
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, FeedCategoryActivity.class);
@@ -80,6 +95,71 @@ public class FeedCategoryActivity extends BackActivity {
         bindListener();
 
         requestLeftData();
+
+        setSearchTabLayout("",false);
+
+    }
+
+    private void setSearchTabLayout(String search,boolean isUpdate){
+        //碎片列表
+        fragmentList.clear();
+        searchWebListFragment = new SearchWebListFragment(this);
+        searchFeedListFragment = new SearchWebFeedListFragment(this);
+        fragmentList.add(searchWebListFragment);
+        fragmentList.add(searchFeedListFragment);
+
+        //标题列表
+        List<String> pageTitleList = new ArrayList<>();
+        pageTitleList.add("网站");
+        pageTitleList.add("订阅");
+
+        //新建适配器
+        BaseViewPagerAdapter adapter = new BaseViewPagerAdapter(getSupportFragmentManager(), fragmentList, pageTitleList);
+
+        //设置ViewPager
+        viewPager.setAdapter(adapter);
+
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+    }
+
+    public void updateSearchTabLayout(String content){
+
+        //更新界面为加载数据的状态
+        searchFeedListFragment.showLoading();
+        searchWebListFragment.showLoading();
+
+        Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl, 10, 10, 10);
+        //请求网站列表
+        Call<List<Website>> request = retrofit.create(HttpInterface.class).searchWebsiteByName(content);
+
+        request.enqueue(new Callback<List<Website>>() {
+            @Override
+            public void onResponse(Call<List<Website>> call, Response<List<Website>> response) {
+                searchWebListFragment.updateData(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Website>> call, Throwable t) {
+                ALog.d("请求失败2" + t.getMessage());
+            }
+        });
+
+        //请求feedList
+        Call<List<Feed>> request2= retrofit.create(HttpInterface.class).searchFeedListByName(content);
+        request2.enqueue(new Callback<List<Feed>>() {
+            @Override
+            public void onResponse(Call<List<Feed>> call, Response<List<Feed>> response) {
+                searchFeedListFragment.updateData(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Feed>> call, Throwable t) {
+                searchFeedListFragment.showError();
+                Toasty.error(FeedCategoryActivity.this,"请求失败了").show();
+            }
+        });
+
 
 
     }
@@ -102,10 +182,9 @@ public class FeedCategoryActivity extends BackActivity {
         leftAdapter.bindToRecyclerView(recyclerLeft);
         rightAdapter.bindToRecyclerView(recyclerRight);
 
-        leftAdapter.setEmptyView(R.layout.simple_loading_view,recyclerLeft);
-        rightAdapter.setEmptyView(R.layout.simple_loading_view,recyclerRight);
+        leftAdapter.setEmptyView(R.layout.simple_loading_view, recyclerLeft);
+        rightAdapter.setEmptyView(R.layout.simple_loading_view, recyclerRight);
 
-        initSearchAdapter();
     }
 
 
@@ -116,10 +195,9 @@ public class FeedCategoryActivity extends BackActivity {
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO:提交才开始搜索
-
-
-                return false;
+                searchViewContent.setVisibility(View.VISIBLE);
+                updateSearchTabLayout(query);
+                return true;
             }
 
             @Override
@@ -129,6 +207,20 @@ public class FeedCategoryActivity extends BackActivity {
             }
         });
 
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+                searchViewContent.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+                searchViewContent.setVisibility(View.GONE);
+
+            }
+        });
 
 
         leftAdapter.setOnItemClickListener(new FeedCategoryLeftAdapter.OnItemClickListener() {
@@ -173,7 +265,7 @@ public class FeedCategoryActivity extends BackActivity {
 
     public void requestRightData(String categoryName) {
         rightAdapter.setNewData(null);
-        rightAdapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
+        rightAdapter.setEmptyView(R.layout.simple_loading_view, recyclerRight);
         Retrofit retrofit = HttpUtil.getRetrofit("bean", GlobalConfig.serverUrl, 10, 10, 10);
         Call<List<Website>> request = retrofit.create(HttpInterface.class).getWebsiteListByCategory(categoryName);
 
@@ -184,7 +276,7 @@ public class FeedCategoryActivity extends BackActivity {
                     websiteList.clear();
                     websiteList.addAll(response.body());
                     rightAdapter.setNewData(websiteList);
-                    if (websiteList.size() == 0){
+                    if (websiteList.size() == 0) {
                         rightAdapter.setNewData(null);
                         rightAdapter.setEmptyView(R.layout.simple_empty_view);
                     }
@@ -202,20 +294,12 @@ public class FeedCategoryActivity extends BackActivity {
     }
 
 
-    private void initSearchAdapter(){
-        //初始化列表
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new FeedListAdapter(feedList);
-        adapter.bindToRecyclerView(recyclerView);
-        adapter.setEmptyView(R.layout.simple_empty_view);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(SkinPreference.getInstance().getSkinName().equals("night")){
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
             getMenuInflater().inflate(R.menu.feed_night, menu);
-        }else {
+        } else {
             getMenuInflater().inflate(R.menu.feed, menu);
         }
         MenuItem item = menu.findItem(R.id.action_search);
@@ -230,11 +314,11 @@ public class FeedCategoryActivity extends BackActivity {
             case R.id.action_add_by_url:
                 //弹窗
                 List<FeedRequire> list = new ArrayList<>();
-                list.add(new FeedRequire("订阅地址","举例：https://www.ihewro.com/feed",FeedRequire.SET_URL));
-                list.add(new FeedRequire("订阅名称","随意给订阅取一个名字",FeedRequire.SET_NAME));
+                list.add(new FeedRequire("订阅地址", "举例：https://www.ihewro.com/feed", FeedRequire.SET_URL));
+                list.add(new FeedRequire("订阅名称", "随意给订阅取一个名字", FeedRequire.SET_NAME));
                 new XPopup.Builder(FeedCategoryActivity.this)
 //                        .moveUpToKeyboard(false) //如果不加这个，评论弹窗会移动到软键盘上面
-                        .asCustom(new RequireListPopupView(FeedCategoryActivity.this,list,"手动订阅","适用于高级玩家",new Help(false),new Feed(),getSupportFragmentManager()))
+                        .asCustom(new RequireListPopupView(FeedCategoryActivity.this, list, "手动订阅", "适用于高级玩家", new Help(false), new Feed(), getSupportFragmentManager()))
                         .show();
 
                 break;

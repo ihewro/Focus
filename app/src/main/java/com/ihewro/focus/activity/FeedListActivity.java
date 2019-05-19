@@ -150,7 +150,6 @@ public class FeedListActivity extends BackActivity {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 showRequireList(position);
-
             }
         });
     }
