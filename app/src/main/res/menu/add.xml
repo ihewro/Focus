@@ -13,5 +13,10 @@
         android:title="导出OPML"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_add_by_url"
+        android:orderInCategory="100"
+        android:title="手动添加订阅"
+        app:showAsAction="never" />
 
 </menu>

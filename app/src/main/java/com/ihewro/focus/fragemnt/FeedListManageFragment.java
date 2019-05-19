@@ -125,4 +125,12 @@ public class FeedListManageFragment extends Fragment {
         mFeedFolderId = id;
         setRecyclerView();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
 }

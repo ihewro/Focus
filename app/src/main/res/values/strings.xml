@@ -119,14 +119,14 @@
     <string name="pref_title_update">检查更新</string>
     <string name="pref_summary_update">1.0.0</string>
     <string name="pref_key_about">pref_key_about</string>
-    <string name="pref_title_about">关于我们</string>
+    <string name="pref_title_about">关于作者</string>
     <string name="pref_key_enhance_setting">pref_key_enhance_setting</string>
     <string name="pref_title_enhance_setting">高级设置</string>
     <string name="pref_key_backup">pref_key_backup</string>
     <string name="pref_title_backup">备份</string>
     <string name="pref_key_recover">pref_key_recover</string>
-    <string name="pref_title_recover">恢复订阅</string>
-    <string name="pref_summary_backup">备份你的订阅数据，以便恢复。（导出为OPML格式）</string>
+    <string name="pref_title_recover">恢复数据</string>
+    <string name="pref_summary_backup">备份你的订阅数据，以便恢复。（这里备份的数据库，和导出OPML不一样，备份数据库包括所有已读和收藏状态）</string>
     <string name="pref_summary_recover">恢复数据</string>
     <string name="pref_key_font_size">pref_key_font_size</string>
     <string name="pref_title_font_size">字体大小</string>
@@ -140,5 +140,8 @@
     <string name="pref_title_rsshub_choice">RssHub源选择</string>
     <string name="pref_key_rsshub_choice">pref_key_rsshub_choice</string>
     <string name="pref_summary_rsshub_choice">官方RssHub可能不够稳定，可以使用moerats大佬自建的RssHub源</string>
+    <string name="pref_key_auto_name">pref_key_auto_name</string>
+    <string name="pref_title_auto_name">订阅名称自动设置</string>
+    <string name="pref_summary_auto_name">开启该选项，订阅名称自动使用网络请求的页面标题（有一次网络请求后），自己手动设置的名称将被覆盖</string>
 
 </resources>

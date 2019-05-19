@@ -2,6 +2,7 @@ package com.ihewro.focus.util;
 
 import android.Manifest;
 import android.app.Activity;
+import android.os.Handler;
 import android.util.Xml;
 import android.widget.Toast;
 
@@ -241,7 +242,12 @@ public class OPMLReadHelper {
                 feed.save();
             }
 
-            EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    EventBus.getDefault().post(new EventMessage(EventMessage.IMPORT_OPML_FEED));
+                }
+            },500);
 
         }
 

@@ -6,6 +6,7 @@ import com.blankj.ALog;
 import com.google.common.base.Strings;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 
 import org.jsoup.Jsoup;
 import org.litepal.LitePal;
@@ -123,6 +124,7 @@ public class FeedParser {
         feed.setUrl(feedUrl);
         List<FeedItem> feedItems = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, CHANNEL);
+        String netFeedName = "";
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -130,10 +132,10 @@ public class FeedParser {
             String name = parser.getName();
             // Starts by looking for the entry tag
             switch (name) {
-                /*case TITLE:
+                case TITLE:
                     //使用用户设置的title
-//                    feed.setName(readTitle(parser));
-                    break;*/
+                    netFeedName = readTitle(parser);
+                    break;
                 case LINK:
                     feed.setLink(readLink(parser));
                     break;
@@ -157,6 +159,9 @@ public class FeedParser {
             }
 
             ALog.d();
+        }
+        if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("1")){//自动通过网络设置名字
+            feed.setName(netFeedName);//因为在线请求的时候没有拉取Titile这个字段
         }
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");
@@ -312,7 +317,9 @@ public class FeedParser {
                 feedId = tempFeeds.get(0).getId();
             }
             feed.setId(feedId);
-            feed.setName(tempFeeds.get(0).getName());//因为在线请求的时候没有拉取Titile这个字段
+            if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("0")){//没有选择，自动设置会手动设置name
+                feed.setName(tempFeeds.get(0).getName());//因为在线请求的时候没有拉取Titile这个字段
+            }
 
             //        tempFeeds.get(0).setLink(feed.getLink());
 //        tempFeeds.get(0).setDesc(feed.getDesc());

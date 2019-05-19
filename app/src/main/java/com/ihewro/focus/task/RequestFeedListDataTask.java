@@ -204,6 +204,7 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
         List<Feed> tempList = LitePal.where("url = ?" ,url).find(Feed.class);
         if (tempList.size()>0){
             Feed temp = tempList.get(0);
+            ALog.d(temp);
             List<FeedItem> tempFeedItemList = LitePal.where("feedid = ?", String.valueOf(temp.getId())).find(FeedItem.class);
             ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
             eList.addAll(tempFeedItemList);

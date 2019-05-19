@@ -18,16 +18,22 @@
         android:key="@string/pref_key_use_internet_while_open"
         android:title="@string/pref_title_use_internet_while_open"
         android:summary="@string/pref_summary_lower_flow_mode"/>
-
+<!--
     <Preference
         android:key="@string/pref_key_load_choice"
         android:title="@string/pref_title_load_choice"
-        android:summary="@string/pref_summary_load_choice"/>
+        android:summary="@string/pref_summary_load_choice"/>-->
 
     <Preference
         android:key="@string/pref_key_rsshub_choice"
         android:title="@string/pref_title_rsshub_choice"
         android:summary="@string/pref_summary_rsshub_choice"/>
+
+    <SwitchPreference
+        android:key="@string/pref_key_auto_name"
+        android:title="@string/pref_title_auto_name"
+        android:summary="@string/pref_summary_auto_name"/>
+
 
 
     <PreferenceCategory
@@ -48,9 +54,9 @@
         android:key="@string/pref_key_primary_about"
         android:title="@string/pref_title_primary_about" />
 
-    <Preference
+<!--    <Preference
         android:key="@string/pref_key_licence"
-        android:title="@string/pref_title_licence"/>
+        android:title="@string/pref_title_licence"/>-->
 
     <Preference
         android:key="@string/pref_key_update"

@@ -26,6 +26,9 @@ public class EventMessage {
     private static final String REFRESH_FEED_ITEM_LIST = "REFRESH_FEED_ITEM_LIST";//刷新订阅列表
 
 
+    //TODO: 对这个事情需要进行UI更新出来
+    public static final String DATABASE_RECOVER = "DATABASE_RECOVER";//数据库恢复通知
+
     //点击事件
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
@@ -47,19 +50,20 @@ public class EventMessage {
     public static final String NIGHT_MODE ="NIGHT_MODE";
 
     public static final String FEED_PULL_DATA_ERROR = "FEED_PULL_DATA_ERROR";
+    public static final String IMPORT_OPML_FEED = "IMPORT_OPML_FEED";//导入OPML文件
 
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
 
     //FeedList 收到这样的通知需要更新列表
-    public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED,MARK_FEED_READ);
+    public static final List<String>  feedOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED,MARK_FEED_READ,DATABASE_RECOVER,IMPORT_OPML_FEED);
 
     //FeedFolderList收到这样的通知需要更新列表
-    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,MOVE_FEED,MARK_FEED_FOLDER_READ);
+    public static final List<String>  feedFolderOperation = Arrays.asList(ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,MOVE_FEED,MARK_FEED_FOLDER_READ,DATABASE_RECOVER,IMPORT_OPML_FEED);
 
 
 

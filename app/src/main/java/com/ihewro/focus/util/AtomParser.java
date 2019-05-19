@@ -3,6 +3,7 @@ package com.ihewro.focus.util;
 import com.blankj.ALog;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 
 import org.jsoup.Jsoup;
 import org.xmlpull.v1.XmlPullParser;
@@ -56,6 +57,8 @@ public class AtomParser {
         feed.setUrl(url);
         List<FeedItem> feedItems = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, FEED);
+        String netFeedName = "";
+
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -64,7 +67,7 @@ public class AtomParser {
             // Starts by looking for the entry tag
             switch (name) {
                 case TITLE:
-                    feed.setName(readTitle(parser));
+                    netFeedName = readTitle(parser);
                     break;
                 case LINK:
                     feed.setLink(readLink(parser));
@@ -87,6 +90,10 @@ public class AtomParser {
                     skip(parser);
                     break;
             }
+        }
+
+        if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("1")){//自动通过网络设置名字
+            feed.setName(netFeedName);//因为在线请求的时候没有拉取Titile这个字段
         }
         feed.setFeedItemList(feedItems);
         feed.setWebsiteCategoryName("");

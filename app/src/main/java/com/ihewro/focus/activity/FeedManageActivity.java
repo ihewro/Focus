@@ -15,16 +15,22 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
+import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedRequire;
+import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.fragemnt.FeedFolderListManageFragment;
 import com.ihewro.focus.fragemnt.FeedListManageFragment;
 import com.ihewro.focus.util.OPMLCreateHelper;
 import com.ihewro.focus.util.OPMLReadHelper;
+import com.ihewro.focus.view.RequireListPopupView;
+import com.lxj.xpopup.XPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -158,6 +164,16 @@ public class FeedManageActivity extends BackActivity implements EasyPermissions.
                 opmlCreateHelper.run();
                 break;
 
+            case R.id.action_add_by_url:
+                //弹窗
+                List<FeedRequire> list = new ArrayList<>();
+                list.add(new FeedRequire("订阅地址","举例：https://www.ihewro.com/feed",FeedRequire.SET_URL));
+                list.add(new FeedRequire("订阅名称","随意给订阅取一个名字",FeedRequire.SET_NAME));
+                new XPopup.Builder(FeedManageActivity.this)
+//                        .moveUpToKeyboard(false) //如果不加这个，评论弹窗会移动到软键盘上面
+                        .asCustom(new RequireListPopupView(FeedManageActivity.this,list,"手动订阅","适用于高级玩家",new Help(false),new Feed(),getSupportFragmentManager()))
+                        .show();
+                break;
         }
         return true;
     }
@@ -230,5 +246,13 @@ public class FeedManageActivity extends BackActivity implements EasyPermissions.
     @Override
     public void onFileChooserDismissed(@NonNull FileChooserDialog dialog) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
     }
 }

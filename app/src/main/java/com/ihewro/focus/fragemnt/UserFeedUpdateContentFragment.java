@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
@@ -75,6 +77,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     private int orderChoice = FilterPopupView.ORDER_BY_NEW;
     private int filterChoice = FilterPopupView.SHOW_ALL;
+    private boolean isconnet = false;//
 
     @SuppressLint("ValidFragment")
     public UserFeedUpdateContentFragment(View view) {
@@ -154,6 +157,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
+        isconnet = true;
 
     }
 
@@ -198,6 +202,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
                     //解除绑定
                     Objects.requireNonNull(getActivity()).unbindService(connection);
+                    isconnet = false;
                 }
             });
 
@@ -227,7 +232,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (getActivity()!=null){//当活动被回收的时候，服务也必须停止
+        if (getActivity()!=null && isconnet){//当活动被回收的时候，服务也必须停止
             getActivity().unbindService(connection);
         }
         unbinder.unbind();
@@ -295,6 +300,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
             }
             updateData(this.feedIdList,this.orderChoice,this.filterChoice);
 
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){
+            //显示所有文章
+            updateData(new ArrayList<String>(),this.orderChoice,this.filterChoice);
+            ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
         }
     }
 
@@ -315,6 +324,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
         super.onDestroy();
         if (getActivity()!=null){//当活动被回收的时候，服务也必须停止
             getActivity().unbindService(connection);
+        }
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
         }
     }
 }

@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.MyApplication;
+import com.ihewro.focus.callback.FileOperationCallback;
 
 /**
  * <pre>
@@ -83,6 +85,20 @@ public class UIUtil {
         // 获得状态栏高度
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return context.getResources().getDimensionPixelSize(resourceId);
+    }
+
+    /**
+     * 自动数据库
+     */
+    public static void autoBackUpWhenItIsNecessary(){
+        //删除autobackup其他的所有文件
+        FileUtil.delFolder(GlobalConfig.appDirPath + "database/autobackup/");
+        FileUtil.copyFileToTarget(UIUtil.getContext().getDatabasePath("focus.db").getAbsolutePath(), GlobalConfig.appDirPath + "database/autobackup/" + "auto:" + DateUtil.getNowDateStr() + ".db", new FileOperationCallback() {
+            @Override
+            public void onFinish() {
+                //nothing to do
+            }
+        });
     }
 
 }

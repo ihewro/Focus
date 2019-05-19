@@ -22,7 +22,7 @@ android {
         }
     }
 
-    sourceSets {main {res.srcDirs = ['src/main/res', 'src/main/res-night']}}
+    sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res-night'] } }
 
 
     buildTypes {
@@ -80,7 +80,6 @@ dependencies {
     //dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-
 
     //网络请求
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
@@ -142,10 +141,8 @@ dependencies {
     //chrome tab
     implementation 'com.android.support:customtabs:28.0.0'
 
-
     //侧滑返回
     implementation 'com.github.ChenTianSaber:SlideBack:v0.8.2'
-
 
     //pup弹窗
     implementation 'com.lxj:xpopup:1.7.9'
@@ -161,6 +158,10 @@ dependencies {
 
     //简化运行时申请权限的代码
     implementation 'pub.devrel:easypermissions:2.0.1'
+
+    //关于页面
+    implementation 'me.drakeet.support:about:2.1.1'
+    implementation 'me.drakeet.multitype:multitype:3.4.4'
 
 
 }
