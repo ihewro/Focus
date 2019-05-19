@@ -286,6 +286,13 @@ public class MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
+        //适配夜间模式
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary_night));
+        } else {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        }
+
     }
 
     private void updateTabLayout(final String text) {

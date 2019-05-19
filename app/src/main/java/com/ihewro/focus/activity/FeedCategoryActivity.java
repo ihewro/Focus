@@ -121,6 +121,12 @@ public class FeedCategoryActivity extends BackActivity {
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary_night));
+        } else {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        }
     }
 
     public void updateSearchTabLayout(String content){
