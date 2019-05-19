@@ -166,6 +166,7 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
         }
 
         try {
+
             Response<String> response = call.execute();
             if (response != null && response.isSuccessful()){
                 feed.setErrorGet(false);
@@ -190,6 +191,8 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
                 }
             }
         } catch (IOException e) {
+            feed.setErrorGet(true);
+            feed.save();
             e.printStackTrace();
         }
         setUI();

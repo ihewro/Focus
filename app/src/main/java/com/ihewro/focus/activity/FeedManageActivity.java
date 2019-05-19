@@ -146,6 +146,7 @@ public class FeedManageActivity extends BackActivity implements EasyPermissions.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
         switch (item.getItemId()){
             case R.id.action_import://导入
                 opmlReadHelper = new OPMLReadHelper(FeedManageActivity.this);

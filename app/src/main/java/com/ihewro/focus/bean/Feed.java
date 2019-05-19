@@ -25,7 +25,6 @@ public class Feed extends LitePalSupport {
     @Column(unique = true)
     private int id;//真实主键
 
-    @Column(unique = true)
     private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id，这个字段需要保留，以便获取服务器上对应的参数列表，该字段仅仅在获取参数列表使用，其他任何使用禁止使用！
 
     private String name;

@@ -238,7 +238,7 @@ public class RequireListPopupView extends BottomPopupView {
                 feed.setFeedFolderId(targetId);
                 feed.setTimeout(Feed.DEFAULT_TIMEOUT);
                 try{
-                    feed.save();
+                    feed.saveThrows();
                     Toasty.success(UIUtil.getContext(),"订阅成功").show();
                     EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
                 }catch (LitePalSupportException exception){
