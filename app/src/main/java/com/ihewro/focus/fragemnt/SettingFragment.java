@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.AboutActivity;
 import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.Feed;
@@ -182,6 +183,7 @@ public class SettingFragment extends PreferenceFragment {
         aboot.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                AboutActivity.activityStart(getActivity());
                 return false;
             }
         });

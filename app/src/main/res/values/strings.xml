@@ -143,5 +143,6 @@
     <string name="pref_key_auto_name">pref_key_auto_name</string>
     <string name="pref_title_auto_name">订阅名称自动设置</string>
     <string name="pref_summary_auto_name">开启该选项，订阅名称自动使用网络请求的页面标题（有一次网络请求后），自己手动设置的名称将被覆盖</string>
+    <string name="card_content" />
 
 </resources>
