@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +15,9 @@ import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.RequestDataCallback;
@@ -112,6 +115,7 @@ public class RequestFeedListDataService extends Service {
                 public void onFinish(List<FeedItem> list) {//没有网络的时候结束
                     //通知activity修改数据
                     callback.onFinish(list);
+//                    stopForeground(true);没有网络请求不会开启前台服务的
                     //结束自己
                     stopSelf();
                 }
@@ -121,9 +125,20 @@ public class RequestFeedListDataService extends Service {
         }
 
 
+        public void stopService(){
+            stopSelf();
+        }
+
+
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ALog.d("服务被结束了");
 
+
+    }
 
     private Notification createNotice(String title, int progress){
         //消息管理
@@ -138,6 +153,12 @@ public class RequestFeedListDataService extends Service {
             builderProgress.setContentText(progress + "%");
             builderProgress.setProgress(100, progress, false);
         }
+        //绑定点击事件
+        Intent intent = new Intent(activity,MainActivity.class);
+        PendingIntent pending_intent_go = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builderProgress.setAutoCancel(true);
+        builderProgress.setContentIntent(pending_intent_go);
 
         notification = builderProgress.build();
 
@@ -163,12 +184,6 @@ public class RequestFeedListDataService extends Service {
     }
 
 
-    public void updateNotice(int percent){
-        //更新进度条
-        builderProgress.setProgress(100, percent, false);
-        //再次通知
-        mNotificationManager.notify(1, builderProgress.build());
-    }
 
 
     private NotificationManager getNotificationManager(){

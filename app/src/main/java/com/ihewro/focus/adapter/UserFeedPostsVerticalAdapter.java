@@ -93,7 +93,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
         String imageUrl = DataUtil.getFeedItemImageUrl(item);
         if (!StringUtil.trim(imageUrl).equals("")){
-            if (!imageUrl.startsWith("http://")||!imageUrl.startsWith("https://")){
+            if (!imageUrl.startsWith("http://")&& !imageUrl.startsWith("https://")){
                 //说明是相对地址
                 if (!imageUrl.substring(0,1).equals("/")){
                     imageUrl = "/" + imageUrl;//前面如果没有/，补足一个

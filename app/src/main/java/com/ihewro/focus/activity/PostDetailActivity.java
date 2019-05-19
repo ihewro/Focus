@@ -470,4 +470,11 @@ public class PostDetailActivity extends BaseActivity {
         String url = currentFeedItem.getUrl();
         WebViewUtil.openLink(url,PostDetailActivity.this);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ALog.d("postDetail 被销毁");
+
+    }
 }

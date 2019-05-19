@@ -206,6 +206,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+            //停止服务
+            myBinder.stopService();
             ALog.d("活动与服务解除了绑定");
         }
     };
@@ -225,6 +227,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (getActivity()!=null){//当活动被回收的时候，服务也必须停止
+            getActivity().unbindService(connection);
+        }
         unbinder.unbind();
         EventBus.getDefault().unregister(this);
     }
@@ -303,5 +308,13 @@ public class UserFeedUpdateContentFragment extends Fragment {
         this.orderChoice = oderChoice;
         this.filterChoice = filterChoice;
         refreshLayout.autoRefresh();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (getActivity()!=null){//当活动被回收的时候，服务也必须停止
+            getActivity().unbindService(connection);
+        }
     }
 }

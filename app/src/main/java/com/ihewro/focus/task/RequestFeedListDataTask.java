@@ -121,36 +121,7 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
             callback.onFinish(new ArrayList<FeedItem>());
         }
     }
-    /**
-     *
-     * @param index 已经完成了的任务个数
-     */
-    private void updateTextInAlter(int index){
-        if (isForce || flag){//当有网络请求的时候，才有进度通知条
-            if (index >= num){
-                if (popupView!=null && popupView.isShow()){
 
-                    popupView.getProgressBar().setProgress(100);
-                    popupView.getProgressInfo().setText("任务完成");
-                    popupView.getCircle().setVisibility(View.GONE);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            popupView.dismiss();
-                        }
-                    },1000); // 延时1秒
-                }
-            }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
-                ALog.d("怎么回事吗？？");
-                if (popupView!=null && popupView.isShow()){
-                    ALog.d("怎么回事吗？？2333");
-                    int progress = (int) ((index*1.0)/num *100);
-                    popupView.getProgressBar().setProgress(progress);
-                    popupView.getProgressInfo().setText(returnProgressText(index));
-                }
-            }
-        }
-    }
 
     /**
      * 该代码函数为子线程，禁止操作UI内容
@@ -316,7 +287,10 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
             }else {
                 callback.onFinish(list);
             }
+        }else {
         }
+        ALog.d("完成数目"+okNum+"总数目"+num);
+
     }
 
     private void ShowProgress(){
@@ -365,11 +339,43 @@ public class RequestFeedListDataTask extends AsyncTask<String, Integer, Integer>
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
 
+        //调用service的回调函数
+        callback.onProgress((int) ((values[0]*1.0/num)*100));
+
         //更新进度条
         updateTextInAlter(values[0]);
 
-        //调用service的回调函数
-        callback.onProgress((int) ((values[0]*1.0/num)*100));
+    }
+
+    /**
+     *
+     * @param index 已经完成了的任务个数
+     */
+    private void updateTextInAlter(int index){
+        if (isForce || flag){//当有网络请求的时候，才有进度通知条
+            if (index >= num){
+                if (popupView!=null && popupView.isShow()){
+
+                    popupView.getProgressBar().setProgress(100);
+                    popupView.getProgressInfo().setText("任务完成");
+                    popupView.getCircle().setVisibility(View.GONE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            popupView.dismiss();
+                        }
+                    },1000); // 延时1秒
+                }
+            }else {//这个地方结束了第index个请求（从1计数），开始第index+1个请求
+                ALog.d("怎么回事吗？？");
+                if (popupView!=null && popupView.isShow()){
+                    ALog.d("怎么回事吗？？2333");
+                    int progress = (int) ((index*1.0)/num *100);
+                    popupView.getProgressBar().setProgress(progress);
+                    popupView.getProgressInfo().setText(returnProgressText(index));
+                }
+            }
+        }
     }
 
     @Override

@@ -678,4 +678,10 @@ public class MainActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ALog.d("mainActivity 被销毁");
+    }
 }

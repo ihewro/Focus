@@ -1,5 +1,6 @@
 package com.ihewro.focus.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -16,6 +17,13 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
+
+        Intent intent = getIntent();
+
+        if (!isTaskRoot()) {
+            finish();
+            return;
+        }
 
 
         //跳转到 {@link MainActivity}
