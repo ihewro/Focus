@@ -93,7 +93,7 @@ public class RequestFeedListDataService extends Service {
                 @Override
                 public void onProgress(int progress) {
                     //更新通知
-                    mNotificationManager.notify(1, createNotice("获取中……",progress));
+                    mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",progress));
                 }
 
                 @Override

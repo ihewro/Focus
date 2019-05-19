@@ -93,12 +93,21 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
         String imageUrl = DataUtil.getFeedItemImageUrl(item);
         if (!StringUtil.trim(imageUrl).equals("")){
+            if (!imageUrl.startsWith("http://")||!imageUrl.startsWith("https://")){
+                //说明是相对地址
+                if (!imageUrl.substring(0,1).equals("/")){
+                    imageUrl = "/" + imageUrl;//前面如果没有/，补足一个
+                }
+                imageUrl =  StringUtil.getUrlPrefix(item.getUrl()) + imageUrl;
+            }
+            ALog.d("图片地址是" + imageUrl);
             helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
             ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
                 @Override
                 public void onFailed(ImageView imageView, FailReason failReason) {
                     imageView.setVisibility(View.GONE);
                     ALog.d("图片加载失败！！");
+
                 }
 
                 @Override

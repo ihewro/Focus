@@ -64,6 +64,8 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                                     finalO.setName(name);
                                     finalO.save();
                                 }
+                                Toasty.success(getContext(),"修改成功").show();
+
                                 EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
                             }
                         }).show();
@@ -95,6 +97,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
 
                                 //3.删除文件夹
                                 LitePal.delete(FeedFolder.class,id);
+                                Toasty.success(getContext(),"退订成功").show();
 
                                 EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED_FOLDER, (int) id));
                             }
@@ -126,6 +129,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                                     LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(feed.getId()));
 
                                 }
+                                Toasty.success(getContext(),"标记成功").show();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.MARK_FEED_FOLDER_READ, (int) id));
                             }
                         })

@@ -23,7 +23,7 @@ public class PostUtil {
         if (article == null || textView == null) {
             return;
         }
-        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context);
+        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context,article.getUrl());
     }
 
     public static String getContent(FeedItem article) {

@@ -20,12 +20,12 @@
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="25dp"
-        android:text="什么内容都没有哦😯"
+        android:layout_marginEnd="80dp"
+        android:text="什么内容都没有哦😯，去侧边栏「发现」看看有哪些订阅吧"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView5" />

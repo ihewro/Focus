@@ -67,6 +67,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 }else {
                                     item.setName(name);
                                     item.save();
+                                    Toasty.success(getContext(),"修改成功").show();
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
                                 }
                             }
@@ -92,7 +93,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(item.getId()));
                                 //再删除feed
                                 LitePal.delete(Feed.class,id);
-
+                                Toasty.success(getContext(),"退订成功").show();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED,id));
                             }
                         })
@@ -118,6 +119,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 ContentValues values = new ContentValues();
                                 values.put("read", "1");
                                 LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(id));
+                                Toasty.success(getContext(),"操作成功").show();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.MARK_FEED_READ, (int) id));
                             }
                         })
@@ -136,6 +138,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         //移动到指定的目录下
                         item.setFeedFolderId(targetId);
                         item.save();
+                        Toasty.success(getContext(),"移动成功").show();
                         EventBus.getDefault().post(new EventMessage(EventMessage.MOVE_FEED));
                     }
                 },getContext(),"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
@@ -149,6 +152,8 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                 final Feed item = (Feed)o;
                 ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText(null, item.getUrl()));
+                Toasty.success(getContext(),"复制成功").show();
+                dismiss();
 
             }
         }));
@@ -170,6 +175,8 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 }else {
                                     item.setUrl(url);
                                     item.save();
+                                    Toasty.success(getContext(),"修改成功").show();
+
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
                                 }
                             }
@@ -195,6 +202,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 }else {
                                     item.setTimeout(Integer.parseInt(timeout));
                                     item.save();
+                                    Toasty.success(getContext(),"设置成功").show();
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
                                 }
                             }

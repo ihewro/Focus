@@ -63,7 +63,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
     }
 
     private void initListener(final BaseViewHolder helper, final Feed item){
-        //长按修改名称
+        //长按功能菜单
         helper.getView(R.id.item_view).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {

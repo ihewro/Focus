@@ -71,10 +71,11 @@ public class Feed extends LitePalSupport {
     public Feed() {
     }
 
-    public Feed(String name, String url, String desc) {
+    public Feed(String name, String url, String desc, int timeout) {
         this.name = name;
         this.url = url;
         this.desc = desc;
+        this.timeout = timeout;
     }
 
 

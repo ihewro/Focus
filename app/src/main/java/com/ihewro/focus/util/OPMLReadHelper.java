@@ -12,6 +12,7 @@ import com.ihewro.focus.activity.FeedManageActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.UserPreference;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.dmoral.toasty.Toasty;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
@@ -97,7 +99,7 @@ public class OPMLReadHelper {
             //保存到指定的文件夹中
             saveFeedToFeedFolder(feedFolders);
 
-            Toast.makeText(activity, "导入成功", Toast.LENGTH_SHORT).show();
+            Toasty.success(activity, "导入成功", Toast.LENGTH_SHORT).show();
         } catch (XmlPullParserException e) {
 
             Toast.makeText(activity, "文件格式错误", Toast.LENGTH_SHORT).show();
@@ -212,7 +214,7 @@ public class OPMLReadHelper {
         }
         iconUrl = htmlUrl + "/favicon.ico";
 
-        Feed feed = new Feed(title,xmlUrl,description);
+        Feed feed = new Feed(title,xmlUrl,description, Feed.DEFAULT_TIMEOUT);
 
         return feed;
     }
@@ -238,8 +240,11 @@ public class OPMLReadHelper {
                 feed.setFeedFolderId(feedFolder.getId());
                 feed.save();
             }
+
             EventBus.getDefault().post(new EventMessage(EventMessage.ADD_FEED));
 
         }
+
+        Toasty.success(activity,"导入成功！").show();
     }
 }

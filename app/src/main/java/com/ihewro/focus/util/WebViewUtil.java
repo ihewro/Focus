@@ -28,8 +28,15 @@ import skin.support.utils.SkinPreference;
  */
 public class WebViewUtil {
 
+    /**
+     *
+     * @param webView
+     * @param html
+     * @param context
+     * @param url 用于修改相对地址的
+     */
     @SuppressLint("SetJavaScriptEnabled")
-    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context){
+    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context,String url){
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setDomStorageEnabled(true);
@@ -42,7 +49,7 @@ public class WebViewUtil {
 
         String[] imageUrls = {};
         webView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");
-        webView.setWebViewClient(new MyWebViewClient(context));
+        webView.setWebViewClient(new MyWebViewClient(context,url));
 
         //加载HTML
         String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";

@@ -30,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import es.dmoral.toasty.Toasty;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
@@ -97,7 +98,7 @@ public class OPMLCreateHelper {
 
             if (flag){
                 FileOutputStream fileOutputStream = new FileOutputStream(outFile);
-                createXml(fileOutputStream);
+                createXml(fileOutputStream,outPutPath);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,7 +107,7 @@ public class OPMLCreateHelper {
     }
 
 
-    private void createXml(OutputStream outputStream){
+    private void createXml(OutputStream outputStream,String path){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
         try {
@@ -167,6 +168,8 @@ public class OPMLCreateHelper {
             PrintWriter printWriter = new PrintWriter(outputStream);
             StreamResult streamResult = new StreamResult(printWriter);
             transformer.transform(domSource, streamResult);
+
+            Toasty.success(activity,"成功导出至" + path).show();
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
