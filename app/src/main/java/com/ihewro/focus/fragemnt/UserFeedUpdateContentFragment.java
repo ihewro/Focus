@@ -79,6 +79,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private int orderChoice = FilterPopupView.ORDER_BY_NEW;
     private int filterChoice = FilterPopupView.SHOW_ALL;
     private boolean isconnet = false;//
+    private int feedItemNum;
 
     @SuppressLint("ValidFragment")
     public UserFeedUpdateContentFragment(View view) {
@@ -155,6 +156,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
      * 获取用户的所有订阅的文章
      */
     public void requestAllData(){
+        this.feedItemNum = this.feedIdList.size();
         Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
@@ -182,7 +184,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             myBinder.initParameter(orderChoice, filterChoice, getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
                 @Override
                 public void onBegin() {
-                    refreshLayout.finishRefresh(true);
+//                    refreshLayout.finishRefresh(true);
                 }
 
                 @Override
@@ -212,7 +214,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 public void onFinish(List<FeedItem> feedList) {
                     eList.clear();
                     eList.addAll(feedList);
-
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -224,6 +225,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
                             isFirstOpen = false;
                         }
                     });
+
+                    int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
+                    if (sub > 0){
+                        Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
+                    }else {
+                        Toasty.success(getActivity(),"暂无新内容").show();
+                    }
+                    refreshLayout.finishRefresh(true);
 
                     //解除绑定
                     if (isconnet){

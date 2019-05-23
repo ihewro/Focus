@@ -601,7 +601,7 @@ public class MainActivity extends BaseActivity {
                 SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
                 if (feedList.get(j).isErrorGet()) {
                     haveErrorFeedInCurrentFolder = true;
-                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
+                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_sync_problem);
                 } else {
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
                 }
@@ -620,7 +620,7 @@ public class MainActivity extends BaseActivity {
             );
 
             if (haveErrorFeedInCurrentFolder) {
-                one.withIcon(GoogleMaterial.Icon.gmd_signal_wifi_off);
+                one.withIcon(GoogleMaterial.Icon.gmd_report_problem);
             }
             if (notReadNum != 0) {
                 one.withBadge(notReadNum + "");

@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import es.dmoral.toasty.Toasty;
+
 /**
  * <pre>
  *     author : hewro
@@ -115,6 +117,7 @@ public class RequestFeedListDataService extends Service {
                         }
                     });
                 }else {//网络请求
+                    Toasty.success(activity,"开始请求数据").show();
                     startForeground(1,createNotice("开始获取数据中……",0));
                     ExecutorService mExecutor = Executors.newCachedThreadPool();
                     for (int i = 0;i < feedList.size();i++){
@@ -123,9 +126,7 @@ public class RequestFeedListDataService extends Service {
                             @Override
                             public void onSuccess(List<FeedItem> feedItemList) {
                                 updateUI();
-                                //计算出当前的process
-                                int process = (int) (okNum *1.0 / num * 100);
-                                mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",process));
+
                             }
 
                         });
@@ -138,30 +139,36 @@ public class RequestFeedListDataService extends Service {
         }
 
         private void updateUI(){
+
             okNum++;
+
+            //计算出当前的process
+            int process = (int) (okNum *1.0 / num * 100);
+            mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",process));
 
             //没请求完也需要
             handleData(new RequestDataCallback() {
                 @Override
                 public void onSuccess(List<FeedItem> feedItemList) {
-                    callback.onUpdate(feedItemList);
+                    if (okNum >= num){//数据全部请求完毕
+                        handleData(new RequestDataCallback() {
+                            @Override
+                            public void onSuccess(List<FeedItem> feedItemList) {
+                                stopForeground(true);
+                                mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
+                                //通知activity修改数据
+                                callback.onFinish(feedItemList);
+                                //结束自己
+                                stopSelf();
+                            }
+                        });
+                    }else {
+                        callback.onUpdate(feedItemList);
+                    }
                 }
             });
 
 
-            if (okNum >= num){//数据全部请求完毕
-                handleData(new RequestDataCallback() {
-                    @Override
-                    public void onSuccess(List<FeedItem> feedItemList) {
-                        stopForeground(true);
-                        mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
-                        //通知activity修改数据
-                        callback.onFinish(feedItemList);
-                        //结束自己
-                        stopSelf();
-                    }
-                });
-            }
 
             ALog.d("完成数目"+okNum+"总数目"+num);
 
@@ -275,6 +282,9 @@ public class RequestFeedListDataService extends Service {
         if (progress > 0){//全部获取完的时候不需要显示进度条了
             builderProgress.setContentText(progress + "%");
             builderProgress.setProgress(100, progress, false);
+        }
+        if (progress == 100){
+            builderProgress.setContentText(title);
         }
         //绑定点击事件
         Intent intent = new Intent(activity,MainActivity.class);
