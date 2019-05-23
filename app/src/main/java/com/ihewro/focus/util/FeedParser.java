@@ -4,7 +4,6 @@ import android.util.Xml;
 
 import com.blankj.ALog;
 import com.google.common.base.Strings;
-import com.google.gson.JsonObject;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;

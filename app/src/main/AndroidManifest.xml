@@ -35,7 +35,9 @@
 
         <service android:name=".task.RequestFeedListDataService" />
 
-        <activity android:name=".activity.WebViewActivity" />
+        <activity android:name=".activity.WebViewActivity"
+            android:hardwareAccelerated="true"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".activity.FeedManageActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.FeedListActivity" />
@@ -43,7 +45,9 @@
         <activity android:name=".activity.StarActivity" />
         <activity android:name=".activity.FeedCategoryActivity" />
         <activity android:name=".activity.ErrorActivity" />
-        <activity android:name=".activity.PostDetailActivity" />
+        <activity android:name=".activity.PostDetailActivity"
+            android:hardwareAccelerated="true"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

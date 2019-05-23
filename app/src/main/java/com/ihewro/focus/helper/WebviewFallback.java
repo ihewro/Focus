@@ -15,8 +15,10 @@ package com.ihewro.focus.helper;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.widget.LinearLayout;
 
 import com.ihewro.focus.activity.WebViewActivity;
+import com.just.agentweb.AgentWeb;
 
 /**
  * A Fallback that opens a Webview when Custom Tabs is not available

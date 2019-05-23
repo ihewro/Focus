@@ -67,8 +67,7 @@
             android:id="@+id/toolbar"
             app:title="发现市场"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:layout_height="?attr/actionBarSize"/>
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/search_view"

@@ -11,22 +11,23 @@
      limitations under the License.
 -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="@string/app_name"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:title="网页加载中……" />
 
     <WebView
         android:id="@+id/webview"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="16dp"
@@ -34,4 +35,4 @@
         android:paddingRight="16dp"
         android:paddingTop="16dp"
         android:layout_marginTop="?attr/actionBarSize"/>
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

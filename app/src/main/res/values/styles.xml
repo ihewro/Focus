@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="popupMenuStyle">@style/ThemeOverlay.AppCompat.Light</item>
 
         <!--抽屉的风格-->
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
@@ -20,8 +21,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_night</item>
         <item name="colorAccent">@color/colorAccent_night</item>
         <item name="android:windowBackground">@color/colorPrimary_night</item>
-
-
+        <item name="popupMenuStyle">@style/ThemeOverlay.AppCompat.Dark</item>
 
         <!--搜索框-->
         <!-- Background for the search bar -->
@@ -32,6 +32,7 @@
 
 
     </style>
+
 
 
     <style name="Animation_Activity">

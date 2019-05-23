@@ -16,8 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="设置"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:title="设置"/>
     </android.support.design.widget.AppBarLayout>
 
     <!--这个地方不能使用scrollView，否则就不显示设置项，具体原因未知-->
