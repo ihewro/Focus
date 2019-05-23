@@ -156,7 +156,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
      * 获取用户的所有订阅的文章
      */
     public void requestAllData(){
-        this.feedItemNum = this.feedIdList.size();
         Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
@@ -181,6 +180,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 feedList = LitePal.findAll(Feed.class);
             }
 
+
+
             myBinder.initParameter(orderChoice, filterChoice, getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
                 @Override
                 public void onBegin() {
@@ -189,7 +190,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
                 @Override
                 public void onUpdate(List<FeedItem> feedItems) {
-                    //TODO：显示多少新的文章
                     int sub = feedItems.size() - eList.size();
                     if (sub > 0){//有新文章时候才会去更新
                         Toasty.success(getActivity(),sub + "篇新文章").show();
@@ -209,30 +209,29 @@ public class UserFeedUpdateContentFragment extends Fragment {
                         });
                     }
                 }
-
                 @Override
                 public void onFinish(List<FeedItem> feedList) {
                     eList.clear();
                     eList.addAll(feedList);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setNewData(eList);
-                            if (eList.size()==0){
-                                adapter.setNewData(null);
-                                adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
-                            }
-                            isFirstOpen = false;
-                        }
-                    });
-
-                    int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
-                    if (sub > 0){
-                        Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
-                    }else {
-                        Toasty.success(getActivity(),"暂无新内容").show();
+                    adapter.setNewData(eList);
+                    if (eList.size()==0){
+                        adapter.setNewData(null);
+                        adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
                     }
+
+                    //显示通知
+                    int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
+                    if (!isFirstOpen){
+                        if (sub > 0 ){
+                            Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
+                        }else {
+                            Toasty.success(getActivity(),"暂无新内容").show();
+                        }
+                    }
+                    //刷新界面
+                    isFirstOpen = false;
                     refreshLayout.finishRefresh(true);
+                    UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
 
                     //解除绑定
                     if (isconnet){

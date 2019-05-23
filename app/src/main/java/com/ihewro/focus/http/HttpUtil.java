@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.blankj.ALog;
+import com.ihewro.focus.helper.EncodingInterceptor;
 import com.ihewro.focus.util.HttpsUtil;
 import com.ihewro.focus.util.Tls12SocketFactory;
 import com.ihewro.focus.util.UIUtil;
@@ -56,6 +57,7 @@ public class HttpUtil {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(new EncodingInterceptor("gbk"))//如果没有编码设置，则设置为gbk
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)

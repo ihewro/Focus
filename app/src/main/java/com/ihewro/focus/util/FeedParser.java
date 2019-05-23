@@ -4,6 +4,7 @@ import android.util.Xml;
 
 import com.blankj.ALog;
 import com.google.common.base.Strings;
+import com.google.gson.JsonObject;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -16,6 +17,10 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +62,21 @@ public class FeedParser {
      * @param xmlStr
      * @return[
      */
-    public static Feed parseStr2Feed(String xmlStr,String url) {
+    public static Feed parseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         if (Strings.isNullOrEmpty(xmlStr)) {
             return null;
         }
 
+        //对字符串进行编码
+//        xmlStr = new String(xmlStr.getBytes("UTF-8"),"ISO-8859-1");
+
+//        xmlStr = URLDecoder.decode(xmlStr, "GBK");
+//        xmlStr = new String(xmlStr.getBytes(), StandardCharsets.UTF_8);
+//        xmlStr =  new String(xmlStr.getBytes("GBK"), "UTF-8");
+
+//        xmlStr =new String(xmlStr.getBytes("unicode"),"gb2312");
+        
+        ALog.d(xmlStr);
         feedUrl = url;
 
         XmlPullParser parser = Xml.newPullParser();
@@ -319,7 +334,6 @@ public class FeedParser {
             if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("0")){//没有选择，自动设置会手动设置name
                 feed.setName(tempFeeds.get(0).getName());//因为在线请求的时候没有拉取Titile这个字段
             }
-
             //        tempFeeds.get(0).setLink(feed.getLink());
 //        tempFeeds.get(0).setDesc(feed.getDesc());
 //        tempFeeds.get(0).save();
@@ -340,6 +354,10 @@ public class FeedParser {
                     feed.getFeedItemList().get(i).setRead(temp.isRead());
                     feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
                     feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
+
+                    //更新数据库的数据
+                    temp.setContent(feed.getFeedItemList().get(i).getContent());
+                    temp.save();
                 }
             }
         }
