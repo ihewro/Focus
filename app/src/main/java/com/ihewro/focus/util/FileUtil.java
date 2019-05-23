@@ -99,6 +99,7 @@ public class FileUtil {
         if (Objects.equals(source.getAbsolutePath(), target.getAbsolutePath())){
             flag =  true;
         }else {
+            ALog.d("源文件" + source.getAbsolutePath() + "目标文件"+ target.getAbsolutePath());
             File fileParent = target.getParentFile();
             if(!fileParent.exists()){
                 fileParent.mkdirs();

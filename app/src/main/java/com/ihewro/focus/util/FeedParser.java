@@ -76,7 +76,7 @@ public class FeedParser {
 
 //        xmlStr =new String(xmlStr.getBytes("unicode"),"gb2312");
 
-        ALog.d(xmlStr);
+//        ALog.d(xmlStr);
         feedUrl = url;
 
         XmlPullParser parser = Xml.newPullParser();
@@ -367,9 +367,11 @@ public class FeedParser {
                     feed.getFeedItemList().get(i).setFavorite(temp.isFavorite());
                     feed.getFeedItemList().get(i).setDate(temp.getDate());//有的feedItem 源地址中 没有时间，所以要恢复第一次加入数据库中的时间
 
-                    //更新数据库的数据
                     temp.setContent(feed.getFeedItemList().get(i).getContent());
+                    temp.setTitle(feed.getFeedItemList().get(i).getTitle());
+                    temp.setSummary(feed.getFeedItemList().get(i).getSummary());
                     temp.save();
+
                 }
             }
         }

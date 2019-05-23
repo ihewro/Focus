@@ -3,6 +3,7 @@ package com.ihewro.focus.task;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,10 +20,12 @@ import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.callback.FileOperationCallback;
+import com.ihewro.focus.helper.DatabaseHelper;
 import com.ihewro.focus.util.DataCleanManager;
 import com.ihewro.focus.util.FileUtil;
 
 import org.greenrobot.eventbus.EventBus;
+import org.litepal.LitePal;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,6 +53,9 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
 
     public RecoverDataTask(Activity activity) {
         this.activity = activity;
+        DatabaseHelper helper=new DatabaseHelper(activity,"focus");
+        SQLiteDatabase db = helper.getReadableDatabase();
+        db.disableWriteAheadLogging(); //禁用WAL模式
     }
 
     @Override

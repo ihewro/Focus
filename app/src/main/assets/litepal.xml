@@ -5,6 +5,7 @@
 
     <version value="9" />
 
+
     <!--
     	Define your models in the list with mapping tag, LitePal will
     	create tables for each mapping class. The supported fields
