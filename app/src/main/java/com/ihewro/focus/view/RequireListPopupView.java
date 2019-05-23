@@ -162,8 +162,8 @@ public class RequireListPopupView extends BottomPopupView {
         StringBuilder jointUrl = new StringBuilder();
         if (feed.getUrl()!=null){
             jointUrl = new StringBuilder(feed.getUrl());//构建订阅的域名🌽
-            if (jointUrl.charAt(jointUrl.length()-1) != '/'){//末尾一定是/
-                jointUrl.append("/");
+            if (jointUrl.charAt(jointUrl.length()-1) == '/'){//末尾统一去掉/
+                jointUrl = jointUrl.deleteCharAt(jointUrl.length()-1);
             }
         }
 
@@ -200,12 +200,12 @@ public class RequireListPopupView extends BottomPopupView {
                 }else {
                     feed.setName(editText);
                 }
-            }else {
+            }else {//拼接url
                 if (!feedRequire.isOptional() && editText.trim().equals("")){
                     editTextView.setError("不能为空哦");
                     isValidate = false;
                 }else {
-                    jointUrl.append(editText);
+                    jointUrl.append("/"+editText);
                     isNeedJointUrl = true;
                 }
             }

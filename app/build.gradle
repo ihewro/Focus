@@ -163,5 +163,7 @@ dependencies {
     implementation 'me.drakeet.support:about:2.1.1'
     implementation 'me.drakeet.multitype:multitype:3.4.4'
 
+    //webview
+    api 'com.just.agentweb:agentweb:4.0.3-beta' // (必选)
 
 }
