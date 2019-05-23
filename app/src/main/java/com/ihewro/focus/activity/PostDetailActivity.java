@@ -42,9 +42,11 @@ import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 import skin.support.utils.SkinPreference;
 
 
@@ -468,7 +470,12 @@ public class PostDetailActivity extends BaseActivity {
 
     private void openLink(FeedItem feedItem) {
         String url = currentFeedItem.getUrl();
-        WebViewUtil.openLink(url,PostDetailActivity.this);
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        if (pattern.matcher(url).matches()){
+            Toasty.info(this,"该文章没有外链哦").show();
+        }else {
+            WebViewUtil.openLink(url,PostDetailActivity.this);
+        }
     }
 
     @Override

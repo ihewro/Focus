@@ -53,6 +53,7 @@ public class FeedParser {
     private static final String ITEM = "item";
     private static final String CONTENT = "content:encoded";
     private static final String PUB_DATE = "pubDate";
+    private static final String GUID = "guid";
 
     private static String feedUrl;
 
@@ -75,7 +76,7 @@ public class FeedParser {
 //        xmlStr =  new String(xmlStr.getBytes("GBK"), "UTF-8");
 
 //        xmlStr =new String(xmlStr.getBytes("unicode"),"gb2312");
-        
+
         ALog.d(xmlStr);
         feedUrl = url;
 
@@ -199,6 +200,7 @@ public class FeedParser {
         String pubDate = null;
         String description = null;
         String content = null;
+        String guid = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -220,6 +222,9 @@ public class FeedParser {
                 case CONTENT:
                     content = readContent(parser);
                     break;
+                case GUID:
+                    guid = readGUID(parser);
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -227,6 +232,9 @@ public class FeedParser {
         }
 
         ALog.d("item名称：" + title + "时间为" + pubDate);
+        if (StringUtil.trim(link).equals("")){//link 与guid一定有一个是存在或者都存在，优先使用link的值
+            link = guid;
+        }
         FeedItem feedItem = new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
 
         if (pubDate == null){
@@ -282,6 +290,10 @@ public class FeedParser {
         return readTagByTagName(parser,CONTENT);
     }
 
+
+    private static String readGUID(XmlPullParser parser) throws IOException, XmlPullParserException {
+        return readTagByTagName(parser,GUID);
+    }
     private static Long readLastBuildDate(XmlPullParser parser) throws IOException, XmlPullParserException {
         String dateStr = readTagByTagName(parser,LAST_BUILD_DATE);
         return DateUtil.date2TimeStamp(dateStr);
@@ -315,11 +327,11 @@ public class FeedParser {
 
 
     /**
-     * 获取到的数据与本地数据库的数据进行比对，重复的则恢复状态信息，不重复则入库
+     * 获取到的数据与本地数据库的数据进行比对，重复的则恢复状态信息，不重复则入库，原子操作
      * @param feed
      * @return
      */
-    public static Feed HandleFeed(Feed feed){
+    public synchronized static Feed HandleFeed(Feed feed){
         if (feed !=null){
             //给feed下面所有feedItem设置feedName和feedId;
             //获取当前feed的iid
@@ -344,6 +356,7 @@ public class FeedParser {
             for (int i =0;i<feed.getFeedItemList().size();i++){
                 feed.getFeedItemList().get(i).setFeedName(feed.getName());
                 feed.getFeedItemList().get(i).setFeedId(feedId);
+
                 try{
                     feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
                 }catch (LitePalSupportException exception){

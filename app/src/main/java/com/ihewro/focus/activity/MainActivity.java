@@ -354,7 +354,7 @@ public class MainActivity extends BaseActivity {
     public void queryFeedByText(String text) {
         List<Feed> searchResults;
         text = "%" + text + "%";
-        searchResults = LitePal.where("name like ? or desc like ?", text, text).find(Feed.class);
+        searchResults = LitePal.where("name like ? or desc like ? or url like ?", text, text,text).find(Feed.class);
         searchLocalFeedListFragment.updateData(searchResults);
     }
 
