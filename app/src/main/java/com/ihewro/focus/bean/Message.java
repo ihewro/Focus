@@ -1,5 +1,7 @@
 package com.ihewro.focus.bean;
 
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -12,6 +14,22 @@ package com.ihewro.focus.bean;
 public class Message {
     boolean flag;
     String data;
+    List<FeedItem> feedItemList;
+
+
+    public Message(boolean flag, List<FeedItem> feedItemList) {
+        this.flag = flag;
+        this.feedItemList = feedItemList;
+    }
+
+
+    public List<FeedItem> getFeedItemList() {
+        return feedItemList;
+    }
+
+    public void setFeedItemList(List<FeedItem> feedItemList) {
+        this.feedItemList = feedItemList;
+    }
 
     public Message(boolean flag, String data) {
         this.flag = flag;

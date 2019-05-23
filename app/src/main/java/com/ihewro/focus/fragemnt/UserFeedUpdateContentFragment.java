@@ -53,6 +53,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import es.dmoral.toasty.Toasty;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -183,6 +184,30 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 public void onBegin() {
                     refreshLayout.finishRefresh(true);
                 }
+
+                @Override
+                public void onUpdate(List<FeedItem> feedItems) {
+                    //TODO：显示多少新的文章
+                    int sub = feedItems.size() - eList.size();
+                    if (sub > 0){//有新文章时候才会去更新
+                        Toasty.success(getActivity(),sub + "篇新文章").show();
+                        eList.clear();
+                        eList.addAll(feedItems);
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.setNewData(eList);
+                                if (eList.size()==0){
+                                    adapter.setNewData(null);
+                                    adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                                }
+                                isFirstOpen = false;
+                            }
+                        });
+                    }
+                }
+
                 @Override
                 public void onFinish(List<FeedItem> feedList) {
                     eList.clear();

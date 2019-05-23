@@ -7,6 +7,7 @@ import android.util.Xml;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
+import com.blankj.ALog;
 import com.google.common.base.Strings;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.activity.FeedManageActivity;
@@ -239,6 +240,7 @@ public class OPMLReadHelper {
             //将导入的feed全部保存
             for (Feed feed:feedFolder.getFeedList()) {
                 feed.setFeedFolderId(feedFolder.getId());
+                ALog.d(feed.getUrl());
                 feed.save();
             }
 

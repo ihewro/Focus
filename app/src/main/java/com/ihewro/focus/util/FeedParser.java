@@ -158,7 +158,6 @@ public class FeedParser {
                     break;
             }
 
-            ALog.d();
         }
         if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("1")){//自动通过网络设置名字
             feed.setName(netFeedName);//因为在线请求的时候没有拉取Titile这个字段
