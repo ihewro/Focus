@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
@@ -61,6 +62,7 @@ public class RequestFeedListDataService extends Service {
     private int orderChoice = FilterPopupView.ORDER_BY_NEW;
     private int filterChoice = FilterPopupView.SHOW_ALL;
     private View view;
+    private TextView subTitle;
     private List<Feed> feedList = new ArrayList<>();
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
     private RequestFeedItemListCallback callback;
@@ -84,7 +86,7 @@ public class RequestFeedListDataService extends Service {
 
     public class MyBinder extends Binder{
 
-        public void initParameter(int orderChoice2, int filterChoice2, Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
+        public void initParameter(TextView subTitle2,int orderChoice2, int filterChoice2, Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
             activity = activity2;
             feedList = feedList2;
             callback = callback2;
@@ -92,6 +94,7 @@ public class RequestFeedListDataService extends Service {
             view = view2;
             orderChoice = orderChoice2;
             filterChoice = filterChoice2;
+            subTitle = subTitle2;
 
             createNotice("初始化数据获取服务……",0);
         }
@@ -281,9 +284,11 @@ public class RequestFeedListDataService extends Service {
 
         if (progress > 0){//全部获取完的时候不需要显示进度条了
             builderProgress.setContentText(progress + "%");
+            subTitle.setText("请求数据进度："+progress + "%");
             builderProgress.setProgress(100, progress, false);
         }
         if (progress == 100){
+            subTitle.setText(title);
             builderProgress.setContentText(title);
         }
         //绑定点击事件
