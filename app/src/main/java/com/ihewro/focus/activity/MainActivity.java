@@ -371,7 +371,7 @@ public class MainActivity extends BaseActivity {
                             popupView.getAdapter().setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                                 @Override
                                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                                    if (view.getId() == R.id.long_click) {
+                                    if (view.getId() == R.id.item_view) {
                                         int feedFolderId = popupView.getFeedFolders().get(position).getId();
                                         List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
                                         ArrayList<String> list = new ArrayList<>();

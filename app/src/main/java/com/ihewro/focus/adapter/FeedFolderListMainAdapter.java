@@ -32,7 +32,7 @@ public class FeedFolderListMainAdapter extends BaseItemDraggableAdapter<FeedFold
     protected void convert(BaseViewHolder helper, FeedFolder item) {
         helper.setText(R.id.title,item.getName());
         helper.setGone(R.id.move_logo,false);
-        helper.addOnClickListener(R.id.long_click);
+        helper.addOnClickListener(R.id.item_view);
     }
 
 }

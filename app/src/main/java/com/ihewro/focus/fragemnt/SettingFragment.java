@@ -23,6 +23,8 @@ import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.FileOperationCallback;
 import com.ihewro.focus.task.RecoverDataTask;
@@ -92,7 +94,7 @@ public class SettingFragment extends PreferenceFragment {
         }else {
             use_internet_while_open.setChecked(true);
         }
-        feed_info.setSummary(LitePal.count(Feed.class)+"个订阅");
+        feed_info.setSummary(LitePal.count(FeedFolder.class) + "个分类 " +LitePal.count(Feed.class)+"个订阅 " + LitePal.count(FeedItem.class) + "篇文章");
 
         if (UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("0")){
             auto_name.setChecked(false);

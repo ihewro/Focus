@@ -188,7 +188,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             myBinder.initParameter((TextView)subView,orderChoice, filterChoice, getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
                 @Override
                 public void onBegin() {
-//                    refreshLayout.finishRefresh(true);
+                    refreshLayout.finishRefresh(true);
                 }
 
                 @Override

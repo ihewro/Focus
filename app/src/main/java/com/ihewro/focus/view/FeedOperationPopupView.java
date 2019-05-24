@@ -69,6 +69,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                     item.save();
                                     Toasty.success(getContext(),"修改成功").show();
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                    dismiss();
                                 }
                             }
                         }).show();
@@ -95,6 +96,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 LitePal.delete(Feed.class,id);
                                 Toasty.success(getContext(),"退订成功").show();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.DELETE_FEED,id));
+                                dismiss();
                             }
                         })
                         .show();
@@ -121,6 +123,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 LitePal.updateAll(FeedItem.class,values,"feedid = ?", String.valueOf(id));
                                 Toasty.success(getContext(),"操作成功").show();
                                 EventBus.getDefault().post(new EventMessage(EventMessage.MARK_FEED_READ, (int) id));
+                                dismiss();
                             }
                         })
                         .show();
@@ -139,9 +142,11 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         item.setFeedFolderId(targetId);
                         item.save();
                         Toasty.success(getContext(),"移动成功").show();
+                        dismiss();
                         EventBus.getDefault().post(new EventMessage(EventMessage.MOVE_FEED));
                     }
                 },getContext(),"移动到其他文件夹","点击文件夹名称执行移动操作").execute();
+
             }
         }));
 
@@ -176,8 +181,8 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                     item.setUrl(url);
                                     item.save();
                                     Toasty.success(getContext(),"修改成功").show();
-
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                    dismiss();
                                 }
                             }
                         }).show();
@@ -204,6 +209,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                     item.save();
                                     Toasty.success(getContext(),"设置成功").show();
                                     EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                    dismiss();
                                 }
                             }
                         }).show();
