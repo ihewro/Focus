@@ -44,7 +44,7 @@ public class HttpUtil {
      * @param connectTimeout 单位s
      * @return OkHttpClient
      */
-    public static OkHttpClient getOkHttpClient(int readTimeout, int writeTimeout, int connectTimeout){
+    public static OkHttpClient getOkHttpClient(String type, int readTimeout, int writeTimeout, int connectTimeout){
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
@@ -57,7 +57,6 @@ public class HttpUtil {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(new EncodingInterceptor("gbk"))//如果没有编码设置，则设置为gbk
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
@@ -67,6 +66,11 @@ public class HttpUtil {
                         return true;
                     }
                 });//设置连接超时时间
+
+        if (type.equals("String")){
+            ALog.d("添加了编码了");
+            builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
+        }
 
 
 
@@ -108,7 +112,7 @@ public class HttpUtil {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(requestUrl)
-                .client(HttpUtil.getOkHttpClient(readTimeout,writeTimeout,connectTimeout))
+                .client(HttpUtil.getOkHttpClient(type,readTimeout,writeTimeout,connectTimeout))
                 .addConverterFactory(factory)//retrofit已经把Json解析封装在内部了 你需要传入你想要的解析工具就行了
                 .build();
         return retrofit;

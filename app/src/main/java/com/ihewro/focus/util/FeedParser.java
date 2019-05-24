@@ -22,6 +22,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.ihewro.focus.util.AtomParser.FEED;
 import static com.ihewro.focus.util.AtomParser.readFeedForFeed;
@@ -67,18 +69,26 @@ public class FeedParser {
             return null;
         }
 
-        //对字符串进行编码
-//        xmlStr = new String(xmlStr.getBytes("UTF-8"),"ISO-8859-1");
+        //获取xml文件的编码
+        String encode = "UTF-8";//默认编码
+        String temp = xmlStr.substring(0,100);
+        Pattern p = Pattern.compile("encoding=\"(.*?)\"");
+        Matcher m = p.matcher(temp);
+        boolean flag = m.find();//【部分匹配】，返回true or false，而且指针会移动下次匹配的位置
+        if (flag){
+            int begin = m.start()+10;
+            int end = m.end();
+            encode = temp.substring(begin,end-1);
+            ALog.d(encode);
+        }
+        //如果是utf-8不需要转码
+        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
+        return beginParseStr2Feed(xmlStr,url);
+    }
 
-//        xmlStr = URLDecoder.decode(xmlStr, "GBK");
-//        xmlStr = new String(xmlStr.getBytes(), StandardCharsets.UTF_8);
-//        xmlStr =  new String(xmlStr.getBytes("GBK"), "UTF-8");
 
-//        xmlStr =new String(xmlStr.getBytes("unicode"),"gb2312");
-
-//        ALog.d(xmlStr);
+    private static Feed beginParseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         feedUrl = url;
-
         XmlPullParser parser = Xml.newPullParser();
         try {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -370,6 +380,9 @@ public class FeedParser {
                     temp.setContent(feed.getFeedItemList().get(i).getContent());
                     temp.setTitle(feed.getFeedItemList().get(i).getTitle());
                     temp.setSummary(feed.getFeedItemList().get(i).getSummary());
+                    if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("1")){//没有选择，自动设置会手动设置name
+                        temp.setFeedName(feed.getFeedItemList().get(i).getFeedName());
+                    }
                     temp.save();
 
                 }

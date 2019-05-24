@@ -56,35 +56,6 @@ public class EncodingInterceptor implements Interceptor {
     }
 
     /**
-     * set contentType in headers
-     * @param response
-     * @throws IOException
-     */
-    private void setHeaderContentType(Response response) throws IOException {
-        String contentType = response.header("Content-Type");
-        if (!StringUtil.trim(contentType).equals("") && contentType.contains("charset")) {//如果表名了
-            return;
-        }
-        // build new headers
-        Headers headers = response.headers();
-        Headers.Builder builder = headers.newBuilder();
-        builder.removeAll("Content-Type");
-        builder.add("Content-Type", (!StringUtil.trim(contentType).equals("") ? contentType + "; ":"" ) + "charset=" + encoding);
-        headers = builder.build();
-        // setting headers using reflect
-        Class  _response = Response.class;
-        try {
-            Field field = _response.getDeclaredField("headers");
-            field.setAccessible(true);
-            field.set(response, headers);
-        } catch (NoSuchFieldException e) {
-            throw new IOException("use reflect to setting header occurred an error", e);
-        } catch (IllegalAccessException e) {
-            throw new IOException("use reflect to setting header occurred an error", e);
-        }
-    }
-
-    /**
      * set body contentType
      * @param response
      * @throws IOException
@@ -96,14 +67,11 @@ public class EncodingInterceptor implements Interceptor {
         try {
             Field field = aClass.getDeclaredField("contentTypeString");
             field.setAccessible(true);
-            /*Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);*/
             String contentTypeString = String.valueOf(field.get(body));
-            if (!StringUtil.trim(contentTypeString).equals("") && contentTypeString.contains("charset")) {
-                return;
-            }
-            field.set(body, (!StringUtil.trim(contentTypeString).equals("") ? contentTypeString + "; ":"" ) + "charset=" + encoding);
+            ALog.d(contentTypeString);
+//            field.set(body, (!StringUtil.trim(contentTypeString).equals("") ? contentTypeString + "; ":"" ) + "charset=" + encoding);
+            field.set(body, "text/xml;charset=" + encoding);
+
         } catch (NoSuchFieldException e) {
             throw new IOException("use reflect to setting header occurred an error", e);
         } catch (IllegalAccessException e) {
