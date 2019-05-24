@@ -75,5 +75,8 @@
 
 同时感谢RSSHub开源项目以及moerats提供的自建RSSHub源（理论上会比官方源更稳定一些）。
 </string>
+    <string name="pref_key_own_rsshub">pref_key_own_rsshub_choice</string>
+    <string name="pref_title_own_rsshub">自定义RSSHub源</string>
+    <string name="pref_summary_own_rsshub">如果上面的设置项选择了自定义，而且你有自己搭建的RSSHub源，可以在这里填写</string>
 
 </resources>

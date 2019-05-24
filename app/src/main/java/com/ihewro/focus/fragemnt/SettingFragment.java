@@ -9,6 +9,7 @@ import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.activity.AboutActivity;
 import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.MainActivity;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.FileOperationCallback;
@@ -28,6 +30,7 @@ import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
 import com.ihewro.focus.util.RSSUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.List;
@@ -47,6 +50,7 @@ public class SettingFragment extends PreferenceFragment {
     private Preference back_up;
     private Preference recover_data;
     private Preference aboot;
+    private Preference ownrsshub;
 
 
     public SettingFragment() {
@@ -77,6 +81,7 @@ public class SettingFragment extends PreferenceFragment {
         back_up =  preferenceManager.findPreference(getString(R.string.pref_key_backup));
         recover_data =  preferenceManager.findPreference(getString(R.string.pref_key_recover));
         aboot =  preferenceManager.findPreference(getString(R.string.pref_key_about));
+        ownrsshub = preferenceManager.findPreference(getString(R.string.pref_key_own_rsshub));
 
     }
 
@@ -100,6 +105,35 @@ public class SettingFragment extends PreferenceFragment {
 
 
     private void initListener() {
+
+        ownrsshub.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                new MaterialDialog.Builder(getActivity())
+                        .title("填写自定义RSSHub源")
+                        .content("输入你的地址：")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input("",UserPreference.queryValueByKey(UserPreference.OWN_RSSHUB, GlobalConfig.OfficialRSSHUB)
+, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                String name = dialog.getInputEditText().getText().toString().trim();
+                                if (name.equals("")){
+                                    Toasty.info(getActivity(),"请勿为空😯").show();
+                                }else {
+                                    UserPreference.updateOrSaveValueByKey(UserPreference.OWN_RSSHUB,dialog.getInputEditText().getText().toString().trim());
+                                    Toasty.success(getActivity(),"填写成功").show();
+                                }
+                            }
+                        }).show();
+
+
+                return false;
+            }
+        });
+
+
         choose_rsshub.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

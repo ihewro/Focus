@@ -21,6 +21,7 @@ public class UserPreference extends LitePalSupport {
 
     public static final String  USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
     public static final String  AUTO_SET_FEED_NAME =  "AUTO_SET_FEED_NAME";
+    public static final String  OWN_RSSHUB =  "自定义源";
 
     public static final String  RSS_HUB =  "rsshub";
     public static final String FIRST_USE_LOCAL_SEARCH_AND_FILTER = "FIRST_USE_LOCAL_SEARCH_AND_FILTER";//是否首次打开APP
@@ -101,7 +102,21 @@ public class UserPreference extends LitePalSupport {
 
 
     public static String getRssHubUrl(){
-        return queryValueByKey(RSS_HUB, GlobalConfig.OfficialRSSHUB);
+
+        String url =  queryValueByKey(RSS_HUB, GlobalConfig.OfficialRSSHUB);
+        if (url.equals(OWN_RSSHUB)){//如果有自定义源则选择这个
+            url =  queryValueByKey(OWN_RSSHUB, GlobalConfig.OfficialRSSHUB);
+            //对自定义源的地址进行处理
+            if (!url.startsWith("http://")||url.startsWith("https://")){
+                url = "http://" + url;
+            }
+            if (url.endsWith("/")){
+                url = url.substring(0,url.length()-1);
+            }
+            return url;
+        }else {
+            return url;
+        }
     }
 
 

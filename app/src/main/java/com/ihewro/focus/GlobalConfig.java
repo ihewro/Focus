@@ -2,6 +2,8 @@ package com.ihewro.focus;
 
 import android.os.Environment;
 
+import com.ihewro.focus.bean.UserPreference;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class GlobalConfig {
 
     public static final String OfficialRSSHUB = "https://rsshub.app";
     public static final String MoeratsRsshub = "https://rsshub.moerats.com";
-    public static final List<String> rssHub = Arrays.asList(OfficialRSSHUB, MoeratsRsshub);
+    public static final List<String> rssHub = Arrays.asList(OfficialRSSHUB, MoeratsRsshub, UserPreference.OWN_RSSHUB);
 
 
 

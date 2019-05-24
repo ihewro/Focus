@@ -29,6 +29,11 @@
         android:title="@string/pref_title_rsshub_choice"
         android:summary="@string/pref_summary_rsshub_choice"/>
 
+    <Preference
+        android:key="@string/pref_key_own_rsshub"
+        android:title="@string/pref_title_own_rsshub"
+        android:summary="@string/pref_summary_own_rsshub"/>
+
     <SwitchPreference
         android:key="@string/pref_key_auto_name"
         android:title="@string/pref_title_auto_name"
