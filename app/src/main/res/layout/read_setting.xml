@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="20dp"
-    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <TextView
@@ -39,6 +39,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:max="20"
             android:layout_marginLeft="50dp"/>
     </LinearLayout>
 
@@ -65,6 +66,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:max="10"
             android:layout_marginLeft="50dp"/>
     </LinearLayout>
 
@@ -90,6 +92,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:max="10"
             android:layout_marginLeft="50dp"/>
     </LinearLayout>
 

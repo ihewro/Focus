@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.ihewro.focus"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 3
         versionName "1.2"

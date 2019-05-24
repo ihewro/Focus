@@ -182,8 +182,11 @@ public class PostDetailActivity extends BaseActivity {
             feedItemList.add(feedItem);
         }
 
-        toolbar.setTitle(notReadNum+"");
-
+        if (notReadNum <= 0){
+            toolbar.setTitle("");
+        }else {
+            toolbar.setTitle(notReadNum+"");
+        }
 
         adapter = new PostDetailListAdapter(PostDetailActivity.this,isUpdateMainReadMark,postSetting, feedItemList);
         adapter.bindToRecyclerView(recyclerView);
@@ -219,6 +222,7 @@ public class PostDetailActivity extends BaseActivity {
                 //修改顶部导航栏的收藏状态
                 setLikeButton();
                 initPostClickListener();
+
 
             }
         }));
@@ -501,7 +505,7 @@ public class PostDetailActivity extends BaseActivity {
     private void updateNotReadNum(){
         //TODO: 实际上这儿有个问题，就是3篇文章，滑到第二篇的时候，第三篇后预加载，导致被标记为已读
         this.notReadNum --;
-        if (notReadNum == 0){
+        if (notReadNum <= 0){
             toolbar.setTitle("");
         }else {
             toolbar.setTitle(notReadNum+"");

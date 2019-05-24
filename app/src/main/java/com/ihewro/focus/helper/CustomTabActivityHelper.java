@@ -15,6 +15,7 @@
 package com.ihewro.focus.helper;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsClient;
@@ -55,7 +56,14 @@ public class CustomTabActivityHelper implements ServiceConnectionCallback {
             }
         } else {
             customTabsIntent.intent.setPackage(packageName);
-            customTabsIntent.launchUrl(activity, uri);
+            try {
+                customTabsIntent.launchUrl(activity, uri);
+            }catch (ActivityNotFoundException e){
+                //普通方法
+                if (fallback != null) {
+                    fallback.openUri(activity, uri);
+                }
+            }
         }
     }
 

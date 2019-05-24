@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ihewro.focus.R;
 import com.ihewro.focus.bean.FeedItem;
 import com.scwang.smartrefresh.header.internal.pathview.PathsView;
 import com.scwang.smartrefresh.layout.api.RefreshFooter;
@@ -17,6 +18,7 @@ import com.scwang.smartrefresh.layout.api.RefreshKernel;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.internal.ProgressDrawable;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
@@ -32,7 +34,7 @@ import com.scwang.smartrefresh.layout.util.DensityUtil;
 public class PostFooter extends LinearLayout implements RefreshFooter {
 
     private TextView mHeaderText;//标题文本
-    private PathsView mArrowView;//下拉箭头
+    private ImageView mArrowView;//下拉箭头
     private ImageView mProgressView;//刷新动画视图
     private ProgressDrawable mProgressDrawable;//刷新动画
 
@@ -48,10 +50,10 @@ public class PostFooter extends LinearLayout implements RefreshFooter {
         setGravity(Gravity.CENTER);
         mHeaderText = new TextView(context);
         mProgressDrawable = new ProgressDrawable();
-        mArrowView = new PathsView(context);
+        mArrowView = new ImageView(context);
         mProgressView = new ImageView(context);
         mProgressView.setImageDrawable(mProgressDrawable);
-        mArrowView.parserPaths("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z");
+        mArrowView.setImageResource(R.drawable.ic_arrow_downward_black_24dp);
         addView(mProgressView, DensityUtil.dp2px(20), DensityUtil.dp2px(20));
         addView(mArrowView, DensityUtil.dp2px(20), DensityUtil.dp2px(20));
         addView(new View(context), DensityUtil.dp2px(20), DensityUtil.dp2px(20));
@@ -122,6 +124,7 @@ public class PostFooter extends LinearLayout implements RefreshFooter {
         switch (newState) {
             case None:
             case PullUpToLoad:
+
                 mHeaderText.setText("访问源网站");
                 mArrowView.setVisibility(VISIBLE);//显示下拉箭头
                 mProgressView.setVisibility(GONE);//隐藏动画
@@ -135,7 +138,7 @@ public class PostFooter extends LinearLayout implements RefreshFooter {
             case Refreshing:
                 mHeaderText.setText("正在载入……");
                 mProgressView.setVisibility(VISIBLE);//显示加载动画
-                mArrowView.setVisibility(GONE);//隐藏箭头
+                mArrowView.setVisibility(VISIBLE);//隐藏箭头
                 break;
         }
     }

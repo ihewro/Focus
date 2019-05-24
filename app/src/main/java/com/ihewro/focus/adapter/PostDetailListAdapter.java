@@ -3,7 +3,9 @@ package com.ihewro.focus.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.webkit.WebView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -66,8 +68,12 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
         helper.setText(R.id.feed_name,item.getFeedName());
 
 
+
         //将该文章标记为已读，并且通知首页修改布局
         if (!item.isRead()){
+            //如果这个文章没有阅读过则滚动到顶部
+            ((NestedScrollView)helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
+
             item.setRead(true);
             item.save();
             if (!flag) {//TODO:如果是-1表示根据id来修改UI的已读信息
