@@ -15,13 +15,9 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.amitshekhar.utils.DatabaseHelper;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.AboutActivity;
-import com.ihewro.focus.activity.ErrorActivity;
-import com.ihewro.focus.activity.MainActivity;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
@@ -32,7 +28,6 @@ import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
 import com.ihewro.focus.util.RSSUtil;
 
-import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.List;
