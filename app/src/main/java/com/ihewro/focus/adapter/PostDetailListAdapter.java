@@ -67,12 +67,15 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
 
         //将该文章标记为已读，并且通知首页修改布局
-        item.setRead(true);
-        item.save();
-        if (!flag) {//TODO:如果是-1表示根据id来修改UI的已读信息
-            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, item.getId()));
-        } else {
-            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, helper.getAdapterPosition()));
+        if (!item.isRead()){
+            item.setRead(true);
+            item.save();
+            if (!flag) {//TODO:如果是-1表示根据id来修改UI的已读信息
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, item.getId()));
+            } else {
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, helper.getAdapterPosition()));
+            }
+            EventBus.getDefault().post(new EventMessage(EventMessage.MARK_ITEM_READED));
         }
     }
 

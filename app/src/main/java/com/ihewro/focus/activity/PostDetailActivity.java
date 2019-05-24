@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,10 +39,13 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
@@ -76,6 +80,8 @@ public class PostDetailActivity extends BaseActivity {
     private boolean isUpdateMainReadMark;
 
     private List<Integer> feedItemIdList;
+    private int notReadNum = 0;
+
 
 
 
@@ -93,7 +99,7 @@ public class PostDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         ButterKnife.bind(this);
-
+        EventBus.getDefault().register(this);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -111,17 +117,15 @@ public class PostDetailActivity extends BaseActivity {
 
         initRecyclerView();
 
-        initView();
 
         initListener();
 
 
     }
 
-    private void initView() {
 
 
-    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private void initListener() {
@@ -154,7 +158,6 @@ public class PostDetailActivity extends BaseActivity {
 
     public void initData() {
         currentFeedItem = LitePal.find(FeedItem.class,mId);
-
     }
 
     private void initRecyclerView() {
@@ -169,22 +172,31 @@ public class PostDetailActivity extends BaseActivity {
 
 
         //获取所有文章的对象
+        this.notReadNum = 0;
         final List<FeedItem> feedItemList = new ArrayList<>();
         for (Integer id: feedItemIdList){
-            feedItemList.add(LitePal.find(FeedItem.class,id));
+            FeedItem feedItem = LitePal.find(FeedItem.class,id);
+            if (!feedItem.isRead()){
+                this.notReadNum ++;
+            }
+            feedItemList.add(feedItem);
         }
+
+        toolbar.setTitle(notReadNum+"");
+
+
         adapter = new PostDetailListAdapter(PostDetailActivity.this,isUpdateMainReadMark,postSetting, feedItemList);
         adapter.bindToRecyclerView(recyclerView);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-
         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
             @Override
             public void onFirstScroll() {
                 initPostClickListener();
                 ALog.d("首次加载");
+
             }
 
             @Override
@@ -478,10 +490,28 @@ public class PostDetailActivity extends BaseActivity {
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if (eventBusMessage.getType().equals(EventMessage.MARK_ITEM_READED)) {
+           updateNotReadNum();
+        }
+    }
+
+    private void updateNotReadNum(){
+        //TODO: 实际上这儿有个问题，就是3篇文章，滑到第二篇的时候，第三篇后预加载，导致被标记为已读
+        this.notReadNum --;
+        if (notReadNum == 0){
+            toolbar.setTitle("");
+        }else {
+            toolbar.setTitle(notReadNum+"");
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         ALog.d("postDetail 被销毁");
-
     }
 }

@@ -73,6 +73,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     Unbinder unbinder;
 
     private View view;//toolbar的view,用来显示列表依存的view
+    private View subView;//toolbar下面的文字view,用来显示当前未读数目
     private boolean isFirstOpen = true;//首次打开
     ArrayList<String> feedIdList = new ArrayList<>();
 
@@ -81,9 +82,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private boolean isconnet = false;//
     private int feedItemNum;
 
+    private int notReadNum = 0;
+
     @SuppressLint("ValidFragment")
-    public UserFeedUpdateContentFragment(View view) {
+    public UserFeedUpdateContentFragment(View view,View subView) {
         this.view = view;
+        this.subView = subView;
     }
 
     public UserFeedUpdateContentFragment() {
@@ -94,8 +98,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
      *
      * @return 返回实例
      */
-    public static UserFeedUpdateContentFragment newInstance(ArrayList<String> feedIdList,View view) {
-        UserFeedUpdateContentFragment fragment = new UserFeedUpdateContentFragment(view);
+    public static UserFeedUpdateContentFragment newInstance(ArrayList<String> feedIdList,View view,View subView) {
+        UserFeedUpdateContentFragment fragment = new UserFeedUpdateContentFragment(view,subView);
         Bundle args = new Bundle();
         args.putStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID,feedIdList);
         fragment.setArguments(args);
@@ -110,6 +114,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             feedIdList = getArguments().getStringArrayList(UserFeedUpdateContentFragment.FEED_LIST_ID);
         }
         EventBus.getDefault().register(this);
+        updateNotReadNum();
     }
 
 
@@ -147,8 +152,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
         adapter.bindToRecyclerView(recyclerView);
-//        recyclerView.setAdapter(adapter);
-//        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
     }
 
@@ -232,6 +235,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     isFirstOpen = false;
                     refreshLayout.finishRefresh(true);
                     UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
+                    updateNotReadNum();
 
                     //解除绑定
                     if (isconnet){
@@ -274,26 +278,73 @@ public class UserFeedUpdateContentFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+
+    public ArrayList<String> getFeedIdList() {
+        return feedIdList;
+    }
+
+    public void updateData(ArrayList<String> feedIdList, int oderChoice, int filterChoice) {
+        this.feedIdList = feedIdList;
+        this.isFirstOpen = true;
+        this.orderChoice = oderChoice;
+        this.filterChoice = filterChoice;
+        refreshLayout.autoRefresh();
+
+
+    }
+
+    private void updateNotReadNum(){
+        //修改顶部的未读数据
+        this.notReadNum  = 0;
+        if (feedIdList.size() >0){
+            for (int i = 0; i < feedIdList.size(); i++) {
+                this.notReadNum += LitePal.where("read = ? and feedid = ?","0",feedIdList.get(i)).count(FeedItem.class);
+            }
+        }else {//为空表示显示所有的feedId
+            this.notReadNum = LitePal.where("read = ?","0").count(FeedItem.class);
+        }
+        ((TextView)subView).setText("共有"+this.notReadNum+"篇未读");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (getActivity()!=null && isconnet){//当活动被回收的时候，服务也必须停止
+            getActivity().unbindService(connection);
+            isconnet = false;
+        }
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {
+
+        //更新未读数目
+        if (EventMessage.feedItemReadStatusOperation.contains(eventBusMessage.getType())){
+            updateNotReadNum();
+        }
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {//已读状态修改
             //更新已读标志
             int indexInList = eventBusMessage.getInteger();
             if (indexInList!=-1){
                 eList.get(indexInList).setRead(true);
                 adapter.notifyItemChanged(indexInList);
             }
-        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){
+
+
+        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){//收藏状态修改
             //更新收藏状态
             int indexInList = eventBusMessage.getInteger();
             boolean flag = eventBusMessage.isFlag();
             eList.get(indexInList).setFavorite(flag);
             adapter.notifyItemChanged(indexInList);
-        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//从搜索的列表中进入的文章详情页面
+        }
 
-
-        } else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//检查feedid是否在本碎片的内容内
-
+        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//有文章的已读状态修改
+            //检查feedid是否在本碎片的内容内
             //如果在，则让这部分
             List<Integer> feedIdList = new ArrayList<>();
             if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ)){
@@ -312,57 +363,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 }
             }
 
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){//删除了订阅或者文件夹，直接显示全部文章
 
-            //TODO: 写在子线程中
-            //如果在，删除这部分的文章显示
-            List<Integer> feedIdList = new ArrayList<>();
-            if (Objects.equals(eventBusMessage.getType(), EventMessage.DELETE_FEED)){
-                feedIdList.add(eventBusMessage.getInteger());
-            }else{//整个文件夹都标记为已读
-                List<Feed>feedList = LitePal.where("feedfolderid = ?", String.valueOf(eventBusMessage.getInteger())).find(Feed.class);
-                for(Feed feed:feedList){
-                    feedIdList.add(feed.getId());
-                }
-            }
-
-            //删除对应的文章，更新界面
-            for (Iterator iterator = this.feedIdList.iterator(); iterator.hasNext();) {
-                int id = Integer.valueOf((String)iterator.next());
-                if (feedIdList.contains(id)){
-                    iterator.remove();
-                }
-            }
-            updateData(this.feedIdList,this.orderChoice,this.filterChoice);
-
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){
+            updateData(new ArrayList<String>(),this.orderChoice,this.filterChoice);
+            ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){//恢复数据，通过OPML或者数据库的方式
             //显示所有文章
             updateData(new ArrayList<String>(),this.orderChoice,this.filterChoice);
             ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
-        }
-    }
-
-    public ArrayList<String> getFeedIdList() {
-        return feedIdList;
-    }
-
-    public void updateData(ArrayList<String> feedIdList, int oderChoice, int filterChoice) {
-        this.feedIdList = feedIdList;
-        this.isFirstOpen = true;
-        this.orderChoice = oderChoice;
-        this.filterChoice = filterChoice;
-        refreshLayout.autoRefresh();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (getActivity()!=null && isconnet){//当活动被回收的时候，服务也必须停止
-            getActivity().unbindService(connection);
-            isconnet = false;
-        }
-        if (EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().unregister(this);
         }
     }
 }

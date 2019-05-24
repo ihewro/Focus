@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ButtonBarLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +29,6 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.BaseViewPagerAdapter;
-import com.ihewro.focus.adapter.FeedSearchAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
@@ -41,8 +39,6 @@ import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
-import com.ihewro.focus.fragemnt.search.SearchWebFeedListFragment;
-import com.ihewro.focus.fragemnt.search.SearchWebListFragment;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -106,6 +102,8 @@ public class MainActivity extends BaseActivity {
     ViewPager viewPager;
     @BindView(R.id.search_view_content)
     LinearLayout searchViewContent;
+    @BindView(R.id.subtitle)
+    TextView subtitle;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -213,7 +211,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
     private void initListener() {
 
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
@@ -221,7 +218,7 @@ public class MainActivity extends BaseActivity {
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
 //                searchViewContent.setVisibility(View.GONE);
-                if (!query.equals("")){
+                if (!query.equals("")) {
                     updateTabLayout(query);
                 }
                 return true;
@@ -231,7 +228,7 @@ public class MainActivity extends BaseActivity {
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
                 //开始同步搜索
-                if (!newText.equals("")){
+                if (!newText.equals("")) {
                     updateTabLayout(newText);
                 }
                 return true;
@@ -331,9 +328,6 @@ public class MainActivity extends BaseActivity {
         }).run();
 
 
-
-
-
     }
 
 
@@ -354,7 +348,7 @@ public class MainActivity extends BaseActivity {
     public void queryFeedByText(String text) {
         List<Feed> searchResults;
         text = "%" + text + "%";
-        searchResults = LitePal.where("name like ? or desc like ? or url like ?", text, text,text).find(Feed.class);
+        searchResults = LitePal.where("name like ? or desc like ? or url like ?", text, text, text).find(Feed.class);
         searchLocalFeedListFragment.updateData(searchResults);
     }
 
@@ -401,7 +395,6 @@ public class MainActivity extends BaseActivity {
         }
         popupView.toggle();
     }
-
 
 
     public void initEmptyView() {
@@ -551,7 +544,7 @@ public class MainActivity extends BaseActivity {
      */
     private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
         if (feedPostsFragment == null) {
-            feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList, toolbar);
+            feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList, toolbarTitle,subtitle);
         }
         toolbar.setTitle("全部文章");
         addOrShowFragment(getSupportFragmentManager().beginTransaction(), feedPostsFragment);

@@ -20,6 +20,7 @@ public class EventMessage {
     public static final String MAKE_STAR_STATUS_BY_INDEX = "MAKE_STAR_STATUS";
     public static final String MAKE_STAR_STATUS_BY_ID = "MAKE_STAR_STATUS_BY_ID";
     public static final String EDIT_ITEM_READ = "EDIT_ITEM_READ";//修改了文章的已读状态
+    public static final String MARK_ITEM_READED = "MARK_ITEM_READED";//标记文章为已读
 
     public static final String MARK_FEED_READ = "MARK_FEED_READ";//给一个订阅全部文章标记已读
     public static final String MARK_FEED_FOLDER_READ = "MARK_FEED_FOLDER_READ";//一个订阅文件夹全部标记已读
@@ -52,6 +53,9 @@ public class EventMessage {
     public static final String FEED_PULL_DATA_ERROR = "FEED_PULL_DATA_ERROR";
     public static final String IMPORT_OPML_FEED = "IMPORT_OPML_FEED";//导入OPML文件
 
+
+    //影响文章已读未读的操作集合
+    public static final List<String> feedItemReadStatusOperation = Arrays.asList(MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,MAKE_STAR_STATUS_BY_INDEX,MAKE_STAR_STATUS_BY_ID,EDIT_ITEM_READ,MARK_ITEM_READED,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST);
 
     //首页的左侧边栏遇到这些通知都会更新
     public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED);

@@ -195,6 +195,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             }
         });
 
+        //跳转页面
         helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
