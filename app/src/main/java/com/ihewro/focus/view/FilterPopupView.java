@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.UserPreference;
 import com.lxj.xpopup.core.DrawerPopupView;
 
 import java.util.Arrays;
@@ -26,12 +27,12 @@ import skin.support.utils.SkinPreference;
  */
 public class FilterPopupView extends DrawerPopupView {
 
-    public static final int ORDER_BY_NEW = 960;
-    public static final int ORDER_BY_OLD = 467;
+    public static final String ORDER_BY_NEW = "ORDER_BY_NEW";
+    public static final String ORDER_BY_OLD = "ORDER_BY_OLD";
 
-    public static final int SHOW_ALL = 871;
-    public static final int SHOW_UNREAD = 705;
-    public static final int SHOW_STAR = 750;
+    public static final String SHOW_ALL = "SHOW_ALL";
+    public static final String SHOW_UNREAD = "SHOW_UNREAD";
+    public static final String SHOW_STAR = "SHOW_STAR";
 
     TextView newestTv;
     CardView newestCard;
@@ -47,17 +48,17 @@ public class FilterPopupView extends DrawerPopupView {
     private CardView newestC;
     private boolean isNeedUpdate = false;
 
-    private int orderChoice = ORDER_BY_NEW;//当前排序选择
-    private int filterChoice = SHOW_ALL;//当前筛选器的选择
+    private String orderChoice = ORDER_BY_NEW;//当前排序选择
+    private String filterChoice = SHOW_ALL;//当前筛选器的选择
 
 
 
-    List<Integer> orderOperation = Arrays.asList(ORDER_BY_NEW,ORDER_BY_OLD);
+    List<String> orderOperation = Arrays.asList(ORDER_BY_NEW,ORDER_BY_OLD);
     List<Integer> orderCardViews = Arrays.asList(R.id.newest_card, R.id.old_card);
     List<Integer> orderTextViews = Arrays.asList(R.id.newest_tv, R.id.old_tv);
 
 
-    List<Integer> filterOperation = Arrays.asList(SHOW_ALL,SHOW_UNREAD,SHOW_STAR);
+    List<String> filterOperation = Arrays.asList(SHOW_ALL,SHOW_UNREAD,SHOW_STAR);
     List<Integer> filterCardViews = Arrays.asList(R.id.all_card, R.id.read_card, R.id.star_card);
     List<Integer> filterTextViews = Arrays.asList(R.id.all_tv, R.id.read_tv, R.id.star_tv);
 
@@ -102,8 +103,12 @@ public class FilterPopupView extends DrawerPopupView {
         }
 
         //初始化选项
-        clickOrderList(0);
-        clickFilterList(0);
+        //获取用户设置中的位置
+        orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,ORDER_BY_NEW);
+        filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,SHOW_ALL);
+        clickOrderList(orderOperation.indexOf(orderChoice));
+
+        clickFilterList(filterOperation.indexOf(filterChoice));
 
 
         initListener();
@@ -171,7 +176,7 @@ public class FilterPopupView extends DrawerPopupView {
      */
     private void clickOrderList(int position){
         orderChoice = orderOperation.get(position);
-
+        UserPreference.updateOrSaveValueByKey(UserPreference.ODER_CHOICE,orderChoice);
         //修改当前项为高亮
         ((TextView)findViewById(orderTextViews.get(position))).setTextColor(normalTextColor);
         ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(normalBGColor);
@@ -193,7 +198,7 @@ public class FilterPopupView extends DrawerPopupView {
      */
     private void clickFilterList(int position){
         filterChoice = filterOperation.get(position);
-
+        UserPreference.updateOrSaveValueByKey(UserPreference.FILTER_CHOICE,filterChoice);
         //修改当前项为高亮
         ((TextView)findViewById(filterTextViews.get(position))).setTextColor(normalTextColor);
         ((CardView)findViewById(filterCardViews.get(position))).setCardBackgroundColor(normalBGColor);
@@ -207,11 +212,11 @@ public class FilterPopupView extends DrawerPopupView {
         }
     }
 
-    public int getOrderChoice() {
+    public String getOrderChoice() {
         return orderChoice;
     }
 
-    public int getFilterChoice() {
+    public String getFilterChoice() {
         return filterChoice;
     }
 

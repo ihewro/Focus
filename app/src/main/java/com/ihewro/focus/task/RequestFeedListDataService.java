@@ -59,8 +59,8 @@ public class RequestFeedListDataService extends Service {
     private Activity activity;
     private boolean is_use_internet;//是否使用网络请求
     private ProgressBar pbProgress;
-    private int orderChoice = FilterPopupView.ORDER_BY_NEW;
-    private int filterChoice = FilterPopupView.SHOW_ALL;
+    private String orderChoice = FilterPopupView.ORDER_BY_NEW;
+    private String filterChoice = FilterPopupView.SHOW_ALL;
     private View view;
     private TextView subTitle;
     private List<Feed> feedList = new ArrayList<>();
@@ -86,14 +86,12 @@ public class RequestFeedListDataService extends Service {
 
     public class MyBinder extends Binder{
 
-        public void initParameter(TextView subTitle2,int orderChoice2, int filterChoice2, Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
+        public void initParameter(TextView subTitle2,Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
             activity = activity2;
             feedList = feedList2;
             callback = callback2;
             RequestFeedListDataService.this.isForce = !flag;
             view = view2;
-            orderChoice = orderChoice2;
-            filterChoice = filterChoice2;
             subTitle = subTitle2;
 
             createNotice("初始化数据获取服务……",0);
@@ -192,8 +190,11 @@ public class RequestFeedListDataService extends Service {
                     ALog.d("开始对数据排序");
                     List<FeedItem> list = new ArrayList<>(eList);
 
+                    orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,FilterPopupView.ORDER_BY_NEW);
+                    filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,FilterPopupView.SHOW_ALL);
+
                     //对数据进行过滤
-                    if (filterChoice == FilterPopupView.SHOW_STAR){
+                    if (filterChoice.equals(FilterPopupView.SHOW_STAR)){
                         Iterator<FeedItem> sListIterator = list.iterator();
                         while (sListIterator.hasNext()) {
                             FeedItem feedItem = sListIterator.next();
@@ -201,7 +202,7 @@ public class RequestFeedListDataService extends Service {
                                 sListIterator.remove();
                             }
                         }
-                    }else if (filterChoice == FilterPopupView.SHOW_UNREAD){
+                    }else if (filterChoice.equals(FilterPopupView.SHOW_UNREAD)){
                         Iterator<FeedItem> sListIterator = list.iterator();
                         while (sListIterator.hasNext()) {
                             FeedItem feedItem = sListIterator.next();
@@ -212,7 +213,7 @@ public class RequestFeedListDataService extends Service {
                     }
                     //对数据排序
                     //选择排序方式
-                    if (orderChoice == FilterPopupView.ORDER_BY_NEW){
+                    if (orderChoice.equals(FilterPopupView.ORDER_BY_NEW)){
                         Collections.sort(list, new Comparator<FeedItem>() {
                             @Override
                             public int compare(FeedItem t0, FeedItem t1) {//新的在前

@@ -77,8 +77,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private boolean isFirstOpen = true;//首次打开
     ArrayList<String> feedIdList = new ArrayList<>();
 
-    private int orderChoice = FilterPopupView.ORDER_BY_NEW;
-    private int filterChoice = FilterPopupView.SHOW_ALL;
     private boolean isconnet = false;//
     private int feedItemNum;
 
@@ -185,7 +183,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
 
 
-            myBinder.initParameter((TextView)subView,orderChoice, filterChoice, getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
+            myBinder.initParameter((TextView)subView,getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
                 @Override
                 public void onBegin() {
                     refreshLayout.finishRefresh(true);
@@ -283,11 +281,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
         return feedIdList;
     }
 
-    public void updateData(ArrayList<String> feedIdList, int oderChoice, int filterChoice) {
+    public void updateData(ArrayList<String> feedIdList) {
         this.feedIdList = feedIdList;
         this.isFirstOpen = true;
-        this.orderChoice = oderChoice;
-        this.filterChoice = filterChoice;
         refreshLayout.autoRefresh();
 
 
@@ -365,11 +361,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
         }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){//删除了订阅或者文件夹，直接显示全部文章
 
-            updateData(new ArrayList<String>(),this.orderChoice,this.filterChoice);
+            updateData(new ArrayList<String>());
             ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
         }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){//恢复数据，通过OPML或者数据库的方式
             //显示所有文章
-            updateData(new ArrayList<String>(),this.orderChoice,this.filterChoice);
+            updateData(new ArrayList<String>());
             ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
         }
     }

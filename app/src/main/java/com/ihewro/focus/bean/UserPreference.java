@@ -22,6 +22,8 @@ public class UserPreference extends LitePalSupport {
     public static final String  USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
     public static final String  AUTO_SET_FEED_NAME =  "AUTO_SET_FEED_NAME";
     public static final String  OWN_RSSHUB =  "自定义源";
+    public static final String  ODER_CHOICE = "ODER_CHOICE";//排序规则
+    public static final String  FILTER_CHOICE = "FILTER_CHOICE";//过滤规则
 
     public static final String  RSS_HUB =  "rsshub";
     public static final String FIRST_USE_LOCAL_SEARCH_AND_FILTER = "FIRST_USE_LOCAL_SEARCH_AND_FILTER";//是否首次打开APP

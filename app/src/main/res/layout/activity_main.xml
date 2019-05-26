@@ -58,17 +58,17 @@
                                 android:layout_height="wrap_content"/>
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
 
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/subtitle"
-                            android:text=""
+                            android:text="测试233"
                             android:textColor="@color/text_read"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 

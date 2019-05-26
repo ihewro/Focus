@@ -380,7 +380,7 @@ public class MainActivity extends BaseActivity {
                                             list.add(String.valueOf(feeds.get(i).getId()));
                                         }
                                         //切换到指定文件夹下
-                                        clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                                        clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName());
                                         popupView.dismiss();//关闭弹窗
                                     }
                                 }
@@ -485,7 +485,7 @@ public class MainActivity extends BaseActivity {
         if (drawerItem.getTag() != null) {
             switch ((int) drawerItem.getTag()) {
                 case SHOW_ALL:
-                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章", drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
                     break;
                 case SHOW_STAR:
                     StarActivity.activityStart(MainActivity.this);
@@ -506,7 +506,7 @@ public class MainActivity extends BaseActivity {
                     ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                     ArrayList<String> list = new ArrayList<>();
                     list.add(String.valueOf(drawerItem.getIdentifier()));
-                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString());
                     break;
 
             }
@@ -556,12 +556,12 @@ public class MainActivity extends BaseActivity {
      * @param feedIdList
      * @param title
      */
-    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title, int oderChoice, int filterChoice) {
+    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title) {
         if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
         } else {
             toolbarTitle.setText(title);
-            feedPostsFragment.updateData(feedIdList, oderChoice, filterChoice);
+            feedPostsFragment.updateData(feedIdList);
         }
 
     }
@@ -734,7 +734,7 @@ public class MainActivity extends BaseActivity {
                     public void onDismiss() {
                         //刷新当前页面的数据，因为筛选的规则变了
                         if (drawerPopupView.isNeedUpdate()) {
-                            clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(), toolbarTitle.getText().toString(), drawerPopupView.getOrderChoice(), drawerPopupView.getFilterChoice());
+                            clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(), toolbarTitle.getText().toString());
                             drawerPopupView.setNeedUpdate(false);
                         }
                     }
