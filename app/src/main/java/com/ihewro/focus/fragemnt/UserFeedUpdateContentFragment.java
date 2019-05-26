@@ -308,7 +308,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             this.notReadNum = LitePal.where("read = ?","0").count(FeedItem.class);
         }
         if (this.notReadNum == 0){
-            ((TextView)subView).setText("全部阅读完了，可以休息一会:）");
+            ((TextView)subView).setText("无未读文章");
         }else {
             ((TextView)subView).setText("共有"+this.notReadNum+"篇未读");
         }

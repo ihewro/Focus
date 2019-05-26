@@ -62,29 +62,14 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
     protected void convert(BaseViewHolder helper, final FeedItem item) {
 
         //设置文章内容
-        PostUtil.setContent(context, item, ((WebView)helper.getView(R.id.post_content)));
-        helper.setText(R.id.post_title,item.getTitle());
-        helper.setText(R.id.post_time,DateUtil.getTimeStringByInt(item.getDate()));
-        helper.setText(R.id.feed_name,item.getFeedName());
+        PostUtil.setContent(context, item, ((WebView) helper.getView(R.id.post_content)));
+        helper.setText(R.id.post_title, item.getTitle());
+        helper.setText(R.id.post_time, DateUtil.getTimeStringByInt(item.getDate()));
+        helper.setText(R.id.feed_name, item.getFeedName());
 
-
-
-        //将该文章标记为已读，并且通知首页修改布局
-        if (!item.isRead()){
+        if (!item.isRead()) {
             //如果这个文章没有阅读过则滚动到顶部
-            ((NestedScrollView)helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
-
-            item.setRead(true);
-            item.save();
-            if (!flag) {//TODO:如果是-1表示根据id来修改UI的已读信息
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, item.getId()));
-            } else {
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, helper.getAdapterPosition()));
-            }
-            EventBus.getDefault().post(new EventMessage(EventMessage.MARK_ITEM_READED));
+            ((NestedScrollView) helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
         }
     }
-
-
-
 }

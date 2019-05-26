@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -198,6 +200,7 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onFirstScroll() {
                 initPostClickListener();
+                setCurrentItemStatus();
                 ALog.d("首次加载");
 
             }
@@ -222,11 +225,30 @@ public class PostDetailActivity extends BaseActivity {
                 //修改顶部导航栏的收藏状态
                 setLikeButton();
                 initPostClickListener();
+                setCurrentItemStatus();
 
 
             }
         }));
 
+    }
+
+
+    /**
+     * 为什么不在adapter里面写，因为recyclerview有缓存机制，没滑到这个时候就给标记为已读了
+     */
+    private void setCurrentItemStatus(){
+        //将该文章标记为已读，并且通知首页修改布局
+        if (!currentFeedItem.isRead()){
+            currentFeedItem.setRead(true);
+            currentFeedItem.save();
+            if (!isUpdateMainReadMark) {//TODO:如果是-1表示根据id来修改UI的已读信息
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
+            } else {
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
+            }
+            updateNotReadNum();
+        }
     }
 
     private void initPostClickListener(){
@@ -495,15 +517,8 @@ public class PostDetailActivity extends BaseActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void refreshUI(EventMessage eventBusMessage) {
-        if (eventBusMessage.getType().equals(EventMessage.MARK_ITEM_READED)) {
-           updateNotReadNum();
-        }
-    }
 
     private void updateNotReadNum(){
-        //TODO: 实际上这儿有个问题，就是3篇文章，滑到第二篇的时候，第三篇后预加载，导致被标记为已读
         this.notReadNum --;
         if (notReadNum <= 0){
             toolbar.setTitle("");
