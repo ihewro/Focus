@@ -24,7 +24,7 @@ public class EventMessage {
 
     public static final String MARK_FEED_READ = "MARK_FEED_READ";//给一个订阅全部文章标记已读
     public static final String MARK_FEED_FOLDER_READ = "MARK_FEED_FOLDER_READ";//一个订阅文件夹全部标记已读
-    private static final String REFRESH_FEED_ITEM_LIST = "REFRESH_FEED_ITEM_LIST";//刷新订阅列表
+    public static final String REFRESH_FEED_ITEM_LIST = "REFRESH_FEED_ITEM_LIST";//刷新订阅列表
 
 
     //TODO: 对这个事情需要进行UI更新出来

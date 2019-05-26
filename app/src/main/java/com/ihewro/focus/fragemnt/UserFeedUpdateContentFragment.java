@@ -5,11 +5,13 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -24,6 +27,7 @@ import com.blankj.ALog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
@@ -190,24 +194,26 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 }
 
                 @Override
-                public void onUpdate(List<FeedItem> feedItems) {
+                public void onUpdate(final List<FeedItem> feedItems) {
                     int sub = feedItems.size() - eList.size();
-                    if (sub > 0){//有新文章时候才会去更新
-                        Toasty.success(getActivity(),sub + "篇新文章").show();
+                    if (sub > 0){//有新文章时候才会去更新界面
+                        //根据是否显示新文章来判断
                         eList.clear();
                         eList.addAll(feedItems);
+                        Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
+                                .setActionTextColor(Color.WHITE)
+                                .setAction("显示", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        adapter.setNewData(eList);
+                                        if (eList.size()==0){
+                                            adapter.setNewData(null);
+                                            adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                                        }
+                                        EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+                                    }
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.setNewData(eList);
-                                if (eList.size()==0){
-                                    adapter.setNewData(null);
-                                    adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
-                                }
-                                isFirstOpen = false;
-                            }
-                        });
+                                }) .show();
                     }
                 }
                 @Override
@@ -234,6 +240,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     refreshLayout.finishRefresh(true);
                     UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
                     updateNotReadNum();
+                    //更新侧边栏和其他接收这个通知的组件
+                    EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
 
                     //解除绑定
                     if (isconnet){
@@ -299,7 +307,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }else {//为空表示显示所有的feedId
             this.notReadNum = LitePal.where("read = ?","0").count(FeedItem.class);
         }
-        ((TextView)subView).setText("共有"+this.notReadNum+"篇未读");
+        if (this.notReadNum == 0){
+            ((TextView)subView).setText("全部阅读完了，可以休息一会:）");
+        }else {
+            ((TextView)subView).setText("共有"+this.notReadNum+"篇未读");
+        }
     }
 
     @Override

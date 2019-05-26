@@ -1,52 +1,23 @@
 package com.ihewro.focus.task;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Service;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
-import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Message;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
-import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.FeedParser;
-import com.ihewro.focus.util.UIUtil;
-import com.ihewro.focus.view.FeedsLoadingPopupView;
-import com.ihewro.focus.view.FilterPopupView;
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.interfaces.XPopupCallback;
-
-import org.greenrobot.eventbus.EventBus;
-import org.litepal.LitePal;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
 
-import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -125,7 +96,6 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
 //                    ALog.dTag("feed233", feed);
                 //feed更新到当前的时间流中。
                 if (feed2!=null){
-                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_FOLDER_NAME));
                     return new Message(true,feed2.getFeedItemList());
                 }else {
                     //当前解析的内容为空

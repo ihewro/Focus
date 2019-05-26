@@ -271,7 +271,6 @@ public class RequestFeedListDataService extends Service {
         super.onDestroy();
         ALog.d("服务被结束了");
 
-
     }
 
     private Notification createNotice(String title, int progress){
