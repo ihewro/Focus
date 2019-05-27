@@ -183,6 +183,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 }
             }else {//为空表示显示所有的feedId
                 feedList = LitePal.findAll(Feed.class);
+                for (Feed feed:feedList){
+                    feedIdList.add(feed.getId()+"");
+                }
             }
 
 
@@ -341,16 +344,38 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 eList.get(indexInList).setRead(true);
                 adapter.notifyItemChanged(indexInList);
             }
-
-
-        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){//收藏状态修改
+        }
+        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_ID)){//已读状态修改
+            //寻找到id的位置
+            int pos = -1;
+            for (int i = 0;i<eList.size();i++){
+                if (eList.get(i).getId() == eventBusMessage.getInteger()){
+                    pos = i;
+                    break;
+                }
+            }
+            eList.get(pos).setRead(true);
+            adapter.notifyItemChanged(pos);
+        }
+        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){//收藏状态修改
             //更新收藏状态
             int indexInList = eventBusMessage.getInteger();
             boolean flag = eventBusMessage.isFlag();
             eList.get(indexInList).setFavorite(flag);
             adapter.notifyItemChanged(indexInList);
+        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//收藏状态修改
+            //寻找到id的位置
+            int pos = -1;
+            for (int i = 0;i<eList.size();i++){
+                if (eList.get(i).getId() == eventBusMessage.getInteger()){
+                    pos = i;
+                    break;
+                }
+            }
+            boolean flag = eventBusMessage.isFlag();
+            eList.get(pos).setFavorite(flag);
+            adapter.notifyItemChanged(pos);
         }
-
         else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//有文章的已读状态修改
             //检查feedid是否在本碎片的内容内
             //如果在，则让这部分

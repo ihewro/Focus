@@ -1,6 +1,7 @@
 package com.ihewro.focus;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.blankj.ALog;
 import com.ihewro.focus.activity.ErrorActivity;
@@ -89,12 +90,12 @@ public class MyApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
         LitePal.initialize(this);
+        LitePal.getDatabase().disableWriteAheadLogging();
         mContext = this;
         initALog();
         initErrorHandle();
 
         ImageLoaderManager.init(this);
-
 
         Toasty.Config.getInstance()
                 .allowQueue(true) // optional (prevents several Toastys from queuing)

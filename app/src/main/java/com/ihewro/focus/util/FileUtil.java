@@ -108,9 +108,6 @@ public class FileUtil {
                     fileTwoParent.mkdir();
                 }
             }
-            if (target.exists()){
-                target.delete();
-            }
             FileInputStream fileInputStream = null;
             FileOutputStream fileOutputStream = null;
             try {

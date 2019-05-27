@@ -74,7 +74,13 @@ public class UserPreference extends LitePalSupport {
         this.value = value;
     }
 
-    public static String queryValueByKey(String key,String defaultValue){
+    public UserPreference(String key, String value, String defaultValue) {
+        this.key = key;
+        this.value = value;
+        this.defaultValue = defaultValue;
+    }
+
+    public static String queryValueByKey(String key, String defaultValue){
         List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
         if (userPreferences.size()>0){
             UserPreference temp = userPreferences.get(0);

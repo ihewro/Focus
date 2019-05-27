@@ -85,7 +85,7 @@ public class SearchFeedItemListFragment extends Fragment {
                 for (FeedItem feedItem : searchResults) {
                     list.add(feedItem.getId());
                 }
-                PostDetailActivity.activityStart(activity, position, list, false);
+                PostDetailActivity.activityStart(activity, position, list, false,false);
 
             }
         });

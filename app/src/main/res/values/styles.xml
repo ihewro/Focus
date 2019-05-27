@@ -44,6 +44,13 @@
 
     <!--抽屉的样式-->
 
+    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="tabSelectedTextColor">@color/colorAccent</item>
+        <item name="tabTextColor">@color/text_secondary_dark</item>
+        <item name="android:textColor">@color/text_secondary_dark</item>
+
+    </style>
+
 
 
 </resources>

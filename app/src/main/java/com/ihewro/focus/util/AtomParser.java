@@ -3,6 +3,7 @@ package com.ihewro.focus.util;
 import com.blankj.ALog;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.Message;
 import com.ihewro.focus.bean.UserPreference;
 
 import org.jsoup.Jsoup;
@@ -70,7 +71,12 @@ public class AtomParser {
                     netFeedName = readTitle(parser);
                     break;
                 case LINK:
-                    feed.setLink(readLink(parser));
+                    Message message = readFeedLink(parser);
+                    if (message.isFlag()){//是真正的link信息
+                        feed.setLink(message.getData());
+                    }else {
+                        skip(parser);
+                    }
                     break;
                 case UPDATED:
                     feed.setTime(readLastBuildDate(parser));
@@ -124,7 +130,7 @@ public class AtomParser {
                     title = readTitle(parser);
                     break;
                 case LINK:
-                    link = readLink(parser);
+                    link = readItemLink(parser);
                     break;
                 case PUBLISHED:
                     pubDate = readPubDate(parser);
@@ -140,7 +146,7 @@ public class AtomParser {
                     break;
             }
         }
-        ALog.d("item名称：" + title + "时间为" + pubDate);
+        ALog.d("item名称：" + title + "时间为" + pubDate + "地址为" + link);
         FeedItem  feedItem = new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
         if (pubDate == null){
             feedItem.setNotHaveExtractTime(true);
@@ -153,8 +159,51 @@ public class AtomParser {
         return Jsoup.parse(readTagByTagName(parser,TITLE)).text();
     }
 
-    private static String readLink(XmlPullParser parser) throws IOException, XmlPullParserException {
-        return readTagByTagName(parser,LINK);
+
+    private static Message readFeedLink(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String url = "";
+        parser.require(XmlPullParser.START_TAG, null, LINK);
+        boolean is_false = false;
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            switch (parser.getAttributeName(i)) {
+                case "href":
+                    url = parser.getAttributeType(i);
+                    break;
+                case "rel":
+                    //直接返回，这个地址是不需要的
+                    is_false = true;
+                    break;
+            }
+            if (is_false){
+                break;
+            }
+        }
+        if (is_false){
+            return new Message(false);
+        }else {
+            parser.next();
+            return new Message(true,url);
+        }
+    }
+
+
+    private static String readItemLink(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String url = "";
+        parser.require(XmlPullParser.START_TAG, null, LINK);
+        boolean isHaveTargetValue = false;
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            switch (parser.getAttributeName(i)) {
+                case "href":
+                    url = parser.getAttributeValue(i);
+                    isHaveTargetValue = true;
+                    break;
+            }
+            if (isHaveTargetValue){
+                break; //退出
+            }
+        }
+        parser.next();
+        return url;
     }
 
     private static String readPubDate(XmlPullParser parser) throws IOException, XmlPullParserException {

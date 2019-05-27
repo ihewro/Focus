@@ -9,11 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.ihewro.focus.R;
+import com.ihewro.focus.adapter.StarItemListAdapter;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.StarItem;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
@@ -25,7 +31,7 @@ import butterknife.ButterKnife;
 
 public class StarActivity extends BackActivity {
 
-    List<FeedItem> eList = new ArrayList<FeedItem>();
+    List<StarItem> eList = new ArrayList<>();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.appbar)
@@ -33,7 +39,7 @@ public class StarActivity extends BackActivity {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    UserFeedPostsVerticalAdapter adapter;
+    StarItemListAdapter adapter;
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, StarActivity.class);
@@ -45,6 +51,7 @@ public class StarActivity extends BackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_star);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -53,8 +60,9 @@ public class StarActivity extends BackActivity {
 
 
     public void initData() {
-        eList = LitePal.where("favorite = ?", "1").find(FeedItem.class);
-        adapter = new UserFeedPostsVerticalAdapter(eList,StarActivity.this);
+        List<StarItem> list = LitePal.where("favorite = ?","1").find(StarItem.class);
+        eList.addAll(list);
+        adapter = new StarItemListAdapter(eList,StarActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter.bindToRecyclerView(recyclerView);
@@ -62,8 +70,25 @@ public class StarActivity extends BackActivity {
         if (eList.size()==0){
             adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
         }
-
-//        recyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(new SuspensionDecoration(this, eList));
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void refreshUI(EventMessage eventBusMessage) {
+        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//收藏状态修改
+            //寻找到id的位置
+            int pos = -1;
+            for (int i = 0;i<eList.size();i++){
+                if (eList.get(i).getId() == eventBusMessage.getInteger()){
+                    pos = i;
+                    break;
+                }
+            }
+            boolean flag = eventBusMessage.isFlag();
+            eList.get(pos).setFavorite(flag);
+            adapter.notifyItemChanged(pos);
+        }
+    }
+
+
 }

@@ -25,6 +25,7 @@ public class Feed extends LitePalSupport {
     @Column(unique = true)
     private int id;//真实主键
 
+    @Column(ignore = true)
     private String iid;//这个参数是因为服务端主键是字符串，而lietepal 固定主键为int的id，这个字段需要保留，以便获取服务器上对应的参数列表，该字段仅仅在获取参数列表使用，其他任何使用禁止使用！
 
     private String name;
@@ -43,6 +44,7 @@ public class Feed extends LitePalSupport {
     private int totalNum;//总文章数
     @Column(ignore = true)
     private int unreadNum;//未读文章数
+
     private String logoPath;//feed的图标路径
 
     @Column(ignore = true)
@@ -67,6 +69,20 @@ public class Feed extends LitePalSupport {
 
     }
 
+    public Feed(String name, String desc, String url, String link, String websiteName, String websiteCategoryName, Long time, int feedFolderId, String type,  int timeout, boolean errorGet) {
+        this.name = name;
+        this.desc = desc;
+        this.url = url;
+        this.link = link;
+        this.websiteName = websiteName;
+        this.websiteCategoryName = websiteCategoryName;
+        this.time = time;
+        this.feedFolderId = feedFolderId;
+        this.type = type;
+        this.timeout = timeout;
+        this.errorGet = errorGet;
+    }
+
     public Feed() {
     }
 
@@ -76,6 +92,7 @@ public class Feed extends LitePalSupport {
         this.desc = desc;
         this.timeout = timeout;
     }
+
 
 
 

@@ -3,11 +3,14 @@ package com.ihewro.focus.task;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,10 +22,16 @@ import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
+import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
+import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.StarItem;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.FileOperationCallback;
 import com.ihewro.focus.helper.DatabaseHelper;
 import com.ihewro.focus.util.DataCleanManager;
 import com.ihewro.focus.util.FileUtil;
+import com.ihewro.focus.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -134,24 +143,15 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which2) {
-                                            FileUtil.copyFileToTarget(backupFilesPath.get(which),activity.getDatabasePath("focus.db").getAbsolutePath(), new FileOperationCallback() {
+                                            new Thread(new Runnable() {
                                                 @Override
-                                                public void onFinish() {
-                                                    Toasty.success(activity,"恢复数据成功，为您重新启动……", Toast.LENGTH_SHORT).show();
+                                                public void run() {
+                                                    importData(backupFilesPath.get(which));
+                                                    Toasty.success(activity,"恢复数据成功！", Toast.LENGTH_SHORT).show();
+                                                    EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+                                                }
+                                            }).run();
 
-                                                    new Handler().postDelayed(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            //重新启动
-                                                            //启动页
-                                                            Intent intent = new Intent(activity, MainActivity.class);
-                                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                            activity.startActivity(intent);
-                                                            android.os.Process.killProcess(android.os.Process.myPid());
-                                                        }
-                                                    },1000); // 延时1秒
-                                                                           }
-                                            });
                                         }
                                     })
                                     .show();
@@ -168,7 +168,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                     .extensionsFilter(".db") // Optional extension filter, will override mimeType()
                                     .tag("optional-identifier")
                                     .goUpLabel("上一级") // custom go up label, default label is "..."
-                                    .show((MainActivity)activity); // an AppCompatActivity which implements FileCallback
+                                    .show((FragmentActivity)activity); // an AppCompatActivity which implements FileCallback
 
                         }
                     })
@@ -176,5 +176,133 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
         }else {
             Toasty.info(activity,"暂无任何备份文件，请先备份数据",Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+
+    private void importData(String path){
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(path, null);
+        database.disableWriteAheadLogging();
+
+        //删除数据库
+        LitePal.deleteAll(FeedFolder.class);
+        LitePal.deleteAll(Feed.class);
+        LitePal.deleteAll(FeedItem.class);
+        LitePal.deleteAll(StarItem.class);
+        LitePal.deleteAll(UserPreference.class);
+
+        Cursor feedFolderCur = database.rawQuery("SELECT * from feedfolder", null);
+        if (feedFolderCur!=null && feedFolderCur.moveToFirst()){
+            do{
+                FeedFolder feedFolder = new FeedFolder();
+                String name = feedFolderCur.getString(feedFolderCur.getColumnIndex("name"));
+                int feedfolderId = feedFolderCur.getInt(feedFolderCur.getColumnIndex("id"));
+                feedFolder.setName(name);
+                feedFolder.save();
+
+                Cursor feedCur = database.rawQuery("select * from feed where feedfolderid = ?", new String[]{""+feedfolderId});
+                if (feedCur!=null && feedCur.moveToFirst()){
+                    do {
+                        String name2 = feedCur.getString(feedCur.getColumnIndex("name"));
+                        String desc = feedCur.getString(feedCur.getColumnIndex("desc_lpcolumn"));
+                        String url = feedCur.getString(feedCur.getColumnIndex("url"));
+                        String link = feedCur.getString(feedCur.getColumnIndex("link"));
+                        String websiteName = feedCur.getString(feedCur.getColumnIndex("websitename"));
+                        String websiteCategoryName = feedCur.getString(feedCur.getColumnIndex("websitecategoryname"));
+                        Long time = feedCur.getLong(feedCur.getColumnIndex("time"));
+                        int feedFolderId = feedFolder.getId();
+                        String type = feedCur.getString(feedCur.getColumnIndex("type"));
+                        int timeout = feedCur.getInt(feedCur.getColumnIndex("timeout"));
+                        String temp = feedCur.getString(feedCur.getColumnIndex("errorget"));
+                        boolean errorGet;
+                        if (StringUtil.trim(temp).equals("1")){
+                            errorGet = true;
+                        }else {
+                            errorGet = false;
+                        }
+                        int feedId = feedCur.getInt(feedCur.getColumnIndex("id"));
+                        Feed feed = new Feed(name2,desc,url,link,websiteName,websiteCategoryName,time,feedFolderId,type,timeout,errorGet);
+                        feed.save();
+
+                        //绑定该feed下面的所有文章
+                        Cursor feedItemCur = database.rawQuery("SELECT * from feeditem where feedid = ?", new String[]{feedId + ""});
+                        if (feedItemCur != null && feedItemCur.moveToFirst()) {
+                            if (feedItemCur.moveToFirst()) {
+                                do {
+                                    String title = feedItemCur.getString(feedItemCur.getColumnIndex("title"));
+                                    Long date = feedItemCur.getLong(feedItemCur.getColumnIndex("date"));
+                                    String summary = feedItemCur.getString(feedItemCur.getColumnIndex("summary"));
+                                    String content = feedItemCur.getString(feedItemCur.getColumnIndex("content"));
+                                    int feedId2 = feed.getId();
+                                    String feedName = feedItemCur.getString(feedItemCur.getColumnIndex("feedname"));
+                                    String url2 = feedItemCur.getString(feedItemCur.getColumnIndex("url"));
+                                    temp = StringUtil.trim(feedItemCur.getString(feedItemCur.getColumnIndex("read")));
+                                    boolean read;
+                                    read = temp.equals("1");
+                                    boolean favorite;
+                                    temp = StringUtil.trim(feedItemCur.getString(feedItemCur.getColumnIndex("favorite")));
+                                    favorite = temp.equals("1");
+                                    FeedItem feedItem = new FeedItem(title,date,summary,content,feedId2,feedName,url2,read,favorite);
+                                    feedItem.save();
+                                } while (feedItemCur.moveToNext());
+                            }
+                            feedItemCur.close();
+                        }
+
+                    }while (feedCur.moveToNext());
+                    feedCur.close();
+                }
+            }while (feedFolderCur.moveToNext());
+            feedFolderCur.close();
+
+            //恢复收藏表，早期用户没有收藏表
+            try {
+                Cursor starCur = database.rawQuery("select * from staritem",null);
+                if (starCur != null && starCur.moveToFirst()){
+                    do{
+                        String title = starCur.getString(starCur.getColumnIndex("title"));
+                        Long date = starCur.getLong(starCur.getColumnIndex("date"));
+                        String summary = starCur.getString(starCur.getColumnIndex("summary"));
+                        String content = starCur.getString(starCur.getColumnIndex("content"));
+                        int feeditemId = starCur.getInt(starCur.getColumnIndex("feeditemid"));
+                        String feedName = starCur.getString(starCur.getColumnIndex("feedname"));
+                        String url2 = starCur.getString(starCur.getColumnIndex("url"));
+                        String temp = StringUtil.trim(starCur.getString(starCur.getColumnIndex("read")));
+                        boolean read;
+                        read = temp.equals("1");
+                        boolean favorite;
+                        temp = StringUtil.trim(starCur.getString(starCur.getColumnIndex("favorite")));
+                        favorite = temp.equals("1");
+                        StarItem starItem = new StarItem(new FeedItem(title,date,summary,content,0,feedName,url2,read,favorite));
+                        starItem.setFeedItemId(feeditemId);
+                        starItem.save();
+                    }while (starCur.moveToNext());
+                    starCur.close();
+                }
+            }catch (SQLiteException exception){
+                ALog.d(exception);
+            }
+
+            //恢复用户设置表
+            Cursor userCur = database.rawQuery("select * from userpreference",null);
+            if (userCur!=null && userCur.moveToFirst()){
+                do{
+                    String key = userCur.getString(userCur.getColumnIndex("key"));
+                    String value = userCur.getString(userCur.getColumnIndex("value"));
+                    String defaultValue = "";
+                    try {//早期表没有这个字段
+                        defaultValue = userCur.getString(userCur.getColumnIndex("defalutvalue"));
+                    }catch (IllegalStateException e){
+                        ALog.d(e);
+                    }
+                    UserPreference userPreference = new UserPreference(key,value,defaultValue);
+                    userPreference.save();
+                }while (userCur.moveToNext());
+                userCur.close();
+            }
+
+            database.close();
+        }
+
     }
 }

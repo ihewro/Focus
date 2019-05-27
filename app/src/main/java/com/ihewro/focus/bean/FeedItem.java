@@ -8,6 +8,7 @@ import com.ihewro.focus.util.DateUtil;
 import org.litepal.LitePal;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
+import org.litepal.exceptions.LitePalSupportException;
 
 /**
  * <pre>
@@ -56,7 +57,19 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     public FeedItem() {
     }
 
-    public FeedItem(String title, Long date, String summary, String content,String url, boolean read, boolean favorite) {
+    public FeedItem(String title, Long date, String summary, String content, int feedId, String feedName, String url, boolean read, boolean favorite) {
+        this.title = title;
+        this.date = date;
+        this.summary = summary;
+        this.content = content;
+        this.feedId = feedId;
+        this.feedName = feedName;
+        this.url = url;
+        this.read = read;
+        this.favorite = favorite;
+    }
+
+    public FeedItem(String title, Long date, String summary, String content, String url, boolean read, boolean favorite) {
         this.title = title;
         this.date = date;
         this.summary = summary;
@@ -125,6 +138,14 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+        //保存到收藏表中
+        if (favorite){
+            StarItem starItem = new StarItem(this);
+            starItem.saveOrUpdate();
+        }else {
+            //删除该收藏
+            LitePal.deleteAll(StarItem.class,"feedItemId = ?", String.valueOf(id));
+        }
     }
 
     public String getFeedName() {

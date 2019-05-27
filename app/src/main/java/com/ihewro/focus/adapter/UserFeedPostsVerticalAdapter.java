@@ -206,7 +206,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                     for (FeedItem feedItem: feedItemList){
                         list.add(feedItem.getId());
                     }
-                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),list,true);
+                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),list,true,false);
                 }
             }
         });

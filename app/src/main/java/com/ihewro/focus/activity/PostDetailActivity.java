@@ -29,6 +29,7 @@ import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
+import com.ihewro.focus.bean.StarItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
@@ -73,13 +74,14 @@ public class PostDetailActivity extends BaseActivity {
 
     private MaterialDialog ReadSettingDialog;
     private PostSetting postSetting;
-
+    Class useClass;
 
     private int mId;
     private int mIndex;
     private FeedItem currentFeedItem;
     private MenuItem starItem;
-    private boolean isUpdateMainReadMark;
+    private boolean isUpdateMainReadMark;//true表示从首页进来的。false表示从搜索结果中进来的
+    private boolean isStar;//true表示从收藏页面进来的，false表示从首页进来的
 
     private List<Integer> feedItemIdList;
     private int notReadNum = 0;
@@ -87,10 +89,11 @@ public class PostDetailActivity extends BaseActivity {
 
 
 
-    public static void activityStart(Activity activity,int indexInList, ArrayList<Integer> feedItemIdList,boolean flag) {
+    public static void activityStart(Activity activity,int indexInList, ArrayList<Integer> feedItemIdList,boolean flag,boolean isStar) {
         Intent intent = new Intent(activity, PostDetailActivity.class);
         intent.putExtra(Constants.KEY_INT_INDEX, indexInList);
         intent.putExtra(Constants.IS_UPDATE_MAIN_READ_MARK,flag);
+        intent.putExtra(Constants.IS_FROM_STAR_ACTIVITY,isStar);
         intent.putIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST,feedItemIdList);
         activity.startActivity(intent);
     }
@@ -101,7 +104,6 @@ public class PostDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -113,6 +115,7 @@ public class PostDetailActivity extends BaseActivity {
         feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
         mId = feedItemIdList.get(mIndex);
         isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
+        isStar = intent.getBooleanExtra(Constants.IS_FROM_STAR_ACTIVITY,false);
 
 
         initData();
@@ -159,7 +162,11 @@ public class PostDetailActivity extends BaseActivity {
 
 
     public void initData() {
-        currentFeedItem = LitePal.find(FeedItem.class,mId);
+        if (isStar){
+            currentFeedItem = LitePal.find(StarItem.class,mId);
+        }else {
+            currentFeedItem = LitePal.find(FeedItem.class,mId);
+        }
     }
 
     private void initRecyclerView() {
@@ -177,7 +184,12 @@ public class PostDetailActivity extends BaseActivity {
         this.notReadNum = 0;
         final List<FeedItem> feedItemList = new ArrayList<>();
         for (Integer id: feedItemIdList){
-            FeedItem feedItem = LitePal.find(FeedItem.class,id);
+            FeedItem feedItem;
+            if (isStar){
+                feedItem = LitePal.find(StarItem.class,id);
+            }else {
+                feedItem = LitePal.find(FeedItem.class,id);
+            }
             if (!feedItem.isRead()){
                 this.notReadNum ++;
             }
@@ -242,7 +254,7 @@ public class PostDetailActivity extends BaseActivity {
         if (!currentFeedItem.isRead()){
             currentFeedItem.setRead(true);
             currentFeedItem.save();
-            if (!isUpdateMainReadMark) {//TODO:如果是-1表示根据id来修改UI的已读信息
+            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
                 EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
             } else {
                 EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
@@ -491,7 +503,11 @@ public class PostDetailActivity extends BaseActivity {
     private void setLikeButton() {
         //设置收藏状态
         if (currentFeedItem == null) {
-            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+            if (isStar){
+                currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(StarItem.class).get(0);
+            }else {
+                currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
+            }
         }
         if (currentFeedItem.isFavorite()){
             starItem.setIcon(R.drawable.star_on);
