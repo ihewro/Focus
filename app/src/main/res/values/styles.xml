@@ -11,6 +11,8 @@
         <!--抽屉的风格-->
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
         <item name="material_drawer_selected_text">@color/colorAccent</item>
+        <item name="android:colorEdgeEffect">@color/black</item>
+
 
     </style>
 
