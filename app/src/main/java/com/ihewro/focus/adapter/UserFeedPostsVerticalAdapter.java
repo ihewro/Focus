@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.EventMessage;
@@ -53,28 +54,17 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
     private String feedName;
     private List<FeedItem> feedItemList;
 
+    private int not_read_color;
+    private int read_color;
+    private int not_read_content_color;
+    private int read_content_color;
+
+
+
     public UserFeedPostsVerticalAdapter(@Nullable List<FeedItem> data, Activity activity) {
         super(R.layout.item_post, data);
         this.activity = activity;
         this.feedItemList = data;
-    }
-
-    @Override
-    protected void convert(final BaseViewHolder helper, FeedItem item) {
-        //绑定事件
-        bindListener(helper,item);
-
-        ALog.d(item.getTitle() + "日期：" + item.getDate());
-        helper.setText(R.id.post_title,item.getTitle());
-        helper.setText(R.id.rss_name,item.getFeedName());
-        helper.setText(R.id.post_summay, DataUtil.getOptimizedDesc(item.getSummary()));
-        helper.setText(R.id.post_time, DateUtil.getTTimeStringByInt(item.getDate()));
-
-
-        int not_read_color;
-        int read_color;
-        int not_read_content_color;
-        int read_content_color;
 
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             read_color = R.color.text_read_night;
@@ -90,6 +80,21 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             not_read_color = R.color.text_unread;
             not_read_content_color = R.color.text_unread_content;
         }
+    }
+
+    @Override
+    protected void convert(final BaseViewHolder helper, FeedItem item) {
+        //绑定事件
+        bindListener(helper,item);
+
+        ALog.d(item.getTitle() + "日期：" + item.getDate());
+        helper.setText(R.id.post_title,item.getTitle());
+        helper.setText(R.id.rss_name,item.getFeedName());
+        helper.setText(R.id.post_summay, DataUtil.getOptimizedDesc(item.getSummary()));
+        helper.setText(R.id.post_time, DateUtil.getTTimeStringByInt(item.getDate()));
+
+
+
 
         String imageUrl = DataUtil.getFeedItemImageUrl(item);
         if (!StringUtil.trim(imageUrl).equals("")){
@@ -129,6 +134,11 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         }else {
             helper.getView(R.id.post_pic).setVisibility(View.GONE);
         }
+
+        updateUI(helper,item);
+    }
+
+    private void updateUI(final BaseViewHolder helper,FeedItem item){
         if (item.isRead()){
             ALog.d("是否已读" + item.isRead());
             helper.setTextColor(R.id.post_title,activity.getResources().getColor(read_color));
@@ -156,11 +166,13 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
     private void bindListener(final BaseViewHolder helper, final FeedItem item){
 
+//        ((EasySwipeMenuLayout)helper.getView(R.id.swipe));
         helper.getView(R.id.markRead).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 item.setRead(!item.isRead());
-                notifyDataSetChanged();
+//                notifyDataSetChanged();
+                updateUI(helper,item);
                 //保存到数据库
                 FeedItem temp = LitePal.find(FeedItem.class,item.getId());
                 temp.setRead(item.isRead());

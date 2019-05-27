@@ -424,7 +424,7 @@ public class MainActivity extends BaseActivity {
             flag = true;
         }
 
-        SwitchDrawerItem mode = new SwitchDrawerItem().withName("夜间").withIcon(GoogleMaterial.Icon.gmd_brightness_medium).withChecked(flag).withOnCheckedChangeListener(new OnCheckedChangeListener() {
+        SwitchDrawerItem mode = new SwitchDrawerItem().withName("夜间").withIcon(GoogleMaterial.Icon.gmd_brightness_medium).withChecked(flag).withSelectable(false).withOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
                 ALog.d("点击状态", isChecked);
@@ -469,8 +469,7 @@ public class MainActivity extends BaseActivity {
                 })
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(FEED_MANAGE).withSelectable(false),
-                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false),
-                        new SecondaryDrawerItem().withName("捐赠").withIcon(GoogleMaterial.Icon.gmd_account_balance_wallet).withIdentifier(10).withTag(PAY_SUPPORT).withSelectable(false), mode)
+                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false), mode)
                 .build();
         drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
     }

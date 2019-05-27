@@ -194,6 +194,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 @Override
                 public void onBegin() {
                     refreshLayout.finishRefresh(true);
+                    refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
+
                 }
 
                 @Override
@@ -241,6 +243,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     //刷新界面
                     isFirstOpen = false;
                     refreshLayout.finishRefresh(true);
+                    refreshLayout.setEnableRefresh(true);
                     UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
                     updateNotReadNum();
                     //更新侧边栏和其他接收这个通知的组件
