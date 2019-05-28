@@ -78,5 +78,26 @@
     <string name="pref_key_own_rsshub">pref_key_own_rsshub_choice</string>
     <string name="pref_title_own_rsshub">自定义RSSHub源</string>
     <string name="pref_summary_own_rsshub">如果上面的设置项选择了自定义，而且你有自己搭建的RSSHub源，可以在这里填写</string>
-
+    <string name="pref_key_not_pull_to_open_link">pref_key_not_pull_to_open_link</string>
+    <string name="pref_title_not_pull_to_open_link">禁止上拉访问源网站</string>
+    <string name="pref_summary_not_pull_to_open_link">文章中默认开启该手势，你可以关闭防止误触</string>
+    <string name="pref_key_database_version">pref_key_database_version</string>
+    <string name="pref_title_database_version">数据库版本</string>
+    <string name="pref_summary_database_version">10</string>
+    <string name="pref_key_donate">pref_key_donate</string>
+    <string name="pref_title_donate">捐赠</string>
+    <string name="pref_summary_donate">这不是必须的，捐赠可以给开发者更多动力更新。你也可以使用任何其他方式表达你对该应用的喜爱💝</string>
+    <string name="pref_key_fix_database">pref_key_fix_database</string>
+    <string name="pref_title_fix_database">修复数据库</string>
+    <string name="pref_summary_fix_database">当你的数据出现异常的时候，可以尝试使用该工具</string>
+    <string name="pref_key_clean_database">pref_key_clean_database</string>
+    <string name="pref_title_clean_database">清理数据库</string>
+    <string name="pref_summary_clean_database">你可以控制当前数据库文章的数量，以便保证文章数目在可控范围内</string>
+    <string name="pref_summary_about">关于Focus和其他</string>
+    <string name="pref_key_not_double_click_to_star">pref_key_not_double_click_to_star</string>
+    <string name="pref_title_not_double_click_to_star">禁止双击收藏文章</string>
+    <string name="pref_summary_not_double_click_to_star">文章中默认双击文章收藏当前文章，你可以关闭防止误触</string>
+    <string name="pref_key_not_double_click_to_top">pref_key_not_double_click_to_top</string>
+    <string name="pref_title_not_double_click_to_top">文章中双击顶栏返回文章顶部</string>
+    <string name="pref_summary_not_double_click_to_top">文章中默认双击顶栏返回文章顶部，你可以关闭该特性</string>
 </resources>

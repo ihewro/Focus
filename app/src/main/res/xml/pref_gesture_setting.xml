@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_not_pull_to_open_link"
+        android:title="@string/pref_title_not_pull_to_open_link"
+        android:summary="@string/pref_summary_not_pull_to_open_link"/>
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_not_double_click_to_star"
+        android:title="@string/pref_title_not_double_click_to_star"
+        android:summary="@string/pref_summary_not_double_click_to_star"/>
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_not_double_click_to_top"
+        android:title="@string/pref_title_not_double_click_to_top"
+        android:summary="@string/pref_summary_not_double_click_to_top"/>
+
+</android.support.v7.preference.PreferenceScreen>

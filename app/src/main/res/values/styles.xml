@@ -12,6 +12,9 @@
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
         <item name="material_drawer_selected_text">@color/colorAccent</item>
         <item name="android:colorEdgeEffect">@color/black</item>
+        <item name="preferenceTheme">
+            @style/PreferenceThemeOverlay.v14.Material
+        </item>
 
 
     </style>
@@ -31,7 +34,10 @@
         <item name="searchBackIcon">@drawable/ic_action_navigation_arrow_back_inverted</item>
         <item name="searchSuggestionBackground">@color/colorPrimary_night</item>
         <item name="android:textColor">@color/colorAccent_night</item>
-
+        <item name="android:colorEdgeEffect">@color/white</item>
+        <item name="preferenceTheme">
+            @style/PreferenceThemeOverlay.v14.Material
+        </item>
 
     </style>
 

@@ -171,8 +171,6 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             @Override
             public void onClick(View view) {
                 item.setRead(!item.isRead());
-//                notifyDataSetChanged();
-                updateUI(helper,item);
                 //保存到数据库
                 FeedItem temp = LitePal.find(FeedItem.class,item.getId());
                 temp.setRead(item.isRead());
@@ -184,6 +182,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                 }else {
                     Toasty.success(activity,"标记未读成功").show();
                 }
+                notifyItemChanged(helper.getAdapterPosition());
                 EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_ITEM_READ));
             }
         });
@@ -192,7 +191,6 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             @Override
             public void onClick(View view) {
                 item.setFavorite(!item.isFavorite());
-                notifyDataSetChanged();
 
                 //保存到数据库
                 item.setFavorite(item.isFavorite());
@@ -204,6 +202,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                 }else {
                     Toasty.success(activity,"取消收藏成功").show();
                 }
+                notifyItemChanged(helper.getAdapterPosition());
             }
         });
 
@@ -229,6 +228,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
                 new XPopup.Builder(activity)
                         .atView(helper.getView(R.id.operations))  // 依附于所点击的View，内部会自动判断在上方或者下方显示
+                        .hasShadowBg(false)
                         .asAttachList(new String[]{"将以上部分标记为已读", "将以下部分标记为已读"},
                                 new int[]{},
                                 new OnSelectListener() {
@@ -262,7 +262,6 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             notifyItemChanged(i);
         }
     }
-
 
     private void initTapView(View view){
         TapTargetView.showFor(activity,                 // `this` is an Activity

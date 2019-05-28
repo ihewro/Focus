@@ -58,6 +58,7 @@ dependencies {
 
     //支持库 @link: https://developer.android.com/topic/libraries/support-library/features?hl=zh-cn#v7
     implementation 'com.android.support:appcompat-v7:28.0.0'//v7 appcompat 库
+    implementation group: 'com.android.support', name: 'preference-v7', version: '28.0.0'
     implementation 'com.android.support:design:28.0.0'//材料设计组件
     implementation 'com.android.support:percent:28.0.0'//百分比 布局
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'//constraint 布局

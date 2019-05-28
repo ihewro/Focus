@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <android.support.v7.preference.PreferenceCategory
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_primary_setting"
+        android:title="@string/pref_title_primary_setting" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_use_internet_while_open"
+        android:title="@string/pref_title_use_internet_while_open"
+        android:summary="@string/pref_summary_lower_flow_mode"/>
+
+    <android.support.v7.preference.Preference
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_rsshub_choice"
+        android:title="@string/pref_title_rsshub_choice"
+        android:summary="@string/pref_summary_rsshub_choice"/>
+
+    <android.support.v7.preference.Preference
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_own_rsshub"
+        android:title="@string/pref_title_own_rsshub"
+        android:summary="@string/pref_summary_own_rsshub"/>
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_auto_name"
+        android:title="@string/pref_title_auto_name"
+        android:summary="@string/pref_summary_auto_name" />
+
+
+
+</android.support.v7.preference.PreferenceScreen>

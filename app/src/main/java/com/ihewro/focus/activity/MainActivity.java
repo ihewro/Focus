@@ -499,9 +499,6 @@ public class MainActivity extends BaseActivity {
                 case SETTING://应用设置界面
                     SettingActivity.activityStart(MainActivity.this);
                     break;
-                case PAY_SUPPORT://捐赠支持界面
-                    MiniPayUtils.setupPay(MainActivity.this, new Config.Builder("FKX07840DBMQMUHP92W1DD", R.drawable.alipay, R.drawable.wechatpay).build());
-                    break;
                 case DRAWER_FOLDER_ITEM:
                     ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                     ArrayList<String> list = new ArrayList<>();

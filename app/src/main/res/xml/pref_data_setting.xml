@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_database_version"
+        android:title="@string/pref_title_database_version"
+        android:summary="@string/pref_summary_database_version"/>
+
+
+    <android.support.v7.preference.PreferenceCategory
+        android:key="@string/pref_key_primary_info"
+        android:title="@string/pref_title_primary_info" />
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_feed_num"
+        android:title="@string/pref_title_feed_num"
+        android:summary="20"/>
+
+
+
+
+    <android.support.v7.preference.PreferenceCategory
+        android:key="@string/pref_key_enhance_setting"
+        android:title="@string/pref_title_enhance_setting" />
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_fix_database"
+        android:title="@string/pref_title_fix_database"
+        android:summary="@string/pref_summary_fix_database"/>
+
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_clean_database"
+        android:title="@string/pref_title_clean_database"
+        android:summary="@string/pref_summary_clean_database"/>
+
+
+
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_backup"
+        android:title="@string/pref_title_backup"
+        android:summary="@string/pref_summary_backup"/>
+
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_recover"
+        android:title="@string/pref_title_recover"
+        android:summary="@string/pref_summary_recover"/>
+
+</android.support.v7.preference.PreferenceScreen>

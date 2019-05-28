@@ -195,7 +195,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 public void onBegin() {
                     refreshLayout.finishRefresh(true);
                     refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
-
                 }
 
                 @Override
