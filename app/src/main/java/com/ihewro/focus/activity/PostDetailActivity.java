@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -35,20 +32,12 @@ import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.WebViewUtil;
-import com.ihewro.focus.view.PostFooter;
-import com.ihewro.focus.view.PostHeader;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
@@ -66,8 +55,8 @@ public class PostDetailActivity extends BaseActivity {
     AppBarLayout appbar;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @BindView(R.id.refreshLayout)
-    SmartRefreshLayout refreshLayout;
+
+
 
     private PostDetailListAdapter adapter;
 
@@ -136,27 +125,7 @@ public class PostDetailActivity extends BaseActivity {
     private void initListener() {
 
 
-        refreshLayout.setRefreshHeader(new PostHeader(this, currentFeedItem));
-        refreshLayout.setRefreshFooter(new PostFooter(this, currentFeedItem));
-        //使上拉加载具有弹性效果
-        refreshLayout.setEnableAutoLoadMore(false);
-        //禁止越界拖动（1.0.4以上版本）
-        refreshLayout.setEnableOverScrollDrag(false);
-        //关闭越界回弹功能
-        refreshLayout.setEnableOverScrollBounce(false);
-        // 这个功能是本刷新库的特色功能：在列表滚动到底部时自动加载更多。 如果不想要这个功能，是可以关闭的：
-        refreshLayout.setEnableAutoLoadMore(false);
 
-        refreshLayout.setEnableRefresh(false);//禁止下拉动作
-
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.finishLoadMore();
-                //打开外链
-                openLink(currentFeedItem);
-            }
-        });
 
     }
 

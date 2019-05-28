@@ -23,6 +23,8 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 
+import com.blankj.ALog;
+
 import java.util.List;
 
 /**
@@ -59,6 +61,7 @@ public class CustomTabActivityHelper implements ServiceConnectionCallback {
             try {
                 customTabsIntent.launchUrl(activity, uri);
             }catch (ActivityNotFoundException e){
+                ALog.d("为什么活动没了？" + e);
                 //普通方法
                 if (fallback != null) {
                     fallback.openUri(activity, uri);

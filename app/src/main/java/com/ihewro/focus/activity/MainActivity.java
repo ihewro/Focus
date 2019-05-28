@@ -366,6 +366,7 @@ public class MainActivity extends BaseActivity {
         if (popupView == null) {
             popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
                     .atView(playButton)
+                    .hasShadowBg(true)
                     .setPopupCallback(new XPopupCallback() {
                         @Override
                         public void onShow() {
