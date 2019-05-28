@@ -8,6 +8,10 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="popupMenuStyle">@style/ThemeOverlay.AppCompat.Light</item>
 
+        <!--背景透明-->
+
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+
         <!--抽屉的风格-->
         <!--<item name="material_drawer_selected">@color/colorPrimary</item>-->
         <item name="material_drawer_selected_text">@color/colorAccent</item>
@@ -20,6 +24,7 @@
     </style>
 
 
+
     <!--再写一个是为了左侧边栏-->
     <style name="AppTheme.Dark" parent="MaterialDrawerTheme">
         <item name="colorPrimary">@color/colorPrimary_night</item>
@@ -27,6 +32,9 @@
         <item name="colorAccent">@color/colorAccent_night</item>
         <item name="android:windowBackground">@color/colorPrimary_night</item>
         <item name="popupMenuStyle">@style/ThemeOverlay.AppCompat.Dark</item>
+
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowNoTitle">true</item>-->
 
         <!--搜索框-->
         <!-- Background for the search bar -->
