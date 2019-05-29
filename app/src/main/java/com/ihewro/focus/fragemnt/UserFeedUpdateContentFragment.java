@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -39,6 +40,7 @@ import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.task.RequestFeedListDataService;
 import com.ihewro.focus.task.RequestFeedListDataTask;
+import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FilterPopupView;
 import com.mikepenz.materialize.util.UIUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -174,110 +176,16 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            isconnet = true;
-            myBinder = (RequestFeedListDataService.MyBinder) iBinder;
-
-            List<Feed> feedList = new ArrayList<>();
-            if (feedIdList.size() >0){
-                for (int i = 0; i < feedIdList.size(); i++) {
-                    feedList.add(LitePal.find(Feed.class,Integer.parseInt(feedIdList.get(i))));
-                }
-            }else {//为空表示显示所有的feedId
-                feedList = LitePal.findAll(Feed.class);
-                for (Feed feed:feedList){
-                    feedIdList.add(feed.getId()+"");
-                }
-            }
-
-            myBinder.initParameter((TextView)subView,getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
+        public void onServiceConnected(ComponentName componentName, final IBinder iBinder) {
+            //TODO:主线程
+            new Thread(new Runnable() {
                 @Override
-                public void onBegin() {
-                    refreshLayout.finishRefresh(true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (refreshLayout!=null){
-                                refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
-                            }
-                        }
-                    }, 1000); // 延时1秒
+                public void run() {
+                    //子线程
+                    UIUtil.logCurrentThread();
+                    whileServiceConnect(iBinder);
                 }
-
-                @Override
-                public void onUpdate(final List<FeedItem> feedItems) {
-                    //TODO: 重新计算一下数目
-                    int sub = feedItems.size() - eList.size();
-                    if (sub > 0){//有新文章时候才会去更新界面
-                        //根据是否显示新文章来判断
-                        eList.clear();
-                        eList.addAll(feedItems);
-                        snackbar= Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
-                                .setActionTextColor(Color.WHITE)
-                                .setAction("显示", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        adapter.setNewData(eList);
-                                        if (eList.size()==0){
-                                            adapter.setNewData(null);
-                                            adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
-                                        }
-                                        //TODO: 如果不是网络请求，不用发消息
-                                        EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
-                                    }
-
-                                });
-                        snackbar.show();
-                    }
-                }
-                @Override
-                public void onFinish(List<FeedItem> feedList) {
-                    eList.clear();
-                    eList.addAll(feedList);
-                    adapter.setNewData(eList);
-                    if (eList.size()==0){
-                        adapter.setNewData(null);
-                        adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
-                    }
-
-                    //显示通知
-                    int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
-                    if (!isFirstOpen){
-                        if (sub > 0 ){
-                            if (snackbar!=null && snackbar.isShown()){
-                                snackbar.dismiss();
-                            }
-                            Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
-                        }else {
-                            Toasty.success(getActivity(),"暂无新内容").show();
-                        }
-                    }
-                    //刷新界面
-                    isFirstOpen = false;
-                    refreshLayout.finishRefresh(true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (refreshLayout!=null){
-                                refreshLayout.setEnableRefresh(true);
-                            }
-                        }
-                    }, 1000); // 延时1秒
-                    UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
-                    updateNotReadNum();
-                    //更新侧边栏和其他接收这个通知的组件
-                    //TODO: 如果不是网络请求，不用发消息
-                    EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
-
-                    //解除绑定
-                    if (isconnet){
-                        Objects.requireNonNull(getActivity()).unbindService(connection);
-                        isconnet = false;
-                    }
-                }
-            });
-
-            myBinder.startTask();
+            }).start();
         }
 
         @Override
@@ -287,6 +195,148 @@ public class UserFeedUpdateContentFragment extends Fragment {
             ALog.d("活动与服务解除了绑定");
         }
     };
+
+
+    //子线程
+    private void whileServiceConnect(final IBinder iBinder){
+        isconnet = true;
+        myBinder = (RequestFeedListDataService.MyBinder) iBinder;
+
+        List<Feed> feedList = new ArrayList<>();//
+        if (feedIdList.size() >0){
+            for (int i = 0; i < feedIdList.size(); i++) {
+                feedList.add(LitePal.find(Feed.class,Integer.parseInt(feedIdList.get(i))));
+            }
+        }else {//为空表示显示所有的feedId
+            feedList = LitePal.findAll(Feed.class);
+            for (Feed feed:feedList){
+                feedIdList.add(feed.getId()+"");
+            }
+        }
+
+
+        final List<Feed> finalFeedList = feedList;
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //主线程
+                myBinder.initParameter((TextView)subView,getActivity(), view, isFirstOpen, finalFeedList, new RequestFeedItemListCallback() {
+                    @Override
+                    public void onBegin() {
+                        //主线程
+
+                    }
+
+                    @Override
+                    public void onUpdate(final List<FeedItem> feedItems) {
+                        //主线程
+                        //TODO: 重新计算一下数目
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final int sub = feedItems.size() - eList.size();
+                                if (sub > 0){//有新文章时候才会去更新界面
+                                    //根据是否显示新文章来判断
+                                    eList.clear();
+                                    eList.addAll(feedItems);
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            snackbar= Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
+                                                    .setActionTextColor(Color.WHITE)
+                                                    .setAction("显示", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            adapter.setNewData(eList);
+                                                            if (eList.size()==0){
+                                                                adapter.setNewData(null);
+                                                                adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                                                            }
+                                                            //TODO: 如果不是网络请求，不用发消息
+                                                            EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+                                                        }
+
+                                                    });
+
+                                            snackbar.show();
+                                        }
+                                    });
+
+                                }
+                            }
+                        }).start();
+                    }
+
+
+                    @Override
+                    public void onFinish(final List<FeedItem> feedList) {
+                        //主线程
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //子线程
+                                eList.clear();
+                                eList.addAll(feedList);
+
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //主线程
+                                        if (eList.size()==0){
+                                            adapter.setNewData(null);
+                                            adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                                        }else {
+                                            adapter.setNewData(eList);
+                                        }
+
+                                        //显示通知
+                                        int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
+                                        if (!isFirstOpen){
+                                            if (sub > 0 ){
+                                                if (snackbar!=null && snackbar.isShown()){
+                                                    snackbar.dismiss();
+                                                }
+                                                Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
+                                            }else {
+                                                Toasty.success(getActivity(),"暂无新内容").show();
+                                            }
+                                        }
+                                        //刷新界面
+                                        isFirstOpen = false;
+                                        refreshLayout.finishRefresh(true);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (refreshLayout!=null){
+                                                    refreshLayout.setEnableRefresh(true);
+                                                }
+                                            }
+                                        }, 1000); // 延时1秒
+                                        UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
+                                        updateNotReadNum();
+                                        //更新侧边栏和其他接收这个通知的组件
+
+                                        //TODO: 如果不是网络请求，不用发消息
+                                        EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+
+                                        //解除绑定
+                                        if (isconnet){
+                                            Objects.requireNonNull(getActivity()).unbindService(connection);
+                                            isconnet = false;
+                                        }
+                                    }
+                                });
+                            }
+                        }).start();
+
+                    }
+                });
+                myBinder.startTask();
+            }
+        });
+    }
 
     public void bindListener(){
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -344,7 +394,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (getActivity()!=null && isconnet){//当活动被回收的时候，服务也必须停止
-            getActivity().unbindService(connection);
+            try {
+                getActivity().unbindService(connection);
+            }catch (IllegalArgumentException e){//获取没有注册
+                ALog.d(e);
+            }
             isconnet = false;
         }
         if (EventBus.getDefault().isRegistered(this)){

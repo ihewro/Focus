@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Looper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.MyApplication;
 import com.ihewro.focus.callback.FileOperationCallback;
@@ -99,6 +101,15 @@ public class UIUtil {
                 //nothing to do
             }
         });
+    }
+
+    public static void logCurrentThread(){
+        if(Thread.currentThread() == Looper.getMainLooper().getThread()){
+            ALog.d("主线程！！");
+        }else {
+            ALog.d("子线程！！");
+        }
+
     }
 
 }

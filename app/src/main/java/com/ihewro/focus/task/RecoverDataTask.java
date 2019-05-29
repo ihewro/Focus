@@ -134,12 +134,12 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which2) {
-                                            //显示等待加载框
+
                                             final MaterialDialog dialog1 = new MaterialDialog.Builder(activity)
-                                                    .title("恢复数据")
-                                                    .content("马上就好了……")
+                                                    .content("马上就好……")
                                                     .progress(true, 0)
                                                     .show();
+
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -153,8 +153,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                                         }
                                                     });
                                                 }
-                                            }).run();
-
+                                            }).start();
                                         }
                                     })
                                     .show();
@@ -184,6 +183,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
 
 
     private void importData(String path){
+        //子线程
         SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(path, null);
         database.disableWriteAheadLogging();
 

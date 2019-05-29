@@ -7,6 +7,7 @@ import com.blankj.ALog;
 import com.ihewro.focus.activity.ErrorActivity;
 import com.ihewro.focus.activity.WelcomeActivity;
 import com.ihewro.focus.util.ImageLoaderManager;
+import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.header.TaurusHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
@@ -47,7 +48,7 @@ public class MyApplication extends LitePalApplication {
             @Override
             public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
                 layout.setPrimaryColorsId(R.color.colorAccent, android.R.color.white);//全局设置主题颜色
-                return new TaurusHeader(
+                return new MaterialHeader(
                         context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
             }
         });

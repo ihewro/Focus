@@ -1,5 +1,6 @@
 package com.ihewro.focus.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -22,12 +23,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blankj.ALog;
 import com.canking.minipay.Config;
 import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -70,6 +73,8 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 import skin.support.SkinCompatManager;
 import skin.support.utils.SkinPreference;
 
@@ -105,6 +110,7 @@ public class MainActivity extends BaseActivity {
     LinearLayout searchViewContent;
     @BindView(R.id.subtitle)
     TextView subtitle;
+    public static final int RQUEST_STORAGE_READ = 8;
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -152,6 +158,18 @@ public class MainActivity extends BaseActivity {
         initTapView();
 
         createTabLayout();
+
+        String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            //没有权限 1. 申请权限
+            EasyPermissions.requestPermissions(
+                    new PermissionRequest.Builder(this, RQUEST_STORAGE_READ, perms)
+                            .setRationale("需要存储器读写权限以便后续备份和导入导出功能使用")
+                            .setPositiveButtonText("确定")
+                            .setNegativeButtonText("取消")
+                            .build());
+        }
 
 
     }
@@ -326,7 +344,7 @@ public class MainActivity extends BaseActivity {
                     }
                 });
             }
-        }).run();
+        }).start();
 
 
     }

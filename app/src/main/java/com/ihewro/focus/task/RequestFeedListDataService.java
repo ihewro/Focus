@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -87,17 +88,19 @@ public class RequestFeedListDataService extends Service {
     public class MyBinder extends Binder{
 
         public void initParameter(TextView subTitle2,Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
+            //主线程
             activity = activity2;
             feedList = feedList2;
             callback = callback2;
             RequestFeedListDataService.this.isForce = !flag;
             view = view2;
             subTitle = subTitle2;
-
             createNotice("初始化数据获取服务……",0);
+
         }
 
         public void startTask(){
+            //主线程
             num = feedList.size();
             eList.clear();
             String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, "0");
@@ -114,6 +117,8 @@ public class RequestFeedListDataService extends Service {
                     handleData(new RequestDataCallback() {
                         @Override
                         public void onSuccess(List<FeedItem> feedItemList) {
+                            //主线程
+                            ALog.d("无网络请求结束");
                             callback.onFinish(feedItemList);
                         }
                     });
@@ -126,8 +131,8 @@ public class RequestFeedListDataService extends Service {
                         RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
                             @Override
                             public void onSuccess(List<FeedItem> feedItemList) {
+                                //主线程
                                 updateUI();
-
                             }
 
                         });
@@ -139,8 +144,9 @@ public class RequestFeedListDataService extends Service {
             }
         }
 
+        //主线程
         private void updateUI(){
-
+            //主线程
             okNum++;
 
             //计算出当前的process
@@ -151,18 +157,14 @@ public class RequestFeedListDataService extends Service {
             handleData(new RequestDataCallback() {
                 @Override
                 public void onSuccess(List<FeedItem> feedItemList) {
+                    //主线程
                     if (okNum >= num){//数据全部请求完毕
-                        handleData(new RequestDataCallback() {
-                            @Override
-                            public void onSuccess(List<FeedItem> feedItemList) {
-                                stopForeground(true);
-                                mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
-                                //通知activity修改数据
-                                callback.onFinish(feedItemList);
-                                //结束自己
-                                stopSelf();
-                            }
-                        });
+                        stopForeground(true);
+                        mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
+                        //通知activity修改数据
+                        callback.onFinish(feedItemList);
+                        //结束当前服务
+                        stopSelf();
                     }else {
                         callback.onUpdate(feedItemList);
                     }
@@ -180,6 +182,7 @@ public class RequestFeedListDataService extends Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    //子线程
                     //进行数据处理
                     //合并旧数据没必要合并数据，请求数据的时候都已经保存到本地数据库了。
                     for (int i = 0; i < num;i++){
@@ -188,7 +191,7 @@ public class RequestFeedListDataService extends Service {
                         getFeedItems(url);
                     }
                     ALog.d("开始对数据排序");
-                    List<FeedItem> list = new ArrayList<>(eList);
+                    final List<FeedItem> list = new ArrayList<>(eList);
 
                     orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,FilterPopupView.ORDER_BY_NEW);
                     filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,FilterPopupView.SHOW_ALL);
@@ -240,9 +243,14 @@ public class RequestFeedListDataService extends Service {
                             }
                         });
                     }
-                    callback.onSuccess(list);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess(list);
+                        }
+                    });
                 }
-            }).run();
+            }).start();
 
         }
 
@@ -289,7 +297,7 @@ public class RequestFeedListDataService extends Service {
             builderProgress.setProgress(100, progress, false);
         }
         if (progress == 100){
-            subTitle.setText(title);
+            subTitle.setText("请求完毕");
             builderProgress.setContentText(title);
         }
         //绑定点击事件
