@@ -68,7 +68,7 @@ public class EncodingInterceptor implements Interceptor {
             Field field = aClass.getDeclaredField("contentTypeString");
             field.setAccessible(true);
             String contentTypeString = String.valueOf(field.get(body));
-            ALog.d(contentTypeString);
+//            ALog.d(contentTypeString);
 //            field.set(body, (!StringUtil.trim(contentTypeString).equals("") ? contentTypeString + "; ":"" ) + "charset=" + encoding);
             field.set(body, "text/xml;charset=" + encoding);
 

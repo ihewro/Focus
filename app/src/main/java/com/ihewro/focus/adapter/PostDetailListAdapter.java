@@ -69,7 +69,7 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
         if (!item.isRead()) {
             //如果这个文章没有阅读过则滚动到顶部
-            ((NestedScrollView) helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
+            ((ScrollView) helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
         }
 
         refreshLayout = helper.getView(R.id.refreshLayout);

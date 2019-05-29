@@ -9,11 +9,20 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.task.AppStartTask;
 import com.ihewro.focus.task.listener.TaskListener;
 
+import skin.support.utils.SkinPreference;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            super.setTheme(R.style.AppTheme_Dark);
+        }else {
+            super.setTheme(R.style.AppTheme);
+        }
+
         setContentView(R.layout.activity_welcome);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏

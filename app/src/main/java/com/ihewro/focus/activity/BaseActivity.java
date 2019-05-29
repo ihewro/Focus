@@ -22,20 +22,13 @@ import skin.support.utils.SkinPreference;
 public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-
-        if(!SkinPreference.getInstance().getSkinName().equals("night")){
-            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary),0);
-        }
-    }
-
-    @Override
-    public void setTheme(int resid) {
-        ALog.d("主题名称",SkinPreference.getInstance().getSkinName());
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             super.setTheme(R.style.AppTheme_Dark);
         }else {
             super.setTheme(R.style.AppTheme);
+            StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary),0);
+
         }
+        super.setContentView(layoutResID);
     }
 }

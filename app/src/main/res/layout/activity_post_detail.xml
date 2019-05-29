@@ -24,7 +24,7 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.v7.widget.RecyclerView
+    <com.ihewro.focus.view.MyRecyclerView
         android:id="@+id/recycler_view"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
