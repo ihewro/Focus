@@ -147,8 +147,6 @@ public class FeedListActivity extends BackActivity {
                 requestData();
             }
         });
-
-
     }
 
 }

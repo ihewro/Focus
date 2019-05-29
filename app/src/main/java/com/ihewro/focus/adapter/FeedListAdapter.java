@@ -45,7 +45,7 @@ import retrofit2.Retrofit;
  *     version: 1.0
  * </pre>
  */
-public class FeedListAdapter  extends BaseQuickAdapter<Feed, BaseViewHolder> {
+public class FeedListAdapter extends BaseQuickAdapter<Feed, BaseViewHolder> {
 
     private String mName;
     private Activity activity;

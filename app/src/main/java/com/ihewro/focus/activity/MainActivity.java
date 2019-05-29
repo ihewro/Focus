@@ -43,6 +43,7 @@ import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
+import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -740,7 +741,8 @@ public class MainActivity extends BaseActivity {
     public void refreshUI(EventMessage eventBusMessage) {
         if (EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())) {
             ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
-
+            //备份数据库
+            UIUtil.autoBackUpWhenItIsNecessary();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

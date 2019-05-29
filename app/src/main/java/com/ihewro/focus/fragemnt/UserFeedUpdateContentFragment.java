@@ -199,6 +199,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     //子线程
     private void whileServiceConnect(final IBinder iBinder){
+        //子线程
         isconnet = true;
         myBinder = (RequestFeedListDataService.MyBinder) iBinder;
 
@@ -213,7 +214,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 feedIdList.add(feed.getId()+"");
             }
         }
-
 
         final List<Feed> finalFeedList = feedList;
 
@@ -280,6 +280,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                 eList.clear();
                                 eList.addAll(feedList);
 
+                                ALog.d("卡了吗？");
+
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -303,21 +305,17 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                                 Toasty.success(getActivity(),"暂无新内容").show();
                                             }
                                         }
-                                        //刷新界面
+
+                                        //下次刷新请求数据
                                         isFirstOpen = false;
+
+                                        //取消刷新
                                         refreshLayout.finishRefresh(true);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (refreshLayout!=null){
-                                                    refreshLayout.setEnableRefresh(true);
-                                                }
-                                            }
-                                        }, 1000); // 延时1秒
+
+
                                         UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
                                         updateNotReadNum();
                                         //更新侧边栏和其他接收这个通知的组件
-
                                         //TODO: 如果不是网络请求，不用发消息
                                         EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
 

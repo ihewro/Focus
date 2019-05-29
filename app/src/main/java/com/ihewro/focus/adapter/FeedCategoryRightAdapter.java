@@ -3,6 +3,7 @@ package com.ihewro.focus.adapter;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -12,10 +13,14 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.FeedCategoryActivity;
 import com.ihewro.focus.activity.FeedListActivity;
+import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Website;
 import com.ihewro.focus.callback.ImageLoaderCallback;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.StringUtil;
+import com.ihewro.focus.view.FeedListPopView;
+import com.ihewro.focus.view.RequireListPopupView;
+import com.lxj.xpopup.XPopup;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
@@ -86,7 +91,13 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Website item = FeedCategoryRightAdapter.this.getData().get(position);
-                FeedListActivity.activityStart(activity, item.getName());
+                FeedListPopView feedListPopView = new FeedListPopView(activity,item.getName(),"",new Help(false));
+
+                new XPopup.Builder(activity)
+                        .enableDrag(false)
+                        .asCustom(feedListPopView)
+                        .show();
+
             }
         });
     }
