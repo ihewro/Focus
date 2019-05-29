@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -85,6 +86,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private int feedItemNum;
 
     private int notReadNum = 0;
+    private Snackbar snackbar;
 
     @SuppressLint("ValidFragment")
     public UserFeedUpdateContentFragment(View view,View subView) {
@@ -194,17 +196,23 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 @Override
                 public void onBegin() {
                     refreshLayout.finishRefresh(true);
-                    refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
+                        }
+                    }, 1000); // 延时1秒
                 }
 
                 @Override
                 public void onUpdate(final List<FeedItem> feedItems) {
+                    //TODO: 重新计算一下数目
                     int sub = feedItems.size() - eList.size();
                     if (sub > 0){//有新文章时候才会去更新界面
                         //根据是否显示新文章来判断
                         eList.clear();
                         eList.addAll(feedItems);
-                        Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
+                        snackbar= Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
                                 .setActionTextColor(Color.WHITE)
                                 .setAction("显示", new View.OnClickListener() {
                                     @Override
@@ -214,10 +222,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                             adapter.setNewData(null);
                                             adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
                                         }
+                                        //TODO: 如果不是网络请求，不用发消息
                                         EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
                                     }
 
-                                }) .show();
+                                });
+                        snackbar.show();
                     }
                 }
                 @Override
@@ -234,6 +244,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
                     if (!isFirstOpen){
                         if (sub > 0 ){
+                            if (snackbar!=null && snackbar.isShown()){
+                                snackbar.dismiss();
+                            }
                             Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
                         }else {
                             Toasty.success(getActivity(),"暂无新内容").show();
@@ -242,10 +255,16 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     //刷新界面
                     isFirstOpen = false;
                     refreshLayout.finishRefresh(true);
-                    refreshLayout.setEnableRefresh(true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setEnableRefresh(true);
+                        }
+                    }, 1000); // 延时1秒
                     UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
                     updateNotReadNum();
                     //更新侧边栏和其他接收这个通知的组件
+                    //TODO: 如果不是网络请求，不用发消息
                     EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
 
                     //解除绑定

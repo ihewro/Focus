@@ -89,7 +89,7 @@
     <string name="pref_summary_donate">这不是必须的，捐赠可以给开发者更多动力更新。你也可以使用任何其他方式表达你对该应用的喜爱💝</string>
     <string name="pref_key_fix_database">pref_key_fix_database</string>
     <string name="pref_title_fix_database">修复数据库</string>
-    <string name="pref_summary_fix_database">当你的数据出现异常的时候，可以尝试使用该工具</string>
+    <string name="pref_summary_fix_database">当你的数据出现异常的时候（比如收藏内容丢失），可以尝试使用该工具</string>
     <string name="pref_key_clean_database">pref_key_clean_database</string>
     <string name="pref_title_clean_database">清理数据库</string>
     <string name="pref_summary_clean_database">你可以控制当前数据库文章的数量，以便保证文章数目在可控范围内</string>
@@ -100,4 +100,11 @@
     <string name="pref_key_not_double_click_to_top">pref_key_not_double_click_to_top</string>
     <string name="pref_title_not_double_click_to_top">文章中双击顶栏返回文章顶部</string>
     <string name="pref_summary_not_double_click_to_top">文章中默认双击顶栏返回文章顶部，你可以关闭该特性</string>
+    <string name="pref_key_five_star">pref_key_five_star</string>
+    <string name="pref_title_five_star">五星好评</string>
+    <string name="pref_summary_five_star">觉得好用吗？您的鼓励使我前进的动力！</string>
+    <string name="pref_key_not_image_in_list">pref_key_not_image_in_list</string>
+    <string name="pref_title_not_image_in_list">无图列表</string>
+    <string name="pref_summary_not_image_in_list">开启后，首页显示文章列表不会显示图片</string>
+
 </resources>

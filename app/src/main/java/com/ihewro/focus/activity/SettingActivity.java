@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.fragemnt.setting.DataFragment;
+import com.ihewro.focus.fragemnt.setting.DisplayFragment;
 import com.ihewro.focus.fragemnt.setting.GestureFragment;
 import com.ihewro.focus.fragemnt.setting.OtherFragment;
 import com.ihewro.focus.fragemnt.setting.SynchroFragment;
@@ -36,6 +37,7 @@ public class SettingActivity extends BackActivity {
     private SynchroFragment synchroFragment;
     private GestureFragment gestureFragment;
     private DataFragment dataFragment;
+    private DisplayFragment displayFragment;
     private OtherFragment otherFragment;
 
 
@@ -62,10 +64,13 @@ public class SettingActivity extends BackActivity {
         fragmentList.clear();
         synchroFragment = new SynchroFragment();
         gestureFragment = new GestureFragment();
+        displayFragment = new DisplayFragment();
         dataFragment = new DataFragment();
         otherFragment = new OtherFragment();
+
         fragmentList.add(synchroFragment);
         fragmentList.add(gestureFragment);
+        fragmentList.add(displayFragment);
         fragmentList.add(dataFragment);
         fragmentList.add(otherFragment);
 
@@ -73,6 +78,7 @@ public class SettingActivity extends BackActivity {
         List<String> pageTitleList = new ArrayList<>();
         pageTitleList.add("同步");
         pageTitleList.add("手势");
+        pageTitleList.add("显示");
         pageTitleList.add("数据");
         pageTitleList.add("其他");
 

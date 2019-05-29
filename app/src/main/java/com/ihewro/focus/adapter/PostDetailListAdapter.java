@@ -12,8 +12,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.FeedItem;
-import com.ihewro.focus.callback.OnDoubleClickListener;
-import com.ihewro.focus.helper.DoubleClick;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.PostUtil;
 import com.ihewro.focus.util.WebViewUtil;
