@@ -121,7 +121,7 @@ public class UserPreference extends LitePalSupport {
         if (url.equals(OWN_RSSHUB)){//如果有自定义源则选择这个
             url =  queryValueByKey(OWN_RSSHUB, GlobalConfig.OfficialRSSHUB);
             //对自定义源的地址进行处理
-            if (!url.startsWith("http://") || !url.startsWith("https://")){
+            if (!url.startsWith("http://") && !url.startsWith("https://")){
                 url = "http://" + url;
             }
             if (url.endsWith("/")){

@@ -66,7 +66,7 @@ public class GestureFragment extends SettingFragment {
         notOpenClick.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (notStar.isChecked()){
+                if (notOpenClick.isChecked()){
                     UserPreference.updateOrSaveValueByKey(UserPreference.notOpenClick,"1");
                 }else {
                     UserPreference.updateOrSaveValueByKey(UserPreference.notOpenClick,"0");
@@ -78,7 +78,7 @@ public class GestureFragment extends SettingFragment {
         notToTop.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (notStar.isChecked()){
+                if (notToTop.isChecked()){
                     UserPreference.updateOrSaveValueByKey(UserPreference.notToTop,"1");
                 }else {
                     UserPreference.updateOrSaveValueByKey(UserPreference.notToTop,"0");
