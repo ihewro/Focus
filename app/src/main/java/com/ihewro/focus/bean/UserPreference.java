@@ -19,11 +19,17 @@ import java.util.List;
  */
 public class UserPreference extends LitePalSupport {
 
-    public static final String  USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
-    public static final String  AUTO_SET_FEED_NAME =  "AUTO_SET_FEED_NAME";
-    public static final String  OWN_RSSHUB =  "自定义源";
-    public static final String  ODER_CHOICE = "ODER_CHOICE";//排序规则
-    public static final String  FILTER_CHOICE = "FILTER_CHOICE";//过滤规则
+    public static final String USE_INTERNET_WHILE_OPEN =  "pref_key_use_internet_while_open";
+    public static final String AUTO_SET_FEED_NAME =  "AUTO_SET_FEED_NAME";
+    public static final String OWN_RSSHUB =  "自定义源";
+    public static final String ODER_CHOICE = "ODER_CHOICE";//排序规则
+    public static final String FILTER_CHOICE = "FILTER_CHOICE";//过滤规则
+    public static final String notOpenClick = "notOpenClick";//不要下拉打开连接
+    public static final String notStar = "notStar";//不要双击收藏
+    public static final String notToTop = "notToTop";//不要双击回顶部
+    public static final String not_show_image_in_list = "not_show_image_in_list";//首页列表不要显示图片
+
+
 
     public static final String  RSS_HUB =  "rsshub";
     public static final String FIRST_USE_LOCAL_SEARCH_AND_FILTER = "FIRST_USE_LOCAL_SEARCH_AND_FILTER";//是否首次打开APP

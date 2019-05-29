@@ -257,19 +257,23 @@ public class PostDetailActivity extends BaseActivity {
             }
         });
 
-        toolbar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gestureDetector1.onTouchEvent(motionEvent);
-                return false;
-            }
-        });
-         adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        });
+        if (UserPreference.queryValueByKey(UserPreference.notToTop,"0").equals("0")){
+            toolbar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    gestureDetector1.onTouchEvent(motionEvent);
+                    return false;
+                }
+            });
+        }
+        if (UserPreference.queryValueByKey(UserPreference.notStar,"0").equals("0")){
+            adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return gestureDetector.onTouchEvent(event);
+                }
+            });
+        }
     }
 
 

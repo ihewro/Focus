@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
+import com.ihewro.focus.R;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
@@ -133,12 +134,24 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which2) {
+                                            //显示等待加载框
+                                            final MaterialDialog dialog1 = new MaterialDialog.Builder(activity)
+                                                    .title("恢复数据")
+                                                    .content("马上就好了……")
+                                                    .progress(true, 0)
+                                                    .show();
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     importData(backupFilesPath.get(which));
-                                                    Toasty.success(activity,"恢复数据成功！", Toast.LENGTH_SHORT).show();
-                                                    EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            dialog1.dismiss();
+                                                            Toasty.success(activity,"恢复数据成功！", Toast.LENGTH_SHORT).show();
+                                                            EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+                                                        }
+                                                    });
                                                 }
                                             }).run();
 

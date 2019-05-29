@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.PostUtil;
 import com.ihewro.focus.util.WebViewUtil;
@@ -86,14 +87,18 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
         refreshLayout.setEnableRefresh(false);//禁止下拉动作
 
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.finishLoadMore();
-                //打开外链
-                openLink(currentFeedItem);
-            }
-        });
+        if (UserPreference.queryValueByKey(UserPreference.notOpenClick,"0").equals("0")){
+            refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                    refreshLayout.finishLoadMore();
+                    //打开外链
+                    openLink(currentFeedItem);
+                }
+            });
+        }else {
+            refreshLayout.setEnableLoadMore(false);
+        }
     }
 
     private void openLink(FeedItem feedItem) {

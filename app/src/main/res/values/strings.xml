@@ -102,7 +102,7 @@
     <string name="pref_summary_not_double_click_to_top">文章中默认双击顶栏返回文章顶部，你可以关闭该特性</string>
     <string name="pref_key_five_star">pref_key_five_star</string>
     <string name="pref_title_five_star">五星好评</string>
-    <string name="pref_summary_five_star">觉得好用吗？您的鼓励使我前进的动力！</string>
+    <string name="pref_summary_five_star">觉得好用吗？您的鼓励是我前进的动力！</string>
     <string name="pref_key_not_image_in_list">pref_key_not_image_in_list</string>
     <string name="pref_title_not_image_in_list">无图列表</string>
     <string name="pref_summary_not_image_in_list">开启后，首页显示文章列表不会显示图片</string>

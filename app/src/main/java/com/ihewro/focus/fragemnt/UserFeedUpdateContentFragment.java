@@ -166,7 +166,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
         Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
-        isconnet = true;
 
     }
 
@@ -176,6 +175,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            isconnet = true;
             myBinder = (RequestFeedListDataService.MyBinder) iBinder;
 
             List<Feed> feedList = new ArrayList<>();
@@ -189,8 +189,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     feedIdList.add(feed.getId()+"");
                 }
             }
-
-
 
             myBinder.initParameter((TextView)subView,getActivity(), view, isFirstOpen, feedList, new RequestFeedItemListCallback() {
                 @Override
@@ -260,7 +258,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            refreshLayout.setEnableRefresh(true);
+                            if (refreshLayout!=null){
+                                refreshLayout.setEnableRefresh(true);
+                            }
                         }
                     }, 1000); // 延时1秒
                     UserFeedUpdateContentFragment.this.feedItemNum = eList.size();

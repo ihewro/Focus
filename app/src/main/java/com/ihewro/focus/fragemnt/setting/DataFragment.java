@@ -2,12 +2,14 @@ package com.ihewro.focus.fragemnt.setting;
 
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
+import android.text.InputType;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
@@ -16,7 +18,11 @@ import com.ihewro.focus.task.RecoverDataTask;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 import es.dmoral.toasty.Toasty;
 
@@ -34,6 +40,8 @@ public class DataFragment extends SettingFragment{
     private Preference back_up;
     private Preference recover_data;
     private Preference feed_info;
+    private Preference clean_data;
+    private Preference database_version;
 
 
     @Override
@@ -47,13 +55,14 @@ public class DataFragment extends SettingFragment{
 
         back_up = findPreference(getString(R.string.pref_key_backup));
         recover_data = findPreference(getString(R.string.pref_key_recover));
-
+        clean_data = findPreference(getString(R.string.pref_key_clean_database));
+        database_version = findPreference(getString(R.string.pref_key_database_version));
     }
 
     @Override
     public void initPreferencesData() {
         feed_info.setSummary(LitePal.count(FeedFolder.class) + "个分类 " +LitePal.count(Feed.class)+"个订阅 " + LitePal.count(FeedItem.class) + "篇文章");
-
+        database_version.setSummary(LitePal.getDatabase().getVersion() + "");
     }
 
     @Override
@@ -87,6 +96,40 @@ public class DataFragment extends SettingFragment{
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 new RecoverDataTask(getActivity()).execute();
+
+                return false;
+            }
+        });
+
+        clean_data.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //显示输入弹窗
+                new MaterialDialog.Builder(getContext())
+                        .title("输入需要清理的数目")
+                        .content("该数目的文章会被删除，有且仅有在存在备份的情况下才可以恢复。优先清理历史悠久的文章")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input("", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                String num = dialog.getInputEditText().getText().toString().trim();
+                                Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+                                if (pattern.matcher(num).matches()) {
+                                    //清理数据库
+                                    List<FeedItem> feedItems = LitePal.where("favorite = ?","0").limit(Integer.parseInt(num)).order("date").find(FeedItem.class);
+                                    for (FeedItem feedItem:feedItems){
+                                        feedItem.delete();
+                                    }
+
+                                    Toasty.info(getActivity(),"清理成功！").show();
+                                    EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+
+                                }else {
+                                    //输入错误
+                                    Toasty.info(getActivity(),"老实说你输入的是不是数字").show();
+                                }
+                            }
+                        }).show();
 
                 return false;
             }

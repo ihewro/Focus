@@ -1,30 +1,16 @@
 package com.ihewro.focus.fragemnt.setting;
 
 
-import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.text.InputType;
 import android.view.View;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
-import com.ihewro.focus.activity.AboutActivity;
-import com.ihewro.focus.bean.Feed;
-import com.ihewro.focus.bean.FeedFolder;
-import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
-import com.ihewro.focus.callback.FileOperationCallback;
-import com.ihewro.focus.task.RecoverDataTask;
-import com.ihewro.focus.util.DateUtil;
-import com.ihewro.focus.util.FileUtil;
-import com.ihewro.focus.util.RSSUtil;
-
-import org.litepal.LitePal;
 
 import java.util.List;
 

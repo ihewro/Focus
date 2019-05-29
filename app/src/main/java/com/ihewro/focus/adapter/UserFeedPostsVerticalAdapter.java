@@ -95,46 +95,48 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
 
 
 
-
-        String imageUrl = DataUtil.getFeedItemImageUrl(item);
-        if (!StringUtil.trim(imageUrl).equals("")){
-            if (!imageUrl.startsWith("http://")&& !imageUrl.startsWith("https://")){
-                //说明是相对地址
-                if (!imageUrl.substring(0,1).equals("/")){
-                    imageUrl = "/" + imageUrl;//前面如果没有/，补足一个
+        if (UserPreference.queryValueByKey(UserPreference.not_show_image_in_list,"0").equals("0")){
+            String imageUrl = DataUtil.getFeedItemImageUrl(item);
+            if (!StringUtil.trim(imageUrl).equals("")){
+                if (!imageUrl.startsWith("http://")&& !imageUrl.startsWith("https://")){
+                    //说明是相对地址
+                    if (!imageUrl.substring(0,1).equals("/")){
+                        imageUrl = "/" + imageUrl;//前面如果没有/，补足一个
+                    }
+                    imageUrl =  StringUtil.getUrlPrefix(item.getUrl()) + imageUrl;
                 }
-                imageUrl =  StringUtil.getUrlPrefix(item.getUrl()) + imageUrl;
-            }
-            ALog.d("图片地址是" + imageUrl);
-            helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
-            ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
-                @Override
-                public void onFailed(ImageView imageView, FailReason failReason) {
-                    imageView.setVisibility(View.GONE);
-                    ALog.d("图片加载失败！！");
+                ALog.d("图片地址是" + imageUrl);
+                helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
+                ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
+                    @Override
+                    public void onFailed(ImageView imageView, FailReason failReason) {
+                        imageView.setVisibility(View.GONE);
+                        ALog.d("图片加载失败！！");
 
-                }
-
-                @Override
-                public void onSuccess(ImageView imageView, Bitmap bitmap) {
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(bitmap);
-                }
-
-                @Override
-                public void onStart(ImageView imageView) {
-                    if (SkinPreference.getInstance().getSkinName().equals("night")) {
-                        imageView.setImageResource(R.drawable.ic_night_loading);
-                    } else {
-                        imageView.setImageResource(R.drawable.ic_day_loading);
                     }
 
-                }
-            });
-        }else {
+                    @Override
+                    public void onSuccess(ImageView imageView, Bitmap bitmap) {
+                        imageView.setVisibility(View.VISIBLE);
+                        imageView.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onStart(ImageView imageView) {
+                        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                            imageView.setImageResource(R.drawable.ic_night_loading);
+                        } else {
+                            imageView.setImageResource(R.drawable.ic_day_loading);
+                        }
+
+                    }
+                });
+            }else {
+                helper.getView(R.id.post_pic).setVisibility(View.GONE);
+            }
+        }else {//无图列表
             helper.getView(R.id.post_pic).setVisibility(View.GONE);
         }
-
         updateUI(helper,item);
     }
 
