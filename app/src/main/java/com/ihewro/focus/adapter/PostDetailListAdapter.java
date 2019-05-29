@@ -1,21 +1,19 @@
 package com.ihewro.focus.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
-import com.ihewro.focus.activity.PostDetailActivity;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
-import com.ihewro.focus.bean.PostSetting;
+import com.ihewro.focus.callback.OnDoubleClickListener;
+import com.ihewro.focus.helper.DoubleClick;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.PostUtil;
 import com.ihewro.focus.util.WebViewUtil;
@@ -25,12 +23,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
-import butterknife.BindView;
 import es.dmoral.toasty.Toasty;
 
 /**
@@ -48,19 +43,19 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
     SmartRefreshLayout refreshLayout;
 
     private Activity context;
-    private boolean flag;
-    private PostSetting postSetting;
+    private ScrollView scrollView;
+    private Toolbar toolbar;
 
-    public PostDetailListAdapter(Activity context, boolean flag, PostSetting postSetting, @Nullable List<FeedItem> data) {
+    public PostDetailListAdapter(Activity context, Toolbar toolbar, @Nullable List<FeedItem> data) {
         super(R.layout.item_post_detail,data);
         this.context = context;
-        this.flag = flag;
-        this.postSetting = postSetting;
+        this.toolbar = toolbar;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, final FeedItem item) {
 
+        scrollView = helper.getView(R.id.post_turn);
         //设置文章内容
         PostUtil.setContent(context, item, ((WebView) helper.getView(R.id.post_content)));
         helper.setText(R.id.post_title, item.getTitle());
@@ -69,7 +64,7 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
         if (!item.isRead()) {
             //如果这个文章没有阅读过则滚动到顶部
-            ((ScrollView) helper.getView(R.id.post_turn)).fullScroll(ScrollView.FOCUS_UP);
+            scrollView.fullScroll(ScrollView.FOCUS_UP);
         }
 
         refreshLayout = helper.getView(R.id.refreshLayout);
@@ -79,6 +74,7 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
 
     private void initListener(final FeedItem currentFeedItem){
+
         refreshLayout.setRefreshHeader(new PostHeader(context, currentFeedItem));
         refreshLayout.setRefreshFooter(new PostFooter(context, currentFeedItem));
         //使上拉加载具有弹性效果

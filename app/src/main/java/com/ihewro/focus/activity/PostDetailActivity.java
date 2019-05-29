@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -125,8 +126,6 @@ public class PostDetailActivity extends BaseActivity {
     private void initListener() {
 
 
-
-
     }
 
 
@@ -146,6 +145,7 @@ public class PostDetailActivity extends BaseActivity {
 
         //移动到当前文章的位置
         linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
+
         linearLayoutManager.setStackFromEnd(true);
 
 
@@ -171,7 +171,7 @@ public class PostDetailActivity extends BaseActivity {
             toolbar.setTitle(notReadNum+"");
         }
 
-        adapter = new PostDetailListAdapter(PostDetailActivity.this,isUpdateMainReadMark,postSetting, feedItemList);
+        adapter = new PostDetailListAdapter(PostDetailActivity.this,toolbar, feedItemList);
         adapter.bindToRecyclerView(recyclerView);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
@@ -232,26 +232,12 @@ public class PostDetailActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initPostClickListener(){
 
         //文章的touch事件
         final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
-            /**
-             * 发生确定的单击时执行
-             * @param e
-             * @return
-             */
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
-                ALog.d("单击");
-                return super.onSingleTapConfirmed(e);
-            }
 
-            /**
-             * 双击发生时的通知
-             * @param e
-             * @return
-             */
             @Override
             public boolean onDoubleTap(MotionEvent e) {//双击事件
                 ALog.d("双击");
@@ -269,27 +255,29 @@ public class PostDetailActivity extends BaseActivity {
                 setLikeButton();
                 return true;
             }
+        });
 
-            /**
-             * 双击手势过程中发生的事件，包括按下、移动和抬起事件
-             * @param e
-             * @return
-             */
+        final GestureDetector gestureDetector1 = new GestureDetector(PostDetailActivity.this,new GestureDetector.SimpleOnGestureListener(){
             @Override
-            public boolean onDoubleTapEvent(MotionEvent e) {
-                ALog.d("其他");
-                return super.onDoubleTapEvent(e);
+            public boolean onDoubleTap(MotionEvent e) {
+                ((ScrollView)adapter.getViewByPosition(mIndex,R.id.post_turn)).fullScroll(View.FOCUS_UP);
+                return super.onDoubleTap(e);
             }
         });
 
+        toolbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gestureDetector1.onTouchEvent(motionEvent);
+                return false;
+            }
+        });
          adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return gestureDetector.onTouchEvent(event);
             }
         });
-
-
     }
 
 
