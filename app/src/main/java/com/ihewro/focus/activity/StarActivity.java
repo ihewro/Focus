@@ -9,12 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.ihewro.focus.R;
-import com.ihewro.focus.adapter.StarItemListAdapter;
 import com.ihewro.focus.adapter.UserFeedPostsVerticalAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
-import com.ihewro.focus.bean.StarItem;
-import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,7 +28,7 @@ import butterknife.ButterKnife;
 
 public class StarActivity extends BackActivity {
 
-    List<StarItem> eList = new ArrayList<>();
+    List<FeedItem> eList = new ArrayList<>();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.appbar)
@@ -39,7 +36,7 @@ public class StarActivity extends BackActivity {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    StarItemListAdapter adapter;
+    UserFeedPostsVerticalAdapter adapter;
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, StarActivity.class);
@@ -60,9 +57,9 @@ public class StarActivity extends BackActivity {
 
 
     public void initData() {
-        List<StarItem> list = LitePal.where("favorite = ?","1").find(StarItem.class);
-        eList.addAll(list);
-        adapter = new StarItemListAdapter(eList,StarActivity.this);
+
+        eList = LitePal.where("favorite = ?","1").find(FeedItem.class);
+        adapter = new UserFeedPostsVerticalAdapter(eList,StarActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter.bindToRecyclerView(recyclerView);

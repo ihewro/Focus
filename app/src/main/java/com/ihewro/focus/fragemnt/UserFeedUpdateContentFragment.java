@@ -199,7 +199,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
+                            if (refreshLayout!=null){
+                                refreshLayout.setEnableRefresh(false);//等待数据请求结束后再允许第二次刷新
+                            }
                         }
                     }, 1000); // 延时1秒
                 }

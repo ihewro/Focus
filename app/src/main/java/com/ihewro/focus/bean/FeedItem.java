@@ -2,6 +2,7 @@ package com.ihewro.focus.bean;
 
 import android.support.annotation.NonNull;
 
+import com.blankj.ALog;
 import com.ihewro.focus.decoration.ISuspensionInterface;
 import com.ihewro.focus.util.DateUtil;
 
@@ -138,14 +139,6 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
-        //保存到收藏表中
-        if (favorite){
-            StarItem starItem = new StarItem(this);
-            starItem.saveOrUpdate();
-        }else {
-            //删除该收藏
-            LitePal.deleteAll(StarItem.class,"feedItemId = ?", String.valueOf(id));
-        }
     }
 
     public String getFeedName() {
@@ -207,5 +200,10 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
 
     public void setNotHaveExtractTime(boolean notHaveExtractTime) {
         this.notHaveExtractTime = notHaveExtractTime;
+    }
+
+    @Override
+    public boolean save() {
+        return super.save();
     }
 }

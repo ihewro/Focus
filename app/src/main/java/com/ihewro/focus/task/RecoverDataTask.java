@@ -2,13 +2,10 @@ package com.ihewro.focus.task;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -19,18 +16,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
-import com.ihewro.focus.activity.ErrorActivity;
-import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
-import com.ihewro.focus.bean.StarItem;
 import com.ihewro.focus.bean.UserPreference;
-import com.ihewro.focus.callback.FileOperationCallback;
 import com.ihewro.focus.helper.DatabaseHelper;
 import com.ihewro.focus.util.DataCleanManager;
-import com.ihewro.focus.util.FileUtil;
 import com.ihewro.focus.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,8 +32,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
-import cat.ereza.customactivityoncrash.config.CaocConfig;
 import es.dmoral.toasty.Toasty;
 
 /**
@@ -188,7 +178,6 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
         LitePal.deleteAll(FeedFolder.class);
         LitePal.deleteAll(Feed.class);
         LitePal.deleteAll(FeedItem.class);
-        LitePal.deleteAll(StarItem.class);
         LitePal.deleteAll(UserPreference.class);
 
         Cursor feedFolderCur = database.rawQuery("SELECT * from feedfolder", null);
@@ -255,33 +244,6 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
             }while (feedFolderCur.moveToNext());
             feedFolderCur.close();
 
-            //恢复收藏表，早期用户没有收藏表
-            try {
-                Cursor starCur = database.rawQuery("select * from staritem",null);
-                if (starCur != null && starCur.moveToFirst()){
-                    do{
-                        String title = starCur.getString(starCur.getColumnIndex("title"));
-                        Long date = starCur.getLong(starCur.getColumnIndex("date"));
-                        String summary = starCur.getString(starCur.getColumnIndex("summary"));
-                        String content = starCur.getString(starCur.getColumnIndex("content"));
-                        int feeditemId = starCur.getInt(starCur.getColumnIndex("feeditemid"));
-                        String feedName = starCur.getString(starCur.getColumnIndex("feedname"));
-                        String url2 = starCur.getString(starCur.getColumnIndex("url"));
-                        String temp = StringUtil.trim(starCur.getString(starCur.getColumnIndex("read")));
-                        boolean read;
-                        read = temp.equals("1");
-                        boolean favorite;
-                        temp = StringUtil.trim(starCur.getString(starCur.getColumnIndex("favorite")));
-                        favorite = temp.equals("1");
-                        StarItem starItem = new StarItem(new FeedItem(title,date,summary,content,0,feedName,url2,read,favorite));
-                        starItem.setFeedItemId(feeditemId);
-                        starItem.save();
-                    }while (starCur.moveToNext());
-                    starCur.close();
-                }
-            }catch (SQLiteException exception){
-                ALog.d(exception);
-            }
 
             //恢复用户设置表
             Cursor userCur = database.rawQuery("select * from userpreference",null);

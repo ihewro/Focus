@@ -45,7 +45,7 @@
                         android:layout_centerVertical="true"
                         android:orientation="vertical">
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal">
@@ -58,11 +58,13 @@
                                 android:layout_height="wrap_content"/>
 
                             <ImageView
+                                android:layout_toRightOf="@id/toolbar_title"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
+                                android:layout_centerVertical="true"
                                 android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
 
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <TextView
                             android:id="@+id/subtitle"

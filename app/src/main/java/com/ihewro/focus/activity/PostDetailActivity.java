@@ -27,7 +27,6 @@ import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
-import com.ihewro.focus.bean.StarItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
@@ -71,7 +70,6 @@ public class PostDetailActivity extends BaseActivity {
     private FeedItem currentFeedItem;
     private MenuItem starItem;
     private boolean isUpdateMainReadMark;//true表示从首页进来的。false表示从搜索结果中进来的
-    private boolean isStar;//true表示从收藏页面进来的，false表示从首页进来的
 
     private List<Integer> feedItemIdList;
     private int notReadNum = 0;
@@ -105,7 +103,7 @@ public class PostDetailActivity extends BaseActivity {
         feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
         mId = feedItemIdList.get(mIndex);
         isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
-        isStar = intent.getBooleanExtra(Constants.IS_FROM_STAR_ACTIVITY,false);
+//        isStar = intent.getBooleanExtra(Constants.IS_FROM_STAR_ACTIVITY,false);
 
 
         initData();
@@ -130,11 +128,8 @@ public class PostDetailActivity extends BaseActivity {
 
 
     public void initData() {
-        if (isStar){
-            currentFeedItem = LitePal.find(StarItem.class,mId);
-        }else {
-            currentFeedItem = LitePal.find(FeedItem.class,mId);
-        }
+        currentFeedItem = LitePal.find(FeedItem.class,mId);
+
     }
 
     private void initRecyclerView() {
@@ -154,11 +149,8 @@ public class PostDetailActivity extends BaseActivity {
         final List<FeedItem> feedItemList = new ArrayList<>();
         for (Integer id: feedItemIdList){
             FeedItem feedItem;
-            if (isStar){
-                feedItem = LitePal.find(StarItem.class,id);
-            }else {
-                feedItem = LitePal.find(FeedItem.class,id);
-            }
+            feedItem = LitePal.find(FeedItem.class,id);
+
             if (!feedItem.isRead()){
                 this.notReadNum ++;
             }
@@ -460,11 +452,7 @@ public class PostDetailActivity extends BaseActivity {
     private void setLikeButton() {
         //设置收藏状态
         if (currentFeedItem == null) {
-            if (isStar){
-                currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(StarItem.class).get(0);
-            }else {
-                currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
-            }
+            currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
         if (currentFeedItem.isFavorite()){
             starItem.setIcon(R.drawable.star_on);

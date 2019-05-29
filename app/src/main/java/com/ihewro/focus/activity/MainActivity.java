@@ -419,35 +419,6 @@ public class MainActivity extends BaseActivity {
         //初始化侧边栏
         refreshLeftDrawerFeedList(false);
 
-        //夜间模式控制开关
-        boolean flag = false;
-        if (SkinPreference.getInstance().getSkinName().equals("night")) {
-            flag = true;
-        }
-
-        SwitchDrawerItem mode = new SwitchDrawerItem().withName("夜间").withIcon(GoogleMaterial.Icon.gmd_brightness_medium).withChecked(flag).withSelectable(false).withOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-                ALog.d("点击状态", isChecked);
-                if (isChecked) {
-                    SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            recreate();
-                        }
-                    }, 200); // 延时1秒
-                } else {
-                    SkinCompatManager.getInstance().restoreDefaultTheme();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            recreate();
-                        }
-                    }, 200); // 延时1秒
-                }
-            }
-        });
 
         //初始化侧边栏
         drawer = new DrawerBuilder().withActivity(this)
@@ -470,12 +441,62 @@ public class MainActivity extends BaseActivity {
                 })
                 .withStickyFooter(R.layout.component_drawer_foooter)
                 .withStickyFooterShadow(false)
-                /*.addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName("订阅").withIcon(GoogleMaterial.Icon.gmd_swap_horiz).withIdentifier(10).withTag(FEED_MANAGE).withSelectable(false),
-                        new SecondaryDrawerItem().withName("设置").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(10).withTag(SETTING).withSelectable(false), mode)*/
                 .build();
 
                 drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
+
+
+        //初始化顶部的内容包括颜色
+        boolean flag = false;
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            flag = true;
+            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("日间模式");
+        }else {
+            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("夜间模式");
+        }
+
+        final boolean finalFlag = flag;
+        drawer.getStickyFooter().findViewById(R.id.mode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!finalFlag) {//flag true 表示夜间模式
+                    SkinCompatManager.getInstance().loadSkin("night", null, SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    }, 200); // 延时1秒
+                } else {
+                    SkinCompatManager.getInstance().restoreDefaultTheme();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    }, 200); // 延时1秒
+                }
+            }
+        });
+
+
+        drawer.getStickyFooter().findViewById(R.id.manage).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                FeedManageActivity.activityStart(MainActivity.this);
+            }
+        });
+
+
+        drawer.getStickyFooter().findViewById(R.id.setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingActivity.activityStart(MainActivity.this);
+            }
+        });
+
+
     }
 
 
@@ -496,12 +517,6 @@ public class MainActivity extends BaseActivity {
                     break;
                 case SHOW_DISCOVER:
                     FeedCategoryActivity.activityStart(MainActivity.this);
-                    break;
-                case FEED_MANAGE://启用分类管理
-                    FeedManageActivity.activityStart(MainActivity.this);
-                    break;
-                case SETTING://应用设置界面
-                    SettingActivity.activityStart(MainActivity.this);
                     break;
                 case DRAWER_FOLDER_ITEM:
                     ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());

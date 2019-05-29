@@ -90,7 +90,8 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                                 //1.删除该文件夹下的所有feedITEN
                                 List<Feed> temp = LitePal.where("feedfolderid = ?", String.valueOf(id)).find(Feed.class);
                                 for (int i = 0;i<temp.size();i++){
-                                    LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(temp.get(i).getId()));
+                                    //删除没有收藏的
+                                    LitePal.deleteAll(FeedItem.class,"feedid = ? and favorite = ?", String.valueOf(temp.get(i).getId()),"0");
                                     //2.删除文件夹下的所有feed
                                     temp.get(i).delete();
                                 }

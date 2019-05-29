@@ -91,7 +91,8 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 int id = item.getId();
                                 //先删除对应的feedITEM
-                                LitePal.deleteAll(FeedItem.class,"feedid = ?", String.valueOf(item.getId()));
+                                //只删除没有收藏的
+                                LitePal.deleteAll(FeedItem.class,"feedid = ? and favorite = ?", String.valueOf(item.getId()),"0");
                                 //再删除feed
                                 LitePal.delete(Feed.class,id);
                                 Toasty.success(getContext(),"退订成功").show();

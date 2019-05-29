@@ -3,7 +3,7 @@
 
     <dbname value="focus" />
 
-    <version value="16" />
+    <version value="17" />
 
 
     <!--
@@ -22,7 +22,6 @@
         <mapping class="com.ihewro.focus.bean.FeedItem" />
         <mapping class="com.ihewro.focus.bean.FeedRequire" />
         <mapping class="com.ihewro.focus.bean.FeedFolder" />
-        <mapping class="com.ihewro.focus.bean.StarItem" />
         <mapping class="com.ihewro.focus.bean.UserPreference" />
     </list>
 

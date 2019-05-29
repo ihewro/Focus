@@ -17,6 +17,7 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/manage"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -44,6 +45,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/mode"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
             android:layout_width="0dp"
@@ -63,6 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <TextView
+                    android:id="@+id/mode_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="夜间模式"/>
@@ -71,6 +74,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/setting"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
             android:layout_width="0dp"

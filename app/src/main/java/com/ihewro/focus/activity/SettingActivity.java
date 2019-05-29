@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
@@ -22,6 +23,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import skin.support.utils.SkinPreference;
 
 public class SettingActivity extends BackActivity {
 
@@ -84,6 +86,14 @@ public class SettingActivity extends BackActivity {
 
         //新建适配器
         BaseViewPagerAdapter adapter = new BaseViewPagerAdapter(getSupportFragmentManager(), fragmentList, pageTitleList);
+
+
+        //适配夜间模式
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            tabLayout.setBackgroundColor(ContextCompat.getColor(SettingActivity.this,R.color.colorPrimary_night));
+        } else {
+            tabLayout.setBackgroundColor(ContextCompat.getColor(SettingActivity.this,R.color.colorPrimary));
+        }
 
         //设置ViewPager
         viewPager.setAdapter(adapter);
