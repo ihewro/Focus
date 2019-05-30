@@ -1,6 +1,7 @@
 package com.ihewro.focus.view;
 
 import android.content.Context;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,7 +21,7 @@ import com.ihewro.focus.util.UIUtil;
  *     version: 1.0
  * </pre>
  */
-public class MyScrollView extends ScrollView {
+public class MyScrollView extends NestedScrollView {
 
     public MyScrollView(Context context) {
         super(context);
@@ -39,13 +40,9 @@ public class MyScrollView extends ScrollView {
 
 
 
-    public MyScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-
     private int mLastX = 0;
     private int mLastY = 0;
+    private boolean is_current_scroll = false;//当前是否是上下滚动的
 
 
     @Override
@@ -56,6 +53,7 @@ public class MyScrollView extends ScrollView {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 // 让父容器不拦截ACTION_DOWN事件
+                is_current_scroll = false;
                 getParent().getParent().requestDisallowInterceptTouchEvent(true);
                 break;
             }
@@ -64,14 +62,18 @@ public class MyScrollView extends ScrollView {
                 int deltaY = y - mLastY;
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
                     ALog.d("水平滑动");
-                    // 如果水平方向滑动的距离多一点，那就表示让父容器水平滑动，子控件不滑动，让父容器拦截事件
-                    getParent().getParent().requestDisallowInterceptTouchEvent(false);
+                    if (!is_current_scroll){
+                        // 如果水平方向滑动的距离多一点，那就表示让父容器水平滑动，子控件不滑动，让父容器拦截事件
+                        getParent().getParent().requestDisallowInterceptTouchEvent(false);
+                    }
                 }else {
+                    is_current_scroll = true;
                     ALog.d("上下滑动");
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
+                is_current_scroll = false;
                 break;
             }
             default:

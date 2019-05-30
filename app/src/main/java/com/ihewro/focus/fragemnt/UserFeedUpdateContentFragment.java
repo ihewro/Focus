@@ -294,7 +294,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                         }
 
                                         //显示通知
-                                        int sub = feedList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
+                                        int sub = eList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
                                         if (!isFirstOpen){
                                             if (sub > 0 ){
                                                 if (snackbar!=null && snackbar.isShown()){
