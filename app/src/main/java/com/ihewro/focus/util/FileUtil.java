@@ -29,7 +29,7 @@ public class FileUtil {
         try {
             delAllFile(folderPath); // 删除完里面所有内容
             File myFilePath = new File(folderPath);
-            ALog.d("删除后",myFilePath.list().length);
+//            ALog.d("删除后",myFilePath.list().length);
             myFilePath.delete(); // 删除空文件夹
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,7 +99,7 @@ public class FileUtil {
         if (Objects.equals(source.getAbsolutePath(), target.getAbsolutePath())){
             flag =  true;
         }else {
-            ALog.d("源文件" + source.getAbsolutePath() + "目标文件"+ target.getAbsolutePath());
+//            ALog.d("源文件" + source.getAbsolutePath() + "目标文件"+ target.getAbsolutePath());
             File fileParent = target.getParentFile();
             if(!fileParent.exists()){
                 fileParent.mkdirs();

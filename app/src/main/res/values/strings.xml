@@ -107,4 +107,12 @@
     <string name="pref_title_not_image_in_list">无图列表</string>
     <string name="pref_summary_not_image_in_list">开启后，首页显示文章列表不会显示图片</string>
 
+    <string name="pref_key_refresh_interval">pref_key_refresh_interval</string>
+    <string name="pref_title_refresh_interval">后台定时刷新间隔</string>
+    <string name="pref_summary_refresh_interval" />
+
+    <string name="pref_key_only_use_wifi">pref_key_only_use_wifi</string>
+    <string name="pref_title_only_use_wifi">定时请求只使用WiFi</string>
+    <string name="pref_summary_only_use_wifi">开启后，在非WIFI情况下后台不会请求数据</string>
+
 </resources>

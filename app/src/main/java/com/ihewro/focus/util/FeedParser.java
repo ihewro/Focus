@@ -76,7 +76,7 @@ public class FeedParser {
             int begin = m.start()+10;
             int end = m.end();
             encode = temp.substring(begin,end-1);
-            ALog.d(encode);
+//            ALog.d(encode);
         }
         //如果是utf-8不需要转码
         xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
@@ -237,7 +237,7 @@ public class FeedParser {
             }
         }
 
-        ALog.d("item名称：" + title + "时间为" + pubDate);
+//        ALog.d("item名称：" + title + "时间为" + pubDate);
         if (StringUtil.trim(link).equals("")){//link 与guid一定有一个是存在或者都存在，优先使用link的值
             link = guid;
         }
@@ -282,8 +282,8 @@ public class FeedParser {
         if (pubData==null){
             pubData =DateUtil.getNowDateRFCStr();
         }
-        ALog.d("没有时间！");
-        ALog.d(pubData);
+//        ALog.d("没有时间！");
+//        ALog.d(pubData);
         return pubData;
     }
 
@@ -366,7 +366,7 @@ public class FeedParser {
                 try{
                     feed.getFeedItemList().get(i).saveThrows();//当前feed存储数据库
                 }catch (LitePalSupportException exception){
-                    ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
+//                    ALog.d("数据重复不会插入");//当前feedItem 已经存在数据库中了
                     //此时要对feedItem进行状态字段的恢复，读取数据的状态
                     FeedItem temp = LitePal.where("url = ?",feed.getFeedItemList().get(i).getUrl()).limit(1).find(FeedItem.class).get(0);
                     feed.getFeedItemList().get(i).setId(temp.getId());

@@ -67,7 +67,7 @@ public class DateUtil {
             Message message = isDateString(date_str, dateFormat);
             if (message.isFlag()) {
                 timeStamp = Long.parseLong(message.getData());
-                ALog.d("时间戳为"+ timeStamp);
+//                ALog.d("时间戳为"+ timeStamp);
                 break;
             }
         }

@@ -87,7 +87,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         //绑定事件
         bindListener(helper,item);
 
-        ALog.d(item.getTitle() + "日期：" + item.getDate());
+//        ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
         helper.setText(R.id.rss_name,item.getFeedName());
         helper.setText(R.id.post_summay, DataUtil.getOptimizedDesc(item.getSummary()));
@@ -105,7 +105,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                     }
                     imageUrl =  StringUtil.getUrlPrefix(item.getUrl()) + imageUrl;
                 }
-                ALog.d("图片地址是" + imageUrl);
+//                ALog.d("图片地址是" + imageUrl);
                 helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
                 ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
                     @Override

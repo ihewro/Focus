@@ -6,6 +6,7 @@ import com.ihewro.focus.util.StringUtil;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.SocketTimeoutException;
 import java.util.logging.Logger;
 
 import okhttp3.Headers;
@@ -37,11 +38,7 @@ public class EncodingInterceptor implements Interceptor {
 
     @Override public Response intercept(Interceptor.Chain chain) throws IOException {
         Request request = chain.request();
-        long start = System.nanoTime();
-//        ALog.d("Sending request: {}, headers: {}, request: {}", request.url(), request.headers(), request.body().toString());
         Response response = chain.proceed(request);
-        long end = System.nanoTime();
-//        ALog.d(String.format("Received response for %s in %.1fms%n %s", response.request().url(), (end - start) / 1e6d, response.headers().toString()));
         settingClientCustomEncoding(response);
         return response;
     }

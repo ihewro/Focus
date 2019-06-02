@@ -17,7 +17,7 @@ public interface RequestFeedItemListCallback {
 
     void onBegin();
 
-    void onUpdate(List<FeedItem> feedItems);
+    void onUpdate(List<FeedItem> feedItems,int newNum);
 
-    void onFinish(List<FeedItem> feedList);
+    void onFinish(List<FeedItem> feedList,int newNum);
 }

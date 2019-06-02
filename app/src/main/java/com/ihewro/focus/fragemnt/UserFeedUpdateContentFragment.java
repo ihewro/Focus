@@ -86,6 +86,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     private boolean isconnet = false;//
     private int feedItemNum;
+    private int feedItemNumTemp;
 
     private int notReadNum = 0;
     private Snackbar snackbar;
@@ -227,16 +228,15 @@ public class UserFeedUpdateContentFragment extends Fragment {
                         //主线程
 
                     }
-
                     @Override
-                    public void onUpdate(final List<FeedItem> feedItems) {
+                    public void onUpdate(final List<FeedItem> feedItems, final int newNum) {
                         //主线程
-                        //TODO: 重新计算一下数目
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                final int sub = feedItems.size() - eList.size();
-                                if (sub > 0){//有新文章时候才会去更新界面
+
+
+                                if (newNum > 0){//有新文章时候才会去更新界面
                                     //根据是否显示新文章来判断
                                     eList.clear();
                                     eList.addAll(feedItems);
@@ -244,7 +244,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            snackbar= Snackbar.make(recyclerView, sub + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
+                                            snackbar= Snackbar.make(recyclerView, newNum + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
                                                     .setActionTextColor(Color.WHITE)
                                                     .setAction("显示", new View.OnClickListener() {
                                                         @Override
@@ -271,7 +271,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
 
                     @Override
-                    public void onFinish(final List<FeedItem> feedList) {
+                    public void onFinish(final List<FeedItem> feedList, final int newNum) {
                         //主线程
                         new Thread(new Runnable() {
                             @Override
@@ -279,8 +279,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                 //子线程
                                 eList.clear();
                                 eList.addAll(feedList);
-
-                                ALog.d("卡了吗？");
 
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
@@ -294,13 +292,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                         }
 
                                         //显示通知
-                                        int sub = eList.size() - UserFeedUpdateContentFragment.this.feedItemNum;
                                         if (!isFirstOpen){
-                                            if (sub > 0 ){
+                                            if (newNum > 0 ){
                                                 if (snackbar!=null && snackbar.isShown()){
                                                     snackbar.dismiss();
                                                 }
-                                                Toasty.success(getActivity(),"共有"+sub+"篇新文章").show();
+                                                Toasty.success(getActivity(),"共有"+newNum+"篇新文章").show();
                                             }else {
                                                 Toasty.success(getActivity(),"暂无新内容").show();
                                             }
@@ -313,7 +310,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                         refreshLayout.finishRefresh(true);
 
 
-                                        UserFeedUpdateContentFragment.this.feedItemNum = eList.size();
                                         updateNotReadNum();
                                         //更新侧边栏和其他接收这个通知的组件
                                         //TODO: 如果不是网络请求，不用发消息

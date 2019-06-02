@@ -52,7 +52,7 @@ public class HttpUtil {
                 ALog.dTag("RetrofitLog","retrofitBack = "+message);
             }
         });
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -68,7 +68,7 @@ public class HttpUtil {
                 });//设置连接超时时间
 
         if (type.equals("String")){
-            ALog.d("添加了编码了");
+//            ALog.d("添加了编码了");
             builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
         }
 

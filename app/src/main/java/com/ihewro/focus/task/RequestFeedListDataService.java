@@ -25,6 +25,7 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
+import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.view.FilterPopupView;
 
 import org.litepal.LitePal;
@@ -72,6 +73,8 @@ public class RequestFeedListDataService extends Service {
     private int num;//总共需要请求的数目
     private int okNum = 0;//已经请求的数目
 
+    private int feedItemNum;
+    private int feedItemNumTemp;
 
 
 
@@ -97,6 +100,8 @@ public class RequestFeedListDataService extends Service {
             subTitle = subTitle2;
             createNotice("初始化数据获取服务……",0);
 
+            //初始化文章总数目
+
         }
 
         public void startTask(){
@@ -119,13 +124,19 @@ public class RequestFeedListDataService extends Service {
                         public void onSuccess(List<FeedItem> feedItemList) {
                             //主线程
                             ALog.d("无网络请求结束");
-                            callback.onFinish(feedItemList);
+                            callback.onFinish(feedItemList,0);
                         }
                     });
                 }else {//网络请求
+                    int num = LitePal.count(FeedItem.class);
+                    RequestFeedListDataService.this.feedItemNum = num;
+                    RequestFeedListDataService.this.feedItemNumTemp = num;
+
                     Toasty.success(activity,"开始请求数据").show();
                     startForeground(1,createNotice("开始获取数据中……",0));
                     ExecutorService mExecutor = Executors.newCachedThreadPool();
+                    RequestFeedListDataService.this.feedItemNum = num;
+                    RequestFeedListDataService.this.feedItemNumTemp = num;
                     for (int i = 0;i < feedList.size();i++){
                         //改为线程池调用
                         RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
@@ -140,12 +151,12 @@ public class RequestFeedListDataService extends Service {
                     }
                 }
             }else {//也必须返回一个空数组
-                callback.onFinish(new ArrayList<FeedItem>());
+                callback.onFinish(new ArrayList<FeedItem>(),0);
             }
         }
 
-        //主线程
-        private void updateUI(){
+        //主线程,只能有一个进程操作
+        private synchronized void updateUI(){
             //主线程
             okNum++;
 
@@ -159,21 +170,31 @@ public class RequestFeedListDataService extends Service {
                 public void onSuccess(List<FeedItem> feedItemList) {
                     //主线程
                     if (okNum >= num){//数据全部请求完毕
+
+                        int num = LitePal.count(FeedItem.class);
+                        final int sub = num - RequestFeedListDataService.this.feedItemNum;
                         stopForeground(true);
-                        mNotificationManager.notify(1, createNotice("数据获取完毕！",100));
+                        if (sub>0){
+                            mNotificationManager.notify(1, createNotice("共有"+sub+"篇新文章",100));
+                        }else {
+                            mNotificationManager.notify(1, createNotice("暂无新数据",100));
+                        }
                         //通知activity修改数据
-                        callback.onFinish(feedItemList);
+                        callback.onFinish(feedItemList,sub);
                         //结束当前服务
                         stopSelf();
-                    }else {
-                        callback.onUpdate(feedItemList);
+                    }else {//任务没有结束
+                        int temp = LitePal.count(FeedItem.class);
+                        final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
+                        RequestFeedListDataService.this.feedItemNumTemp = temp;
+                        callback.onUpdate(feedItemList,sub);
                     }
                 }
             });
 
 
 
-            ALog.d("完成数目"+okNum+"总数目"+num);
+//            ALog.d("完成数目"+okNum+"总数目"+num);
 
         }
 
@@ -190,7 +211,7 @@ public class RequestFeedListDataService extends Service {
                         String url = temp.getUrl();
                         getFeedItems(url);
                     }
-                    ALog.d("开始对数据排序");
+//                    ALog.d("开始对数据排序");
                     final List<FeedItem> list = new ArrayList<>(eList);
 
                     orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,FilterPopupView.ORDER_BY_NEW);
@@ -277,7 +298,7 @@ public class RequestFeedListDataService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ALog.d("服务被结束了");
+//        ALog.d("服务被结束了");
 
     }
 

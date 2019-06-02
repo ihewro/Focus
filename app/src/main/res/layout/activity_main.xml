@@ -55,6 +55,7 @@
                                 android:textColor="@color/text_unread"
                                 android:textSize="16sp"
                                 android:layout_width="wrap_content"
+                                android:maxLines="1"
                                 android:layout_height="wrap_content"/>
 
                             <ImageView

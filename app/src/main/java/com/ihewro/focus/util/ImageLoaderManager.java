@@ -57,6 +57,7 @@ public class ImageLoaderManager {
 //                .showImageOnLoading(R.drawable.bj_weixianshi)//加载中的等待图片
                 .build();
         ImageLoader imageLoader = ImageLoader.getInstance();
+
         imageLoader.loadImage(imageUrl, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {

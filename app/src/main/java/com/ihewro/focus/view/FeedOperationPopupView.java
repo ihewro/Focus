@@ -197,7 +197,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                 final Feed item = (Feed)o;
                 new MaterialDialog.Builder(getContext())
                         .title("设置超时时间")
-                        .content("单位是秒，默认15s，时间太短可能会导致部分源无法获取最新数据：")
+                        .content("单位是秒，默认50s，时间太短可能会导致部分源无法获取最新数据：")
                         .inputType(InputType.TYPE_CLASS_TEXT)
                         .input(item.getTimeout()+"", item.getTimeout()+"", new MaterialDialog.InputCallback() {
                             @Override
