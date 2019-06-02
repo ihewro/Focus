@@ -72,11 +72,10 @@ public class FeedFolderListManageFragment extends Fragment {
 
 
     private void initListener(){
-
         // 拖拽排序事件
         OnItemDragListener onItemDragListener = new OnItemDragListener() {
             int start = 0;
-            float end = 0;
+            int end = 0;
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos){
                 start = pos;
@@ -91,14 +90,19 @@ public class FeedFolderListManageFragment extends Fragment {
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {
                 //修改表情中表情包权值，移动的表情包权值 = 移动后的位置
                 ALog.d("结束" + pos);
-                end = pos;
-                if (start > end){//向前移
-//                    expressionFolderList.get((int) end).setOrderValue(end + 0.5);
-                }else {//向后移
-//                    expressionFolderList.get((int) end).setOrderValue(end + 1.5);
+                end = pos;//结果的位置
+                if (end!=0 && end!=feedFolders.size()-1){
+                    feedFolders.get(end).setOrderValue((feedFolders.get(end-1).getOrderValue() + feedFolders.get(end+1).getOrderValue())*1.0/2);
+                }else {
+                    if (end == 0){
+                        feedFolders.get(end).setOrderValue(feedFolders.get(1).getOrderValue()*1.0/2);
+                    }else {
+                        feedFolders.get(end).setOrderValue(feedFolders.get(end -1).getOrderValue() + 1);
+                    }
                 }
-//                expressionFolderList.get((int) end).save();
-//                EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_DATABASE));
+                feedFolders.get(end).save();//保存到数据库
+
+                EventBus.getDefault().post(new EventMessage(EventMessage.ORDER_FOLDER));
             }
 
         };
@@ -116,7 +120,13 @@ public class FeedFolderListManageFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        feedFolders = LitePal.findAll(FeedFolder.class);
+        feedFolders = LitePal.order("ordervalue").find(FeedFolder.class);
+        //更新顺序
+        for (int i = 0; i < feedFolders.size() ; i++) {
+            feedFolders.get(i).setOrderValue(i+1);
+            feedFolders.get(i).save();
+        }
+        //更新
         adapter = new FeedFolderListAdapter(feedFolders,getActivity());
         adapter.bindToRecyclerView(recyclerView);
         if (feedFolders.size() == 0){

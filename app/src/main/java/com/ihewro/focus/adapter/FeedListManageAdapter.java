@@ -9,6 +9,7 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
+import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
@@ -41,7 +42,7 @@ import es.dmoral.toasty.Toasty;
  *     version: 1.0
  * </pre>
  */
-public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder>{
+public class FeedListManageAdapter extends BaseItemDraggableAdapter<Feed, BaseViewHolder> {
 
     private Activity activity;
 
@@ -60,6 +61,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
         helper.setText(R.id.not_read_num,item.getUnreadNum() + "");
 
         initListener(helper,item);
+
     }
 
     private void initListener(final BaseViewHolder helper, final Feed item){
@@ -73,6 +75,7 @@ public class FeedListManageAdapter extends BaseQuickAdapter<Feed, BaseViewHolder
                 return true;
             }
         });
+
 
     }
 

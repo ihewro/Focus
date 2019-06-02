@@ -45,6 +45,7 @@ public class EventMessage {
     public static final String ADD_FEED_FOLDER = "ADD_FEED_FOLDER";//添加新的订阅文件夹
     public static final String EDIT_FEED_FOLDER_NAME = "EDIT_FEED_FOLDER";//修改feed文件夹名称
     public static final String DELETE_FEED_FOLDER = "DELETE_FEED_FOLDER";//删除feed文件夹
+    public static final String ORDER_FOLDER = "ORDER_FOLDER";//顺序改变
 
     //改变主题
     public static final String DAY_MODE = "DAY_MODE";
@@ -58,7 +59,7 @@ public class EventMessage {
     public static final List<String> feedItemReadStatusOperation = Arrays.asList(MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,MAKE_STAR_STATUS_BY_INDEX,EDIT_ITEM_READ,MARK_ITEM_READED,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED,ORDER_FOLDER);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);

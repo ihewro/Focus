@@ -40,6 +40,9 @@ public class Feed extends LitePalSupport {
     private int feedFolderId;//feed文件夹id
     private String type;
 
+    private double orderValue;//顺序权限，用来排序的
+
+
     @Column(ignore = true)
     private int totalNum;//总文章数
     @Column(ignore = true)
@@ -246,5 +249,13 @@ public class Feed extends LitePalSupport {
 
     public void setErrorGet(boolean errorGet) {
         this.errorGet = errorGet;
+    }
+
+    public double getOrderValue() {
+        return orderValue;
+    }
+
+    public void setOrderValue(double orderValue) {
+        this.orderValue = orderValue;
     }
 }

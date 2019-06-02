@@ -280,6 +280,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                 eList.clear();
                                 eList.addAll(feedList);
 
+
+                               if (newNum > 0){//获取到新的数据才自动备份
+                                   //备份数据库
+                                   UIUtil.autoBackUpWhenItIsNecessary();
+                               }
+
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

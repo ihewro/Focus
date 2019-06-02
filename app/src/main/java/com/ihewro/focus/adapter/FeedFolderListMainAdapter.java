@@ -33,6 +33,7 @@ public class FeedFolderListMainAdapter extends BaseItemDraggableAdapter<FeedFold
         helper.setText(R.id.title,item.getName());
         helper.setGone(R.id.move_logo,false);
         helper.addOnClickListener(R.id.item_view);
+        helper.getView(R.id.main_logo).setPadding(60,0,0,0);
     }
 
 }

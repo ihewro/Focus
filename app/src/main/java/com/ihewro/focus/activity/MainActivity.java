@@ -17,20 +17,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blankj.ALog;
-import com.canking.minipay.Config;
-import com.canking.minipay.MiniPayUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -43,7 +38,6 @@ import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
-import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -56,11 +50,9 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
-import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -613,13 +605,13 @@ public class MainActivity extends BaseActivity {
         subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
 
 
-        List<FeedFolder> feedFolderList = LitePal.findAll(FeedFolder.class);
+        List<FeedFolder> feedFolderList = LitePal.order("ordervalue").find(FeedFolder.class);
         for (int i = 0; i < feedFolderList.size(); i++) {
 
             int notReadNum = 0;
 
             List<IDrawerItem> feedItems = new ArrayList<>();
-            List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).find(Feed.class);
+            List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).order("ordervalue").find(Feed.class);
 
             boolean haveErrorFeedInCurrentFolder = false;
             for (int j = 0; j < feedList.size(); j++) {
@@ -741,8 +733,6 @@ public class MainActivity extends BaseActivity {
     public void refreshUI(EventMessage eventBusMessage) {
         if (EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())) {
 //            ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
-            //备份数据库
-            UIUtil.autoBackUpWhenItIsNecessary();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

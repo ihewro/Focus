@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -53,7 +54,6 @@ public class FeedFolderListAdapter extends BaseItemDraggableAdapter<FeedFolder, 
     @Override
     protected void convert(BaseViewHolder helper, FeedFolder item) {
         helper.setText(R.id.title,item.getName());
-
         initListener(helper,item);
     }
 

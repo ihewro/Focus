@@ -26,6 +26,7 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
+import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FilterPopupView;
 
 import org.litepal.LitePal;
