@@ -20,7 +20,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:roundIcon">
-        <activity android:name=".activity.AboutActivity"></activity>
+        <receiver
+            android:name=".task.AutoUpdateReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <service
+            android:name=".task.TimingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.ThemeActivity" />
 
         <provider
@@ -35,9 +45,10 @@
 
         <service android:name=".task.RequestFeedListDataService" />
 
-        <activity android:name=".activity.WebViewActivity"
-            android:hardwareAccelerated="true"
-            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activity.WebViewActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
         <activity android:name=".activity.FeedManageActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.FeedListActivity" />
@@ -45,9 +56,10 @@
         <activity android:name=".activity.StarActivity" />
         <activity android:name=".activity.FeedCategoryActivity" />
         <activity android:name=".activity.ErrorActivity" />
-        <activity android:name=".activity.PostDetailActivity"
-            android:hardwareAccelerated="true"
-            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activity.PostDetailActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
         <activity android:name=".activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

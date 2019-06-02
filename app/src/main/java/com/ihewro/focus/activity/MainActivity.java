@@ -38,6 +38,7 @@ import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
+import com.ihewro.focus.task.TimingService;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -164,7 +165,18 @@ public class MainActivity extends BaseActivity {
                             .build());
         }
 
+        //开启定时任务
+        startTimeService();
 
+
+    }
+
+    private void startTimeService(){
+        String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
+        if (!interval.equals("-1")){//定时器没有开启才会再起开启这个定时器活动
+            Intent intent = new Intent(this, TimingService.class);
+            startService(intent);
+        }
     }
 
 

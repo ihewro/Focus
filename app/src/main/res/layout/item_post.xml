@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:src="@drawable/ic_more_vert_black_24dp"/>
+                        android:src="@drawable/ic_more_vert"/>
 
                 </RelativeLayout>
 
@@ -132,21 +132,22 @@
         android:layout_height="match_parent"
         android:id="@+id/right"
         android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/markRead"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:background="#a9c6de"
+            android:clickable="true"
+            android:text="标记未读"
+            android:textColor="@android:color/white"/>
+
         <Button
             android:id="@+id/star"
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:background="#d9dee4"
             android:text="收藏"
-            android:textColor="@android:color/white"/>
-
-        <Button
-            android:id="@+id/markRead"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:background="#ecd50a"
-            android:clickable="true"
-            android:text="标记未读"
             android:textColor="@android:color/white"/>
     </LinearLayout>
 

@@ -27,6 +27,7 @@ public class SynchroFragment extends SettingFragment {
     private SwitchPreferenceCompat auto_name;
 
     private Preference ownrsshub;
+    private Preference time_interval;
 
 
     public SynchroFragment() {
@@ -45,6 +46,8 @@ public class SynchroFragment extends SettingFragment {
         auto_name = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_auto_name));
 
         ownrsshub = findPreference(getString(R.string.pref_key_own_rsshub));
+        time_interval = findPreference(getString(R.string.pref_key_refresh_interval));
+
 
     }
 
@@ -77,6 +80,29 @@ public class SynchroFragment extends SettingFragment {
 
     @Override
     public void initListener() {
+        time_interval.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final int select = GlobalConfig.refreshIntervalInt.indexOf(Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_interval, String.valueOf(GlobalConfig.refreshIntervalInt.size()-1))));//默认选择最后一项，即-1
+
+                new MaterialDialog.Builder(getActivity())
+                        .title("选择刷新间隔")
+                        .items(GlobalConfig.refreshInterval)
+                        .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                UserPreference.updateOrSaveValueByKey(UserPreference.tim_interval, String.valueOf(GlobalConfig.refreshIntervalInt.get(which)));
+                                return false;
+                            }
+                        })
+                        .positiveText("选择")
+                        .show();
+
+
+                return false;
+            }
+        });
+
         ownrsshub.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

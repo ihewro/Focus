@@ -156,8 +156,8 @@ public class RequestFeedListDataService extends Service {
             }
         }
 
-        //主线程,只能有一个进程操作
-        private synchronized void updateUI(){
+        //主线程
+        private void updateUI(){
             //主线程
             okNum++;
 
