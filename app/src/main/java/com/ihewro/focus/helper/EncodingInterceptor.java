@@ -39,6 +39,7 @@ public class EncodingInterceptor implements Interceptor {
     @Override public Response intercept(Interceptor.Chain chain) throws IOException {
         Request request = chain.request();
         Response response = chain.proceed(request);
+
         settingClientCustomEncoding(response);
         return response;
     }

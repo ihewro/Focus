@@ -1,6 +1,7 @@
 package com.ihewro.focus.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
@@ -21,6 +22,7 @@ import com.ihewro.focus.bean.Operation;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
+import com.lxj.xpopup.XPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -49,7 +51,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
 
     private List<Operation> getFeedOperationList(final long id){
         List<Operation> operations = new ArrayList<>();
-        Feed feed = LitePal.find(Feed.class,id);
+        final Feed feed = LitePal.find(Feed.class,id);
         operations.add(new Operation("重命名","",getResources().getDrawable(R.drawable.ic_rate_review_black_24dp),feed, new OperationCallback() {
             @Override
             public void run(Object o) {
@@ -191,7 +193,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
         }));
 
 
-        operations.add(new Operation("设置超时时间","",getResources().getDrawable(R.drawable.ic_touch_app_black_24dp),feed, new OperationCallback() {
+        operations.add(new Operation("设置超时时间","",getResources().getDrawable(R.drawable.ic_timer_black_24dp),feed, new OperationCallback() {
             @Override
             public void run(Object o) {
                 final Feed item = (Feed)o;
@@ -214,6 +216,20 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                                 }
                             }
                         }).show();
+            }
+        }));
+
+
+
+        operations.add(new Operation("显示请求记录","",getResources().getDrawable(R.drawable.ic_history_black_24dp),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final Feed item = (Feed)o;
+                new XPopup.Builder(getContext())
+                        .enableDrag(false)
+                        .asCustom(new FeedRequestPopupView((Activity) getContext(),item.getName()+"请求记录","",new Help(false),feed.getId()))
+                        .show();
+
             }
         }));
 

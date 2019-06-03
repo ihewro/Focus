@@ -32,6 +32,7 @@ import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.WebViewUtil;
+import com.ihewro.focus.view.MyScrollView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -252,7 +253,7 @@ public class PostDetailActivity extends BaseActivity {
         final GestureDetector gestureDetector1 = new GestureDetector(PostDetailActivity.this,new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                ((ScrollView)adapter.getViewByPosition(mIndex,R.id.post_turn)).fullScroll(View.FOCUS_UP);
+                ((MyScrollView)adapter.getViewByPosition(mIndex,R.id.post_turn)).fullScroll(View.FOCUS_UP);
                 return super.onDoubleTap(e);
             }
         });

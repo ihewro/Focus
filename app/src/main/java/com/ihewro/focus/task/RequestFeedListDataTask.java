@@ -6,16 +6,24 @@ import android.util.Log;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.FeedRequest;
+import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Message;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
 import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
+import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FeedParser;
+
+import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -92,27 +100,49 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
             if (response != null && response.isSuccessful()){
                 feed.setErrorGet(false);
                 feed.save();
-                Feed feed2 = FeedParser.HandleFeed(FeedParser.parseStr2Feed(response.body(),originUrl));
-//                    ALog.dTag("feed233", feed);
+                Feed feed2 = FeedParser.HandleFeed(feed.getId(),response,FeedParser.parseStr2Feed(response.body(),originUrl));
+
                 //feed更新到当前的时间流中。
                 if (feed2!=null){
                     return new Message(true,feed2.getFeedItemList());
                 }else {
                     //当前解析的内容为空
-                    //TODO: 应该是另外一种标识表示数据为空，请求是成功的
                     return new Message(false);
                 }
             }else {
+
+                String reason;
+                if (response.errorBody()!=null){
+                    reason = response.errorBody().string();
+                    //编码转换
+                    //获取xml文件的编码
+                    String encode = "UTF-8";//默认编码
+                    reason = new String(reason.getBytes("ISO-8859-1"),encode);
+                }else {
+                    reason = "无错误报告";
+                    ALog.d("出问题了！");
+                }
+
+                FeedRequest feedRequire = new FeedRequest(feed.getId(),false,0,reason,response.code(), DateUtil.getNowDateRFCInt());
+                feedRequire.save();
                 feed.setErrorGet(true);
                 feed.save();
+
+
                 try {
                     ALog.d("请求失败" + response.code() + response.errorBody().string());
                 } catch (IOException e) {
+                    ALog.d("请求失败");
                     e.printStackTrace();
                 }
                 return new Message(false);
             }
         }  catch (IOException e) {
+            ALog.d("请求失败");
+            ALog.d(e.getMessage());
+            FeedRequest feedRequire = new FeedRequest(feed.getId(),false,0,e.getMessage(),-1, DateUtil.getNowDateRFCInt());
+            feedRequire.save();
+
             feed.setErrorGet(true);
             feed.save();
             e.printStackTrace();

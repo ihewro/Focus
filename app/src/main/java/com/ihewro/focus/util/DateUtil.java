@@ -33,10 +33,20 @@ public class DateUtil {
     }
 
 
+    public static long getNowDateRFCInt() {
+        return System.currentTimeMillis();
+    }
+
     public static String getTimeStringByInt(long time){
         SimpleDateFormat format =  new SimpleDateFormat( "yyyy-MM-dd" );
         return format.format(time);
     }
+
+    public static String getRFCStringByInt(long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy HH:mm:ss");
+        return sdf.format(time);
+    }
+
 
 
     public static String getTTimeStringByInt(long time){

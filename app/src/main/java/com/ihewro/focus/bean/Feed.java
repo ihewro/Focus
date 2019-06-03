@@ -64,7 +64,7 @@ public class Feed extends LitePalSupport {
 
     @Override
     public String toString() {
-        return "feedId" + iid + "\n"
+        return "feedId" + id + "\n"
                 + "name" + name + '\n'
                 + "url" + url +"\n"
                 + "文章数目" + feedItemList.size()+"\n"

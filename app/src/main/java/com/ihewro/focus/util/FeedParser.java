@@ -6,6 +6,7 @@ import com.blankj.ALog;
 import com.google.common.base.Strings;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.FeedRequest;
 import com.ihewro.focus.bean.UserPreference;
 
 import org.jsoup.Jsoup;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import retrofit2.Response;
 
 import static com.ihewro.focus.util.AtomParser.FEED;
 import static com.ihewro.focus.util.AtomParser.readFeedForFeed;
@@ -334,11 +337,16 @@ public class FeedParser {
 
     /**
      * 获取到的数据与本地数据库的数据进行比对，重复的则恢复状态信息，不重复则入库，原子操作
+     *
+     * @param response
      * @param feed
      * @return
      */
-    public synchronized static Feed HandleFeed(Feed feed){
+    public synchronized static Feed HandleFeed(int id,Response<String> response, Feed feed) throws IOException {
         if (feed !=null){
+            int count = LitePal.where("feedid = ?", String.valueOf(id)).count(FeedItem.class);
+
+
             //给feed下面所有feedItem设置feedName和feedId;
             //获取当前feed的iid
             List<Feed> tempFeeds = LitePal.where("url = ?",feed.getUrl()).find(Feed.class);
@@ -384,6 +392,11 @@ public class FeedParser {
 
                 }
             }
+
+            int count2 = LitePal.where("feedid = ?", String.valueOf(id)).count(FeedItem.class);
+            ALog.d("请求前数目" + count + "请求后数目" + count2 + "时间");
+            FeedRequest feedRequire = new FeedRequest(feed.getId(),true,count2 - count,"",response.code(), DateUtil.getNowDateRFCInt());
+            feedRequire.save();
         }
 
         return feed;

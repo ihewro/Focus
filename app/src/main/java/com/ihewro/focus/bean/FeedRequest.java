@@ -19,9 +19,18 @@ public class FeedRequest extends LitePalSupport {
     private int num;//请求成功获取的文章数目
     private String reason;//请求失败的原因
     private int code;//请求返回码
-    private int time;//请求的时间
+    private long time;//请求的时间
+//    private long needTime;
 
 
+    public FeedRequest(int feedId, boolean success, int num, String reason, int code, long time) {
+        this.feedId = feedId;
+        this.success = success;
+        this.num = num;
+        this.reason = reason;
+        this.code = code;
+        this.time = time;
+    }
 
     public int getId() {
         return id;
@@ -67,11 +76,11 @@ public class FeedRequest extends LitePalSupport {
         this.code = code;
     }
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

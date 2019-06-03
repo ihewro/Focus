@@ -652,7 +652,7 @@ public class MainActivity extends BaseActivity {
             );
 
             if (haveErrorFeedInCurrentFolder) {
-                one.withIcon(GoogleMaterial.Icon.gmd_report_problem);
+                one.withTextColorRes(R.color.md_red_700);
             }
             if (notReadNum != 0) {
                 one.withBadge(notReadNum + "");
