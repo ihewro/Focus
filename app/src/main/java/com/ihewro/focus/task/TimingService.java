@@ -20,10 +20,12 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
+import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.UIUtil;
 
 import org.litepal.LitePal;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
@@ -48,25 +50,36 @@ public class TimingService extends Service {
     }
 
 
+    public static void startService(Context context){
+        String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
+        if (!interval.equals("-1")){//定时器没有开启才会再起开启这个定时器活动
+            Intent intent = new Intent(context, TimingService.class);
+            context.startService(intent);
+        }
+
+    }
+
     /**
      * 方式三：采用AlarmManager机制
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        //TODO: 启动新的定时器如何关闭之前的定时器？
 
         //初始化参数
         this.feedItemNum = LitePal.count(FeedItem.class);
         this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
 
-        if (is_open == 1){//说明是定时器启动的，只有定时器启动这个任务才会执行请求数据的任务
+        if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
             UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
 
             //执行任务
-            ALog.d("执行定时任务");
-/*            List<Feed> feedList = LitePal.findAll(Feed.class);
+            ALog.d("执行定时任务" + DateUtil.getNowDateStr());
+            List<Feed> feedList = LitePal.findAll(Feed.class);
+            Feed feed =LitePal.find(Feed.class,11);
+            feedList.add(feed);
+            ALog.d(feed);
             for (int i = 0;i < feedList.size();i++){
                 //改为线程池调用
                 RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
@@ -77,17 +90,21 @@ public class TimingService extends Service {
                     }
                 });
 
-                startForeground(1,createNotice("开始获取数据中……",0));
+                startForeground(1,createNotice("后台更新：开始获取数据中……",0));
                 ExecutorService mExecutor = Executors.newCachedThreadPool();
                 task.executeOnExecutor(mExecutor,feedList.get(i));
-            }*/
+            }
         }
+
+
 
         if (!this.interval.equals("-1")){
             //定时唤醒该服务
+            int temp = Integer.parseInt(this.interval);//分钟
             AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            long triggerAtTime = SystemClock.elapsedRealtime() + 20*1000;//每隔20s执行一次
+            long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
             Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
+            //如果存在这个pendingIntent 则将已有的取消，重新生成一个
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);
             manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         }
@@ -103,7 +120,7 @@ public class TimingService extends Service {
 
         //计算出当前的process
         int process = (int) (okNum *1.0 / num * 100);
-        mNotificationManager.notify(1, createNotice("获取中……",process));
+        mNotificationManager.notify(1, createNotice("后台更新：获取中……",process));
 
         if (okNum >= num){//数据全部请求完毕
 
@@ -111,9 +128,9 @@ public class TimingService extends Service {
             final int sub = num - this.feedItemNum;
             stopForeground(true);
             if (sub>0){
-                mNotificationManager.notify(1, createNotice("共有"+sub+"篇新文章",100));
+                mNotificationManager.notify(1, createNotice("后台更新：共有"+sub+"篇新文章",100));
             }else {
-                mNotificationManager.notify(1, createNotice("暂无新数据",100));
+                mNotificationManager.notify(1, createNotice("后台更新：暂无新数据",100));
             }
             //通知activity修改数据
             //结束当前服务

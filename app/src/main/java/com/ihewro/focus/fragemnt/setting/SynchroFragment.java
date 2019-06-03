@@ -11,6 +11,7 @@ import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.task.TimingService;
 
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class SynchroFragment extends SettingFragment {
         time_interval.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final int select = GlobalConfig.refreshIntervalInt.indexOf(Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_interval, String.valueOf(GlobalConfig.refreshIntervalInt.size()-1))));//默认选择最后一项，即-1
+                final int select = GlobalConfig.refreshIntervalInt.indexOf(Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_interval, String.valueOf(-1))));//默认选择最后一项，即-1
 
                 new MaterialDialog.Builder(getActivity())
                         .title("选择刷新间隔")
@@ -92,9 +93,11 @@ public class SynchroFragment extends SettingFragment {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 UserPreference.updateOrSaveValueByKey(UserPreference.tim_interval, String.valueOf(GlobalConfig.refreshIntervalInt.get(which)));
+                                TimingService.startService(getActivity());
                                 return false;
                             }
                         })
+
                         .positiveText("选择")
                         .show();
 

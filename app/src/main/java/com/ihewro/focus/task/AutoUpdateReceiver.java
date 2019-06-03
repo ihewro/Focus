@@ -17,6 +17,7 @@ public class AutoUpdateReceiver extends BroadcastReceiver {
         if (!interval.equals("-1")){//这个地方判断是因为有可能在定时器运行期间，用户取消了定时器，这样
             Intent i = new Intent(context, TimingService.class);
             context.startService(i);
+        }else {
         }
     }
 }

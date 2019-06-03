@@ -172,11 +172,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startTimeService(){
-        String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
-        if (!interval.equals("-1")){//定时器没有开启才会再起开启这个定时器活动
-            Intent intent = new Intent(this, TimingService.class);
-            startService(intent);
-        }
+        TimingService.startService(this);
     }
 
 
