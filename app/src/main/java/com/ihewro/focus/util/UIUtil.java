@@ -3,6 +3,8 @@ package com.ihewro.focus.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.ColorInt;
@@ -15,6 +17,7 @@ import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.MyApplication;
 import com.ihewro.focus.callback.FileOperationCallback;
+import com.mikepenz.materialize.util.UIUtils;
 
 /**
  * <pre>
@@ -110,6 +113,20 @@ public class UIUtil {
             ALog.d("子线程！！");
         }
 
+    }
+
+    /**
+     * make true current connect service is wifi
+     */
+    public static boolean isWifi() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) UIUtil.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetInfo != null
+                && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            return true;
+        }
+        return false;
     }
 
 }

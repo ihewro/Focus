@@ -29,6 +29,7 @@ public class SynchroFragment extends SettingFragment {
 
     private Preference ownrsshub;
     private Preference time_interval;
+    private SwitchPreferenceCompat only_wifi;
 
 
     public SynchroFragment() {
@@ -49,7 +50,7 @@ public class SynchroFragment extends SettingFragment {
         ownrsshub = findPreference(getString(R.string.pref_key_own_rsshub));
         time_interval = findPreference(getString(R.string.pref_key_refresh_interval));
 
-
+        only_wifi = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_only_use_wifi));
     }
 
 
@@ -66,6 +67,13 @@ public class SynchroFragment extends SettingFragment {
             auto_name.setChecked(false);
         }else {
             auto_name.setChecked(true);
+        }
+
+
+        if (UserPreference.queryValueByKey(UserPreference.notWifi,"0").equals("0")){
+            only_wifi.setChecked(false);
+        }else {
+            only_wifi.setChecked(true);
         }
 
 
@@ -144,6 +152,21 @@ public class SynchroFragment extends SettingFragment {
                 return false;
             }
         });
+
+
+        only_wifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (only_wifi.isChecked()){
+                    UserPreference.updateOrSaveValueByKey(UserPreference.notWifi,"1");
+                }else {
+                    UserPreference.updateOrSaveValueByKey(UserPreference.notWifi,"0");
+                }
+                return false;
+            }
+        });
+
+
         choose_rsshub.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

@@ -31,6 +31,7 @@ public class UserPreference extends LitePalSupport {
     public static final String tim_interval = "tim_interval";//后台请求间隔
     public static final String tim_is_open = "tim_is_open";//定时器是否已经开启
     public static final String back_error = "back_error";//定时器是否已经开启
+    public static final String notWifi = "notWifi";//仅仅wifi下请求
 
 
 
