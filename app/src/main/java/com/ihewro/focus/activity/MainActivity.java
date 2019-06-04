@@ -143,8 +143,8 @@ public class MainActivity extends BaseActivity {
             boolean flag = getIntent().getBooleanExtra(GlobalConfig.is_need_update_main,false);
             if (flag){
                 //更新数据
-                updateDrawer();
-                clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
+                /*updateDrawer();
+                clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");*/
             }
         }
         setSupportActionBar(toolbar);

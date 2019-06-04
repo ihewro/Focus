@@ -72,8 +72,9 @@ public class TimingService extends Service {
 
 
         //初始化参数
-        startForeground(1,createNotice("后台更新服务启动……",0));
-
+        startForeground(2,createNotice("后台更新守护服务","当看到该通知说明服务正常周期运行，否则表示服务运行失败"));
+//        stopForeground(true);
+//
 
         this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
@@ -100,7 +101,7 @@ public class TimingService extends Service {
                     }
                 });
 
-                startForeground(1,createNotice("后台更新：开始获取数据中……",0));
+                mNotificationManager.notify(1,createNotice("后台更新：开始获取数据中……",0));
                 ExecutorService mExecutor = Executors.newCachedThreadPool();
                 task.executeOnExecutor(mExecutor,feedList.get(i));
             }
@@ -114,14 +115,14 @@ public class TimingService extends Service {
             int temp = Integer.parseInt(this.interval);//分钟
             AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
             long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
-//            long triggerAtTime = SystemClock.elapsedRealtime() + 60*1000;//每隔temp分钟执行一次
+//            long triggerAtTime = SystemClock.elapsedRealtime() + 30*1000;//每隔30s执行一次
             Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
             //如果存在这个pendingIntent 则将已有的取消，重新生成一个
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);
             manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         }
 
-        stopSelf();//结束自己，等待定时器唤醒
+//        stopSelf();//结束自己，等待定时器唤醒
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -138,7 +139,6 @@ public class TimingService extends Service {
 
             int num = LitePal.count(FeedItem.class);
             final int sub = num - this.feedItemNum;
-            stopForeground(true);
             if (sub>0){
                 mNotificationManager.notify(1, createNotice("后台更新：共有"+sub+"篇新文章",100));
             }else {
@@ -150,6 +150,7 @@ public class TimingService extends Service {
         }
 
     }
+
 
 
     private Notification createNotice(String title, int progress){
@@ -168,6 +169,11 @@ public class TimingService extends Service {
         if (progress == 100){
             builderProgress.setContentText(title);
         }
+
+        if (progress == -1){
+
+
+        }
         //绑定点击事件
         Intent intent = new Intent(UIUtil.getContext(), MainActivity.class);
         intent.putExtra(GlobalConfig.is_need_update_main,true);
@@ -180,6 +186,30 @@ public class TimingService extends Service {
         return notification;
     }
 
+
+    private Notification createNotice(String title, String content){
+
+        //消息管理
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        initChannels(getApplicationContext());
+        builderProgress = new NotificationCompat.Builder(getApplicationContext(), "focus_pull_data");
+        builderProgress.setContentTitle(title);
+        builderProgress.setSmallIcon(R.mipmap.ic_focus_launcher_round);
+//        builderProgress.setTicker("进度条通知");
+
+        builderProgress.setContentText(content);
+
+        //绑定点击事件
+        Intent intent = new Intent(UIUtil.getContext(), MainActivity.class);
+        intent.putExtra(GlobalConfig.is_need_update_main,true);
+        PendingIntent pending_intent_go = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builderProgress.setAutoCancel(true);
+        builderProgress.setContentIntent(pending_intent_go);
+
+        notification = builderProgress.build();
+
+        return notification;
+    }
 
 
     /**

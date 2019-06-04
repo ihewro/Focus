@@ -30,8 +30,8 @@ public class GlobalConfig {
 
     public static final String is_need_update_main = "is_need_update_main";
     //两个是对应的
-    public static final List<String> refreshInterval = Arrays.asList("15分钟", "30分钟", "45分钟","1个小时","2个小时","3个小时","4个小时","6个小时","10个小时","12个小时","永不");
-    public static final List<Integer> refreshIntervalInt = Arrays.asList(15, 30, 45,60,120,180,240,360,600,720,-1);
+    public static final List<String> refreshInterval = Arrays.asList("2分钟","15分钟", "30分钟", "45分钟","1个小时","2个小时","3个小时","4个小时","6个小时","10个小时","12个小时","永不");
+    public static final List<Integer> refreshIntervalInt = Arrays.asList(2,15, 30, 45,60,120,180,240,360,600,720,-1);
 
 
 

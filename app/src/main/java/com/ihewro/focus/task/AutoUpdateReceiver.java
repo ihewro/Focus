@@ -17,10 +17,14 @@ public class AutoUpdateReceiver extends BroadcastReceiver {
         String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         if (!interval.equals("-1")){//这个地方判断是因为有可能在定时器运行期间，用户取消了定时器，这样
             Intent i = new Intent(context, TimingService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(i);
-            } else {
-                context.startService(i);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(i);
+                } else {
+                    context.startService(i);
+                }
+            }catch (Exception e){
+                UserPreference.updateOrSaveValueByKey(UserPreference.back_error,e.getMessage());
             }
         }else {
         }
