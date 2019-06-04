@@ -54,7 +54,11 @@ public class TimingService extends Service {
         String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         if (!interval.equals("-1")){//定时器没有开启才会再起开启这个定时器活动
             Intent intent = new Intent(context, TimingService.class);
-            context.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
         }
 
     }
@@ -67,19 +71,24 @@ public class TimingService extends Service {
 
 
         //初始化参数
-        this.feedItemNum = LitePal.count(FeedItem.class);
+        startForeground(1,createNotice("后台更新服务启动……",0));
+
+
         this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
 
+        //执行任务
         if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
             UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
 
-            //执行任务
             ALog.d("执行定时任务" + DateUtil.getNowDateStr());
             List<Feed> feedList = LitePal.findAll(Feed.class);
-            Feed feed =LitePal.find(Feed.class,11);
-            feedList.add(feed);
-            ALog.d(feed);
+
+            //初始化参数
+            this.okNum = 0;
+            this.num =feedList.size();
+            this.feedItemNum = LitePal.count(FeedItem.class);
+
             for (int i = 0;i < feedList.size();i++){
                 //改为线程池调用
                 RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
@@ -98,11 +107,13 @@ public class TimingService extends Service {
 
 
 
+        //启动定时器
         if (!this.interval.equals("-1")){
             //定时唤醒该服务
             int temp = Integer.parseInt(this.interval);//分钟
             AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
             long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
+//            long triggerAtTime = SystemClock.elapsedRealtime() + 60*1000;//每隔temp分钟执行一次
             Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
             //如果存在这个pendingIntent 则将已有的取消，重新生成一个
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);

@@ -89,6 +89,7 @@ public class RequestFeedListDataService extends Service {
 
 
 
+
     public class MyBinder extends Binder{
 
         public void initParameter(TextView subTitle2,Activity activity2, View view2, boolean flag, List<Feed> feedList2, RequestFeedItemListCallback callback2){
@@ -107,6 +108,7 @@ public class RequestFeedListDataService extends Service {
 
         public void startTask(){
             //主线程
+
             num = feedList.size();
             eList.clear();
             String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, "0");
@@ -118,6 +120,10 @@ public class RequestFeedListDataService extends Service {
             okNum = 0;
             callback.onBegin();
 
+            //必须要开启前台通知
+            startForeground(1,createNotice("初始化数据获取服务…",0));
+
+
             if (num>0){//请求总数大于1才会进行请求
                 if (!flag && !isForce){//加载本地数据就可以了，没有网络请求
                     handleData(new RequestDataCallback() {
@@ -126,15 +132,16 @@ public class RequestFeedListDataService extends Service {
                             //主线程
                             ALog.d("无网络请求结束");
                             callback.onFinish(feedItemList,0);
+                            stopForeground(true);
+                            mNotificationManager.cancel(1);//无网络情况下状态栏不需要留下通知
                         }
                     });
                 }else {//网络请求
                     int num = LitePal.count(FeedItem.class);
                     RequestFeedListDataService.this.feedItemNum = num;
                     RequestFeedListDataService.this.feedItemNumTemp = num;
-
                     Toasty.success(activity,"开始请求数据").show();
-                    startForeground(1,createNotice("开始获取数据中……",0));
+                    mNotificationManager.notify(1, createNotice("开始获取数据中……",0));
                     ExecutorService mExecutor = Executors.newCachedThreadPool();
                     RequestFeedListDataService.this.feedItemNum = num;
                     RequestFeedListDataService.this.feedItemNumTemp = num;

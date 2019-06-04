@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -167,7 +168,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
      */
     public void requestAllData(){
         Intent intent = new Intent(getActivity(), RequestFeedListDataService.class);
-        getActivity().startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(intent);
+        } else {
+            getActivity().startService(intent);
+        }
         getActivity().bindService(intent,connection,BIND_AUTO_CREATE);
 
     }
@@ -193,6 +198,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         public void onServiceDisconnected(ComponentName componentName) {
             //停止服务
             myBinder.stopService();
+            isconnet = false;
             ALog.d("活动与服务解除了绑定");
         }
     };
@@ -323,8 +329,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
                                         //解除绑定
                                         if (isconnet){
-                                            Objects.requireNonNull(getActivity()).unbindService(connection);
                                             isconnet = false;
+                                            Objects.requireNonNull(getActivity()).unbindService(connection);
                                         }
                                     }
                                 });
