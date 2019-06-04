@@ -14,6 +14,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
 import com.blankj.ALog;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.Feed;
@@ -169,8 +170,8 @@ public class TimingService extends Service {
         }
         //绑定点击事件
         Intent intent = new Intent(UIUtil.getContext(), MainActivity.class);
+        intent.putExtra(GlobalConfig.is_need_update_main,true);
         PendingIntent pending_intent_go = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         builderProgress.setAutoCancel(true);
         builderProgress.setContentIntent(pending_intent_go);
 

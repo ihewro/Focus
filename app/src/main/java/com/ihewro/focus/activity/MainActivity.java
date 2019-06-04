@@ -26,6 +26,7 @@ import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -138,6 +139,14 @@ public class MainActivity extends BaseActivity {
             toolbar.inflateMenu(R.menu.main);
         }
 
+        if (getIntent() != null){
+            boolean flag = getIntent().getBooleanExtra(GlobalConfig.is_need_update_main,false);
+            if (flag){
+                //更新数据
+                updateDrawer();
+                clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
+            }
+        }
         setSupportActionBar(toolbar);
         toolbarTitle.setText("全部文章");
         EventBus.getDefault().register(this);
