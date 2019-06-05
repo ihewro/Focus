@@ -24,6 +24,9 @@ public class FeedFolder extends LitePalSupport {
     @Column(defaultValue = "1.0")
     private double orderValue;//顺序权限，用来排序的
 
+    private int timeout;//拉取的超时时间
+
+
     @Column(ignore = true)
     private int notReadNum;
 
@@ -68,6 +71,14 @@ public class FeedFolder extends LitePalSupport {
 
     public void setNotReadNum(int notReadNum) {
         this.notReadNum = notReadNum;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     public List<Feed> getFeedList() {

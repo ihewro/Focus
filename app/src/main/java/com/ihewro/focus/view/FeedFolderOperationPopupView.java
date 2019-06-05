@@ -140,6 +140,36 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
             }
         }));
 
+
+        operations.add(new Operation("设置超时时间","",getResources().getDrawable(R.drawable.ic_timer_black_24dp),feedFolder, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final FeedFolder item = (FeedFolder)o;
+
+                new MaterialDialog.Builder(getContext())
+                        .title("设置超时时间")
+                        .content("单位是秒，与每个订阅的的超时时间取最大值")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input(item.getTimeout()+"", item.getTimeout()+"", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                String timeout = dialog.getInputEditText().getText().toString().trim();
+                                if (timeout.equals("")){
+                                    Toasty.info(getContext(),"请勿为空😯").show();
+                                }else {
+                                    item.setTimeout(Integer.parseInt(timeout));
+                                    item.save();
+                                    Toasty.success(getContext(),"设置成功").show();
+                                    EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_FEED_NAME));
+                                    dismiss();
+                                }
+                            }
+                        }).show();
+            }
+        }));
+
+
+
         return  operations;
     }
 

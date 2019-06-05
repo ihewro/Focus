@@ -109,7 +109,7 @@
 
     <string name="pref_key_refresh_interval">pref_key_refresh_interval</string>
     <string name="pref_title_refresh_interval">后台定时刷新间隔</string>
-    <string name="pref_summary_refresh_interval">开启后，会消耗少许电量，会在通知栏显示一个守护进程，标志该服务正常，如果没有该通知，标志服务为正常运行。</string>
+    <string name="pref_summary_refresh_interval">【试验功能】开启后，会消耗少许电量，会在通知栏显示一个守护进程，标志该服务正常，如果没有该通知，标志服务为正常运行。</string>
 
     <string name="pref_key_only_use_wifi">pref_key_only_use_wifi</string>
     <string name="pref_title_only_use_wifi">定时请求只使用WiFi</string>

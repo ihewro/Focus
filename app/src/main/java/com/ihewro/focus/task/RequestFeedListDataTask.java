@@ -6,6 +6,7 @@ import android.util.Log;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.FeedRequest;
 import com.ihewro.focus.bean.FeedRequire;
@@ -68,11 +69,20 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Log.e("多线程任务！！","任务开始"+feed.getUrl()+dateFormat.format(new Date(System.currentTimeMillis())));
             String url = feed.getUrl();
-            int timeout = feed.getTimeout();
+
+            //获取
+            int timeout;
+            int feedTimeout = feed.getTimeout();
+            FeedFolder feedFolder = LitePal.find(FeedFolder.class,feed.getFeedFolderId());
+            int feedFolderTimeout = feedFolder.getTimeout();
+
+            timeout = Math.max(feedFolderTimeout,feedTimeout);
 
             if (timeout == 0){
                 timeout = Feed.DEFAULT_TIMEOUT;//默认值
             }
+
+            ALog.d("超时时间" + timeout);
             final String originUrl = url;
 
             //判断RSSHUB的源地址，替换成现在的地址

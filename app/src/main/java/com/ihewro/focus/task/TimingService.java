@@ -52,14 +52,11 @@ public class TimingService extends Service {
 
 
     public static void startService(Context context){
-        String interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
-        if (!interval.equals("-1")){//定时器没有开启才会再起开启这个定时器活动
-            Intent intent = new Intent(context, TimingService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
-            } else {
-                context.startService(intent);
-            }
+        Intent intent = new Intent(context, TimingService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
         }
 
     }
@@ -71,47 +68,17 @@ public class TimingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        //初始化参数
-        startForeground(2,createNotice("后台更新守护服务","当看到该通知说明服务正常周期运行，否则表示服务运行失败"));
-//        stopForeground(true);
-//
-
         this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
 
-        //执行任务
-        if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
-            UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
+        startForeground(2,createNotice("后台更新守护服务","当看到该通知说明服务正常周期运行，否则表示服务运行失败"));
 
-            ALog.d("执行定时任务" + DateUtil.getNowDateStr());
-            List<Feed> feedList = LitePal.findAll(Feed.class);
-
+        if (this.interval.equals("-1")){
+            stopForeground(true);
+            stopSelf();
+        }else {
+            //TODO: 如果已经启动了定时器，当打开应用的时候，不应该再次重新设置定时器
             //初始化参数
-            this.okNum = 0;
-            this.num =feedList.size();
-            this.feedItemNum = LitePal.count(FeedItem.class);
-
-            for (int i = 0;i < feedList.size();i++){
-                //改为线程池调用
-                RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
-                    @Override
-                    public void onSuccess(List<FeedItem> feedItemList) {
-                        //主线程
-                        updateUI();
-                    }
-                });
-
-                mNotificationManager.notify(1,createNotice("后台更新：开始获取数据中……",0));
-                ExecutorService mExecutor = Executors.newCachedThreadPool();
-                task.executeOnExecutor(mExecutor,feedList.get(i));
-            }
-        }
-
-
-
-        //启动定时器
-        if (!this.interval.equals("-1")){
-            //定时唤醒该服务
             int temp = Integer.parseInt(this.interval);//分钟
             AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
             long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
@@ -120,10 +87,38 @@ public class TimingService extends Service {
             //如果存在这个pendingIntent 则将已有的取消，重新生成一个
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);
             manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+
+            //执行任务
+            if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
+                UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
+
+                ALog.d("执行定时任务" + DateUtil.getNowDateStr());
+                List<Feed> feedList = LitePal.findAll(Feed.class);
+
+                //初始化参数
+                this.okNum = 0;
+                this.num =feedList.size();
+                this.feedItemNum = LitePal.count(FeedItem.class);
+
+                for (int i = 0;i < feedList.size();i++){
+                    //改为线程池调用
+                    RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
+                        @Override
+                        public void onSuccess(List<FeedItem> feedItemList) {
+                            //主线程
+                            updateUI();
+                        }
+                    });
+
+                    mNotificationManager.notify(1,createNotice("后台更新：开始获取数据中……",0));
+                    ExecutorService mExecutor = Executors.newCachedThreadPool();
+                    task.executeOnExecutor(mExecutor,feedList.get(i));
+                }
+
+            }
         }
 
-//        stopSelf();//结束自己，等待定时器唤醒
-        return super.onStartCommand(intent, flags, startId);
+         return super.onStartCommand(intent, flags, startId);
     }
 
     //主线程
@@ -144,9 +139,6 @@ public class TimingService extends Service {
             }else {
                 mNotificationManager.notify(1, createNotice("后台更新：暂无新数据",100));
             }
-            //通知activity修改数据
-            //结束当前服务
-            stopSelf();
         }
 
     }
@@ -168,11 +160,6 @@ public class TimingService extends Service {
         }
         if (progress == 100){
             builderProgress.setContentText(title);
-        }
-
-        if (progress == -1){
-
-
         }
         //绑定点击事件
         Intent intent = new Intent(UIUtil.getContext(), MainActivity.class);
@@ -203,7 +190,6 @@ public class TimingService extends Service {
         Intent intent = new Intent(UIUtil.getContext(), MainActivity.class);
         intent.putExtra(GlobalConfig.is_need_update_main,true);
         PendingIntent pending_intent_go = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builderProgress.setAutoCancel(true);
         builderProgress.setContentIntent(pending_intent_go);
 
         notification = builderProgress.build();
