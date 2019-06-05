@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        android:orderInCategory="100"
+        android:title="筛选"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_rsshub"
+        android:icon="@drawable/ic_autorenew_black_24dp"
+        android:orderInCategory="100"
+        android:title="切换rsshub源"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black"
@@ -8,10 +23,4 @@
         android:title="@string/abc_search_hint"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_filter"
-        android:icon="@drawable/ic_filter_list_black_24dp"
-        android:orderInCategory="100"
-        android:title="@string/abc_search_hint"
-        app:showAsAction="always" />
 </menu>

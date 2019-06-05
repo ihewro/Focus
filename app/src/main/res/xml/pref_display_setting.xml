@@ -7,4 +7,9 @@
         android:summary="@string/pref_summary_not_image_in_list"/>
 
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_not_image_in_list"
+        android:title="@string/pref_title_not_image_in_list"
+        android:summary="@string/pref_summary_not_image_in_list"/>
+
 </android.support.v7.preference.PreferenceScreen>

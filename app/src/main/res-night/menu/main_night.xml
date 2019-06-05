@@ -5,8 +5,17 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_night"
         android:orderInCategory="100"
-        android:title="@string/abc_search_hint"
+        android:title="筛选数据"
         app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_rsshub"
+        android:icon="@drawable/ic_autorenew_black_24dp_night"
+        android:orderInCategory="100"
+        android:title="切换rsshub源"
+        app:showAsAction="always" />
+
 
     <item
         android:id="@+id/action_filter"
