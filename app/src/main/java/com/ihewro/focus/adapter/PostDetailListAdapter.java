@@ -6,12 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ScrollView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.util.DateUtil;
@@ -22,6 +24,8 @@ import com.ihewro.focus.view.PostHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+
+import org.litepal.LitePal;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -57,7 +61,7 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
         scrollView = helper.getView(R.id.post_turn);
         //设置文章内容
-        PostUtil.setContent(context, item, ((WebView) helper.getView(R.id.post_content)));
+        PostUtil.setContent(context, item, ((WebView) helper.getView(R.id.post_content)), (ViewGroup) helper.getView(R.id.container));
         helper.setText(R.id.post_title, item.getTitle());
         helper.setText(R.id.post_time, DateUtil.getTimeStringByInt(item.getDate()));
         helper.setText(R.id.feed_name, item.getFeedName());
@@ -108,6 +112,14 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
         if (pattern.matcher(url).matches()){
             Toasty.info(context,"该文章没有外链哦").show();
         }else {
+            /*if (url.startsWith("/")){//相对地址
+                Feed feed = LitePal.find(Feed.class,feedItem.getFeedId());
+                String origin = feed.getLink();
+                if (!origin.endsWith("/")){
+                    origin = origin + "/";
+                }
+                url = origin + url;
+            }*/
             WebViewUtil.openLink(url, context);
         }
     }

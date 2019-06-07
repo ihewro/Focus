@@ -24,6 +24,7 @@ import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 
 import com.blankj.ALog;
+import com.ihewro.focus.bean.UserPreference;
 
 import java.util.List;
 
@@ -52,19 +53,27 @@ public class CustomTabActivityHelper implements ServiceConnectionCallback {
 
         //If we cant find a package name, it means theres no browser that supports
         //Chrome Custom Tabs installed. So, we fallback to the webview
-        if (packageName == null) {
+
+        //如果使用了不使用Chrome内核，则直接打开
+        if(UserPreference.queryValueByKey(UserPreference.notUseChrome,"0").equals("1")){
             if (fallback != null) {
                 fallback.openUri(activity, uri);
             }
-        } else {
-            customTabsIntent.intent.setPackage(packageName);
-            try {
-                customTabsIntent.launchUrl(activity, uri);
-            }catch (ActivityNotFoundException e){
-                ALog.d("为什么活动没了？" + e);
-                //普通方法
+        }else {
+            if (packageName == null) {//普通打开
                 if (fallback != null) {
                     fallback.openUri(activity, uri);
+                }
+            } else {
+                customTabsIntent.intent.setPackage(packageName);
+                try {
+                    customTabsIntent.launchUrl(activity, uri);
+                }catch (ActivityNotFoundException e){
+                    ALog.d("为什么活动没了？" + e);
+                    //普通方法
+                    if (fallback != null) {
+                        fallback.openUri(activity, uri);
+                    }
                 }
             }
         }

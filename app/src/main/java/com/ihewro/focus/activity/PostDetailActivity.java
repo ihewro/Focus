@@ -24,6 +24,7 @@ import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
+import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.bean.UserPreference;
@@ -103,7 +104,6 @@ public class PostDetailActivity extends BaseActivity {
         feedItemIdList = intent.getIntegerArrayListExtra(Constants.KEY_FEED_ITEM_ID_LIST);
         mId = feedItemIdList.get(mIndex);
         isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
-//        isStar = intent.getBooleanExtra(Constants.IS_FROM_STAR_ACTIVITY,false);
 
 
         initData();
@@ -377,7 +377,6 @@ public class PostDetailActivity extends BaseActivity {
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     //修改左侧数字
                     ((TextView)ReadSettingDialog.findViewById(R.id.size_setting_info)).setText(String.valueOf(seekBar.getProgress()));
-
                 }
 
                 @Override
@@ -477,6 +476,14 @@ public class PostDetailActivity extends BaseActivity {
         if (pattern.matcher(url).matches()){
             Toasty.info(this,"该文章没有外链哦").show();
         }else {
+            /*if (url.startsWith("/")){//相对地址
+                Feed feed = LitePal.find(Feed.class,currentFeedItem.getFeedId());
+                String origin = feed.getLink();
+                if (!origin.endsWith("/")){
+                    origin = origin + "/";
+                }
+                url = origin + url;
+            }*/
             WebViewUtil.openLink(url,PostDetailActivity.this);
         }
     }

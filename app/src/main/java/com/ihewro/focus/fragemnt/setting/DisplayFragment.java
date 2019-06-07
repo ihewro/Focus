@@ -18,6 +18,7 @@ import com.ihewro.focus.bean.UserPreference;
 public class DisplayFragment extends SettingFragment {
 
     private SwitchPreferenceCompat not_show_image_in_list;
+    private SwitchPreferenceCompat not_use_chrome;
 
     @Override
     public void initView() {
@@ -27,12 +28,21 @@ public class DisplayFragment extends SettingFragment {
     @Override
     public void initPreferenceComponent() {
         not_show_image_in_list = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_not_image_in_list));
+        not_use_chrome = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_not_use_chrome));
     }
 
     @Override
     public void initPreferencesData() {
         if (UserPreference.queryValueByKey(UserPreference.not_show_image_in_list,"0").equals("1")){//开启禁用
             not_show_image_in_list.setChecked(true);
+        }else {
+            not_show_image_in_list.setChecked(false);
+        }
+
+        if (UserPreference.queryValueByKey(UserPreference.notUseChrome,"0").equals("1")){//开启禁用
+            not_use_chrome.setChecked(true);
+        }else {
+            not_use_chrome.setChecked(false);
         }
 
     }
@@ -48,6 +58,19 @@ public class DisplayFragment extends SettingFragment {
                     UserPreference.updateOrSaveValueByKey(UserPreference.not_show_image_in_list,"1");
                 }else {
                     UserPreference.updateOrSaveValueByKey(UserPreference.not_show_image_in_list,"0");
+                }
+                return false;
+            }
+        });
+
+
+        not_use_chrome.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (not_use_chrome.isChecked()){
+                    UserPreference.updateOrSaveValueByKey(UserPreference.notUseChrome,"1");
+                }else {
+                    UserPreference.updateOrSaveValueByKey(UserPreference.notUseChrome,"0");
                 }
                 return false;
             }

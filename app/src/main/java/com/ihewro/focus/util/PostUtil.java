@@ -3,6 +3,7 @@ package com.ihewro.focus.util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import com.google.common.base.Strings;
@@ -19,11 +20,11 @@ import com.ihewro.focus.bean.FeedItem;
  */
 public class PostUtil {
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
-    public static void setContent(Activity context, FeedItem article, WebView textView) {
+    public static void setContent(Activity context, FeedItem article, WebView textView, ViewGroup viewGroup) {
         if (article == null || textView == null) {
             return;
         }
-        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context,article.getUrl());
+        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context,article.getUrl(),viewGroup);
     }
 
     public static String getContent(FeedItem article) {

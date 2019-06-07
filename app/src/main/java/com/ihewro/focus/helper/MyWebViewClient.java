@@ -23,7 +23,7 @@ import java.io.InputStream;
  *     version: 1.0
  * </pre>
  */
-public class MyWebViewClient extends WebViewClient {
+public class MyWebViewClient extends com.just.agentweb.WebViewClient {
 
     private Context context;
     private String url;
@@ -39,8 +39,12 @@ public class MyWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         view.getSettings().setJavaScriptEnabled(true);
+
+        //显示加载动画
         super.onPageStarted(view, url, favicon);
     }
+
+
 
 
     public MyWebViewClient() {
@@ -85,10 +89,6 @@ public class MyWebViewClient extends WebViewClient {
 
     }
 
-//    shouldInterceptRequest
-
-
-
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -105,7 +105,6 @@ public class MyWebViewClient extends WebViewClient {
                e.printStackTrace();
            }
        }
-
 
         return super.shouldInterceptRequest(view, url);
     }

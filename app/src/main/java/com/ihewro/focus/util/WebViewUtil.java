@@ -6,14 +6,21 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
 
+import com.blankj.ALog;
+import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.MyWebViewClient;
 import com.ihewro.focus.helper.WebviewFallback;
+import com.ihewro.focus.view.WebContentLayout;
+import com.just.agentweb.AgentWeb;
+import com.just.agentweb.DefaultWebClient;
 
 import skin.support.utils.SkinPreference;
 
@@ -28,6 +35,10 @@ import skin.support.utils.SkinPreference;
  */
 public class WebViewUtil {
 
+
+    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context, String url){
+        LoadHtmlIntoWebView(webView, html, context, url,null);
+    }
     /**
      *
      * @param webView
@@ -36,13 +47,14 @@ public class WebViewUtil {
      * @param url 用于修改相对地址的
      */
     @SuppressLint("SetJavaScriptEnabled")
-    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context,String url){
+    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context, String url, ViewGroup parent){
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕        ☆☆
         webSettings.setDisplayZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
+
 
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
@@ -73,10 +85,28 @@ public class WebViewUtil {
         webView.setBackgroundColor(Color.parseColor("#00000000"));
         webView.loadData( body, "text/html; charset=UTF-8", null);
 
+       /* WebContentLayout webContentLayout = new WebContentLayout(context);
+        AgentWeb mAgentWeb = AgentWeb.with(context)
+                .setAgentWebParent(parent, new LinearLayout.LayoutParams(-1, -1))
+                .useDefaultIndicator()
+//                .setWebChromeClient(mWebChromeClient)
+                .setWebViewClient(new MyWebViewClient(context,url))
+                .setWebLayout(webContentLayout)
+                .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
+                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
+                .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
+                .interceptUnkownUrl() //拦截找不到相关页面的Scheme
+                .createAgentWeb()
+                .ready()
+                .get();
+
+        mAgentWeb.getUrlLoader().loadData( body, "text/html; charset=UTF-8", null);*/
+
     }
 
 
     public static void openLink(String url, Activity activity){
+        ALog.d("打开的地址" + url);
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
         CustomTabActivityHelper.openCustomTab(
                 activity, customTabsIntent, Uri.parse(url), new WebviewFallback());
