@@ -47,7 +47,7 @@ import es.dmoral.toasty.Toasty;
 import skin.support.utils.SkinPreference;
 
 
-public class PostDetailActivity extends BaseActivity {
+public class PostDetailActivity extends BackActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

@@ -1,14 +1,12 @@
 package com.ihewro.focus;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.blankj.ALog;
-import com.ihewro.focus.activity.ErrorActivity;
-import com.ihewro.focus.activity.WelcomeActivity;
+import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.scwang.smartrefresh.header.MaterialHeader;
-import com.scwang.smartrefresh.header.TaurusHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -17,11 +15,12 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.zxy.recovery.callback.RecoveryCallback;
+import com.zxy.recovery.core.Recovery;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
-import cat.ereza.customactivityoncrash.config.CaocConfig;
 import es.dmoral.toasty.Toasty;
 import skin.support.SkinCompatManager;
 import skin.support.app.SkinCardViewInflater;
@@ -115,7 +114,20 @@ public class MyApplication extends LitePalApplication {
 
 
     private void initErrorHandle(){
-        CaocConfig.Builder.create()
+
+        Recovery.getInstance()
+                .debug(true)
+                .recoverInBackground(false)
+                .recoverStack(true)
+                .mainPage(MainActivity.class)
+                .recoverEnabled(true)
+                .callback(new MyCrashCallback())
+                .silent(false, Recovery.SilentMode.RECOVER_ACTIVITY_STACK)
+                .skip(MainActivity.class)
+                .init(this);
+
+
+        /*CaocConfig.Builder.create()
                 .backgroundMode(CaocConfig.BACKGROUND_MODE_SILENT) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
                 .enabled(true) //default: true
                 .showErrorDetails(true) //default: true
@@ -127,7 +139,32 @@ public class MyApplication extends LitePalApplication {
                 .restartActivity(WelcomeActivity.class) //default: null (your app's launch activity)
                 .errorActivity(ErrorActivity.class) //default: null (default error activity)
                 .eventListener(null) //default: null
-                .apply();
+                .apply();*/
+    }
+
+    static final class MyCrashCallback implements RecoveryCallback {
+        @Override
+        public void stackTrace(String exceptionMessage) {
+            Log.e("zxy", "exceptionMessage:" + exceptionMessage);
+        }
+
+        @Override
+        public void cause(String cause) {
+            Log.e("zxy", "cause:" + cause);
+        }
+
+        @Override
+        public void exception(String exceptionType, String throwClassName, String throwMethodName, int throwLineNumber) {
+            Log.e("zxy", "exceptionClassName:" + exceptionType);
+            Log.e("zxy", "throwClassName:" + throwClassName);
+            Log.e("zxy", "throwMethodName:" + throwMethodName);
+            Log.e("zxy", "throwLineNumber:" + throwLineNumber);
+        }
+
+        @Override
+        public void throwable(Throwable throwable) {
+
+        }
     }
 
     @Override

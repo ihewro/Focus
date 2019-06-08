@@ -3,8 +3,13 @@ package com.ihewro.focus.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -18,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +47,7 @@ import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
 import com.ihewro.focus.task.TimingService;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -50,6 +57,7 @@ import com.lxj.xpopup.enums.PopupPosition;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
@@ -57,6 +65,12 @@ import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerUIUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -623,6 +637,8 @@ public class MainActivity extends BaseActivity {
         subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
 
 
+
+
         List<FeedFolder> feedFolderList = LitePal.order("ordervalue").find(FeedFolder.class);
         for (int i = 0; i < feedFolderList.size(); i++) {
 
@@ -633,16 +649,41 @@ public class MainActivity extends BaseActivity {
 
             boolean haveErrorFeedInCurrentFolder = false;
             for (int j = 0; j < feedList.size(); j++) {
-                Feed temp = feedList.get(j);
+                final Feed temp = feedList.get(j);
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
 
-                SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
+                final SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
                 if (feedList.get(j).isErrorGet()) {
                     haveErrorFeedInCurrentFolder = true;
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_sync_problem);
                 } else {
-                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+                    //加载订阅的图标
+                    ImageLoader.getInstance().loadImage(StringUtil.getUrlPrefix(temp.getLink()) + "/favicon.ico", new ImageLoadingListener() {
+                        @Override
+                        public void onLoadingStarted(String imageUri, View view) {
+                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+                        }
+
+                        @Override
+                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+                        }
+
+                        @Override
+                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+                            Drawable ico = new BitmapDrawable(getResources(),loadedImage);
+                            secondaryDrawerItem.withIcon(ico);
+                        }
+
+                        @Override
+                        public void onLoadingCancelled(String imageUri, View view) {
+
+                        }
+                    });
+
                 }
+
                 if (current_notReadNum != 0) {
                     secondaryDrawerItem.withBadge(current_notReadNum + "");
                 }

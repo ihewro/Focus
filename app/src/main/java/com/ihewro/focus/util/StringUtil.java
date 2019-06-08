@@ -21,18 +21,24 @@ public class StringUtil {
     }
 
     public static String getUrlPrefix(String url){
+        if (url == null){
+            return  "";
+        }
         int pos= 0;
         if (url.startsWith("http://")){
-            pos = url.indexOf("/",7);//https://<8>fdsfsdf/
+            pos = url.indexOf("/",7);//http://<8>fdsfsdf/
         }else if (url.startsWith("https://")){
-            pos = url.indexOf("/",8);//https://<8>fdsfsdf/
+            pos = url.indexOf("/",8);//https://<9>fdsfsdf/
         }else {
             ALog.d("地址有误");
             return url;
         }
 
-        return url.substring(0,pos);//最后没有斜杆
-
-
+        if (pos == -1){//末尾没有斜杆
+            return  url;
+        }else {
+            return url.substring(0,pos);//最后没有斜杆
+        }
     }
+
 }

@@ -65,6 +65,7 @@ public class WebViewActivity extends BackActivity {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
+            ALog.d("接收到网站的标题");
             if (toolbar != null) {
                 toolbar.setTitle(title);
             }
@@ -78,10 +79,6 @@ public class WebViewActivity extends BackActivity {
             return super.shouldOverrideUrlLoading(view, request);
         }
 
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
-        }
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -142,16 +139,16 @@ public class WebViewActivity extends BackActivity {
                 .interceptUnkownUrl() //拦截找不到相关页面的Scheme
                 .createAgentWeb()
                 .ready()
-                .get();
-//                .go(url);
+//                .get();
+                .go(url);
 
-        
+
         WebSettings webSettings = mAgentWeb.getAgentWebSettings().getWebSettings();
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕        ☆☆
         webSettings.setDisplayZoomControls(true);
         webSettings.setUseWideViewPort(true);
 
-        mAgentWeb.getUrlLoader().loadUrl(url);
+//        mAgentWeb.getUrlLoader().loadUrl(url);
 
 //        mAgentWeb.getUrlLoader().loadDataWithBaseURL(url,"<script src=\"https://focus.com/nolimit.js\"></script>",null,"utf-8",null);
 

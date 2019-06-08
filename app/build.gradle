@@ -102,7 +102,9 @@ dependencies {
     implementation 'com.blankj:alog:1.8.0'
 
     //全局错误异常捕捉
-    implementation 'cat.ereza:customactivityoncrash:2.2.0'
+//    implementation 'cat.ereza:customactivityoncrash:2.2.0'
+    implementation 'com.zxy.android:recovery:1.0.0'
+
 
     //toast
     implementation 'com.github.GrenderG:Toasty:1.4.0'

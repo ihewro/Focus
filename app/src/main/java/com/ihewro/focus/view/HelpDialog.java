@@ -55,7 +55,7 @@ public class HelpDialog extends DialogFragment {
 
         final WebView webView = customView.findViewById(R.id.webview);
 //        webView.loadData(this.content, "text/html", "UTF-8");
-//        WebViewUtil.LoadHtmlIntoWebView(webView,this.content,getActivity(),"");
+        WebViewUtil.LoadHtmlIntoWebView(webView,this.content,getActivity(),"");
         return dialog;
     }
 
