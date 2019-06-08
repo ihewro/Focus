@@ -27,6 +27,7 @@ public class GlobalConfig {
     public static final String OfficialRSSHUB = "https://rsshub.app";
     public static final String MoeratsRsshub = "https://rsshub.moerats.com";
     public static final List<String> rssHub = Arrays.asList(OfficialRSSHUB, MoeratsRsshub, UserPreference.OWN_RSSHUB);
+    public static final List<String> feedRssHub = Arrays.asList(OfficialRSSHUB, MoeratsRsshub, UserPreference.OWN_RSSHUB,UserPreference.DEFAULT_RSSHUB);
 
     public static final String is_need_update_main = "is_need_update_main";
     //两个是对应的

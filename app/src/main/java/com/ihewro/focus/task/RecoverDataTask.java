@@ -193,6 +193,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
         LitePal.deleteAll(FeedItem.class);
         LitePal.deleteAll(UserPreference.class);
 
+        //TODO: 对于新加入的字段的恢复
         Cursor feedFolderCur = database.rawQuery("SELECT * from feedfolder", null);
         if (feedFolderCur!=null && feedFolderCur.moveToFirst()){
             do{

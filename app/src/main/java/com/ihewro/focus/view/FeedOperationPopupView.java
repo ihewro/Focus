@@ -12,13 +12,16 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Operation;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.DialogCallback;
 import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.task.ShowFeedFolderListDialogTask;
@@ -232,6 +235,35 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
 
             }
         }));
+
+
+        operations.add(new Operation("设置rsshub源","",getResources().getDrawable(R.drawable.ic_autorenew_black_24dp_night_grey),feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                final Feed item = (Feed) o;
+                int select = GlobalConfig.feedRssHub.indexOf(item.getRsshub());
+                if (select == -1){
+                    select = GlobalConfig.feedRssHub.size() -1;//跟随主设置
+                }
+                new MaterialDialog.Builder(getContext())
+                        .title("源设置")
+                        .items(GlobalConfig.feedRssHub)
+                        .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if (which>=0 && which<3){
+                                    item.setRsshub(GlobalConfig.feedRssHub.get(which));
+                                    item.save();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        })
+                        .positiveText("选择")
+                        .show();
+            }
+        }));
+
 
 
         return  operations;

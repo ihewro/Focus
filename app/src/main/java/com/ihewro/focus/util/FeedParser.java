@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,7 +65,7 @@ public class FeedParser {
      * @param xmlStr
      * @return[
      */
-    public static Feed parseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
+    public static synchronized Feed parseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         if (Strings.isNullOrEmpty(xmlStr)) {
             return null;
         }
@@ -87,7 +88,7 @@ public class FeedParser {
     }
 
 
-    private static Feed beginParseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
+    private static synchronized Feed beginParseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         feedUrl = url;
         XmlPullParser parser = Xml.newPullParser();
         try {
@@ -120,7 +121,7 @@ public class FeedParser {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private static Feed readRssForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static synchronized Feed readRssForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, RSS);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -144,7 +145,7 @@ public class FeedParser {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private static Feed readChannelForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static synchronized Feed readChannelForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         Feed feed = new Feed();
         feed.setUrl(feedUrl);
         List<FeedItem> feedItems = new ArrayList<>();
@@ -202,7 +203,7 @@ public class FeedParser {
      * @throws IOException
      * @throws XmlPullParserException
      */
-    private static FeedItem readItemForFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private static synchronized FeedItem readItemForFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, null, ITEM);
         String title = null;
         String link = null;

@@ -41,6 +41,8 @@ public class Feed extends LitePalSupport {
     private String type;
 
     private double orderValue;//顺序权限，用来排序的
+    private String rsshub;//源地址
+    private String password;//密码
 
 
     @Column(ignore = true)
@@ -257,5 +259,21 @@ public class Feed extends LitePalSupport {
 
     public void setOrderValue(double orderValue) {
         this.orderValue = orderValue;
+    }
+
+    public String getRsshub() {
+        return rsshub;
+    }
+
+    public void setRsshub(String rsshub) {
+        this.rsshub = rsshub;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -17,6 +17,7 @@ import com.ihewro.focus.http.HttpInterface;
 import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FeedParser;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 
 import org.litepal.LitePal;
@@ -87,9 +88,21 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
 
             //判断RSSHUB的源地址，替换成现在的地址
             for (int i = 0; i< GlobalConfig.rssHub.size(); i++){
-                if (url.contains(GlobalConfig.rssHub.get(i))){
-                    url = url.replace(GlobalConfig.rssHub.get(i),UserPreference.getRssHubUrl());
-                    break;
+                if (url.contains(GlobalConfig.rssHub.get(i))){//需要根据用户的设置替换rss源
+                    String replace;
+                    if (!StringUtil.trim(feed.getRsshub()).equals("") && !StringUtil.trim(feed.getRsshub()).equals(UserPreference.DEFAULT_RSSHUB)){
+                        replace = feed.getRsshub();
+                    }else {
+                        if (!StringUtil.trim(feedFolder.getRsshub()).equals("") && !StringUtil.trim(feed.getRsshub()).equals(UserPreference.DEFAULT_RSSHUB)){
+                            replace = feedFolder.getRsshub();
+                        }else {
+                            replace = UserPreference.getRssHubUrl();
+                        }
+                    }
+
+                    url = url.replace(GlobalConfig.rssHub.get(i),replace);
+                    ALog.d("需要ti替换的" + replace + "结果" + url);
+                  break;
                 }
             }
 
@@ -118,17 +131,18 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
                 if (response != null && response.isSuccessful()){
                     feed.setErrorGet(false);
                     feed.save();
-                    Feed feed2 = FeedParser.HandleFeed(feed.getId(),response,FeedParser.parseStr2Feed(response.body(),originUrl));
-
-                    //feed更新到当前的时间流中。
-                    if (feed2!=null){
-                        return new Message(true,feed2.getFeedItemList());
-                    }else {
-                        //当前解析的内容为空
-                        return new Message(false);
+                    synchronized(this){
+                        //
+                        Feed feed2 = FeedParser.HandleFeed(feed.getId(),response,FeedParser.parseStr2Feed(response.body(),originUrl));
+                        //feed更新到当前的时间流中。
+                        if (feed2!=null){
+                            return new Message(true,feed2.getFeedItemList());
+                        }else {
+                            //当前解析的内容为空
+                            return new Message(false);
+                        }
                     }
                 }else {
-
                     String reason;
                     if (response.errorBody()!=null){
                         reason = response.errorBody().string();
@@ -170,9 +184,6 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
 
         return new Message(false);
     }
-
-
-
 
 
 

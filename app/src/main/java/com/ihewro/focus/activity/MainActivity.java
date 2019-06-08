@@ -3,13 +3,11 @@ package com.ihewro.focus.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -23,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,16 +55,18 @@ import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
-import com.mikepenz.materialdrawer.util.DrawerImageLoader;
-import com.mikepenz.materialdrawer.util.DrawerUIUtils;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -463,10 +462,31 @@ public class MainActivity extends BaseActivity {
         refreshLeftDrawerFeedList(false);
 
 
+        //顶部
+        // Create a few sample profile
+        final IProfile profile = new ProfileDrawerItem().withIcon(R.mipmap.ic_focus_launcher_round).withName("本地RSS").withEmail("数据备份在本地");
+
+        // Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withCompactStyle(true)
+                .withTextColorRes(R.color.colorAccent)
+                .addProfiles(
+                        profile,
+                        //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
+                        new ProfileSettingDrawerItem().withName("添加第三方服务").withDescription("添加内容源").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5)).withIdentifier(1),
+                        new ProfileSettingDrawerItem().withName("管理内容源").withIcon(GoogleMaterial.Icon.gmd_settings)
+                )
+                .build();
+
+
+
+
         //初始化侧边栏
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
                 .withToolbar(toolbar)
+                .withAccountHeader(headerResult)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -486,7 +506,7 @@ public class MainActivity extends BaseActivity {
                 .withStickyFooterShadow(false)
                 .build();
 
-                drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
+//                drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
 
 
         //初始化顶部的内容包括颜色
@@ -657,11 +677,13 @@ public class MainActivity extends BaseActivity {
                     haveErrorFeedInCurrentFolder = true;
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_sync_problem);
                 } else {
-                    //加载订阅的图标
-                    ImageLoader.getInstance().loadImage(StringUtil.getUrlPrefix(temp.getLink()) + "/favicon.ico", new ImageLoadingListener() {
+                    //TODO: 加载订阅的图标
+                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+
+                    /*ImageLoader.getInstance().loadImage(StringUtil.getUrlPrefix(temp.getLink()) + "/favicon.ico", new ImageLoadingListener() {
                         @Override
                         public void onLoadingStarted(String imageUri, View view) {
-                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
+//                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
                         }
 
                         @Override
@@ -680,7 +702,7 @@ public class MainActivity extends BaseActivity {
                         public void onLoadingCancelled(String imageUri, View view) {
 
                         }
-                    });
+                    });*/
 
                 }
 

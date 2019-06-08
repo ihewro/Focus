@@ -20,6 +20,8 @@
             @style/PreferenceThemeOverlay.v14.Material
         </item>
 
+        <item name="material_drawer_divider">@color/divider</item>
+
         <!--<item name="material_drawer_divider">#eeeeee</item>-->
 
 
@@ -49,6 +51,8 @@
         <item name="preferenceTheme">
             @style/PreferenceThemeOverlay.v14.Material
         </item>
+
+        <item name="material_drawer_divider">@color/divider_night</item>
 
     </style>
 

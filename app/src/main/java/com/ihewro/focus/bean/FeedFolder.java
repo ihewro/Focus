@@ -25,6 +25,8 @@ public class FeedFolder extends LitePalSupport {
     private double orderValue;//顺序权限，用来排序的
 
     private int timeout;//拉取的超时时间
+    private String rsshub;//源内容
+    private String password;//密码
 
 
     @Column(ignore = true)
@@ -90,5 +92,21 @@ public class FeedFolder extends LitePalSupport {
 
     public void setFeedList(List<Feed> feedList) {
         this.feedList = feedList;
+    }
+
+    public String getRsshub() {
+        return rsshub;
+    }
+
+    public void setRsshub(String rsshub) {
+        this.rsshub = rsshub;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

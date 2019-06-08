@@ -260,8 +260,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                                                 adapter.setNewData(null);
                                                                 adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
                                                             }
-                                                            //TODO: 如果不是网络请求，不用发消息
-                                                            EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+                                                            //最后再去更新就行
+//                                                            EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
                                                         }
 
                                                     });
