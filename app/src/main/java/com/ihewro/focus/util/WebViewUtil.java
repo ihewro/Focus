@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -62,6 +63,11 @@ public class WebViewUtil {
         String[] imageUrls = {};
         webView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");
         webView.setWebViewClient(new MyWebViewClient(context,url));
+
+
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE,null);//开启硬件加速
+        webView.getSettings().setBlockNetworkImage(true);//一开始禁止图片加载
+
 
         //加载HTML
         String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";
