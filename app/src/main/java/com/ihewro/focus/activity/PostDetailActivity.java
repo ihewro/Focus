@@ -134,75 +134,92 @@ public class PostDetailActivity extends BackActivity {
 
     private void initRecyclerView() {
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        //显示空+加载的界面
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //移动到当前文章的位置
-        linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
-
-        linearLayoutManager.setStackFromEnd(true);
-
-
-        //获取所有文章的对象
-        this.notReadNum = 0;
-        final List<FeedItem> feedItemList = new ArrayList<>();
-        for (Integer id: feedItemIdList){
-            FeedItem feedItem;
-            feedItem = LitePal.find(FeedItem.class,id);
-
-            if (!feedItem.isRead()){
-                this.notReadNum ++;
-            }
-            feedItemList.add(feedItem);
-        }
-
-        if (notReadNum <= 0){
-            toolbar.setTitle("");
-        }else {
-            toolbar.setTitle(notReadNum+"");
-        }
-
-        adapter = new PostDetailListAdapter(PostDetailActivity.this,toolbar, feedItemList);
-        adapter.bindToRecyclerView(recyclerView);
-
-        PagerSnapHelper snapHelper = new PagerSnapHelper();
+        final PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-        recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
+        adapter = new PostDetailListAdapter(PostDetailActivity.this,toolbar, null);
+        adapter.bindToRecyclerView(recyclerView);
+
+        adapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
+
+        new Thread(new Runnable() {
             @Override
-            public void onFirstScroll() {
-                initPostClickListener();
-                setCurrentItemStatus();
-                ALog.d("首次加载");
+            public void run() {
+                //获取所有文章的对象
 
+                PostDetailActivity.this.notReadNum = 0;
+                final List<FeedItem> feedItemList = new ArrayList<>();
+                for (Integer id: feedItemIdList){
+                    FeedItem feedItem;
+                    feedItem = LitePal.find(FeedItem.class,id);
+
+                    if (!feedItem.isRead()){
+                        PostDetailActivity.this.notReadNum ++;
+                    }
+                    feedItemList.add(feedItem);
+                }
+
+                PostDetailActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (notReadNum <= 0){
+                            toolbar.setTitle("");
+                        }else {
+                            toolbar.setTitle(notReadNum+"");
+                        }
+
+                        adapter.setNewData(feedItemList);
+
+                        //移动到当前文章的位置
+                        linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
+                        linearLayoutManager.setStackFromEnd(true);
+
+                        recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
+                            @Override
+                            public void onFirstScroll() {
+                                initPostClickListener();
+                                setCurrentItemStatus();
+                                ALog.d("首次加载");
+
+                            }
+
+                            @Override
+                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                ALog.d("onScrollStateChanged");
+                            }
+
+                            @Override
+                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                ALog.d("onScrolled");
+
+                            }
+
+                            @Override
+                            public void onPageSelected(int position) {
+                                ALog.d("onPageSelected" + position + feedItemList.get(position));
+                                mIndex = position;
+                                mId = feedItemIdList.get(mIndex);
+                                initData();
+                                //修改顶部导航栏的收藏状态
+                                setLikeButton();
+                                initPostClickListener();
+                                setCurrentItemStatus();
+
+
+                            }
+                        }));
+                    }
+                });
             }
+        }).start();
 
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                ALog.d("onScrollStateChanged");
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                ALog.d("onScrolled");
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                ALog.d("onPageSelected" + position + feedItemList.get(position));
-                mIndex = position;
-                mId = feedItemIdList.get(mIndex);
-                initData();
-                //修改顶部导航栏的收藏状态
-                setLikeButton();
-                initPostClickListener();
-                setCurrentItemStatus();
-
-
-            }
-        }));
 
     }
 

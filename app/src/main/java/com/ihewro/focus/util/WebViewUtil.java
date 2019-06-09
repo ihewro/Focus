@@ -83,7 +83,9 @@ public class WebViewUtil {
                 + "</body></html>";
 
         webView.setBackgroundColor(Color.parseColor("#00000000"));
-        webView.loadData( body, "text/html; charset=UTF-8", null);
+//        webView.loadData( body, "text/html; charset=UTF-8", null);
+        webView.loadDataWithBaseURL(null, body, "text/html", "utf-8", null);
+
 
        /* WebContentLayout webContentLayout = new WebContentLayout(context);
         AgentWeb mAgentWeb = AgentWeb.with(context)
