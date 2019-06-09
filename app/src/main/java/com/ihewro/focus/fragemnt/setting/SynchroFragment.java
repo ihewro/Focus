@@ -101,7 +101,7 @@ public class SynchroFragment extends SettingFragment {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 UserPreference.updateOrSaveValueByKey(UserPreference.tim_interval, String.valueOf(GlobalConfig.refreshIntervalInt.get(which)));
-                                TimingService.startService(getActivity());
+                                TimingService.startService(getActivity(),true);
                                 return false;
                             }
                         })

@@ -171,7 +171,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
             }
         }));
 
-        operations.add(new Operation("分享该文件夹","",getResources().getDrawable(R.drawable.ic_share_black_24dp_grey),feedFolder, new OperationCallback() {
+/*        operations.add(new Operation("分享该文件夹","",getResources().getDrawable(R.drawable.ic_share_black_24dp_grey),feedFolder, new OperationCallback() {
             @Override
             public void run(Object o) {
                 final FeedFolder item = (FeedFolder)o;
@@ -195,7 +195,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                             }
                         }).show();
             }
-        }));
+        }));*/
 
 
         operations.add(new Operation("设置rsshub源","",getResources().getDrawable(R.drawable.ic_autorenew_black_24dp_night_grey),feedFolder, new OperationCallback() {

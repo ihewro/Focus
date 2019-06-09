@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startTimeService(){
-        TimingService.startService(this);
+        TimingService.startService(this,false);
     }
 
 
@@ -464,20 +464,28 @@ public class MainActivity extends BaseActivity {
 
         //顶部
         // Create a few sample profile
-        final IProfile profile = new ProfileDrawerItem().withIcon(R.mipmap.ic_focus_launcher_round).withName("本地RSS").withEmail("数据备份在本地");
+        final IProfile profile = new ProfileDrawerItem().withName("本地RSS").withEmail("数据备份在本地");
 
+        int color;
+        if(SkinPreference.getInstance().getSkinName().equals("night")){
+            color = R.color.material_drawer_dark_secondary_text;
+        }else {
+            color = R.color.material_drawer_secondary_text;
+        }
         // Create the AccountHeader
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
-                .withTextColorRes(R.color.colorAccent)
+//                .withHeaderBackground(R.drawable.moecats)
+                .withTextColorRes(color)
                 .addProfiles(
                         profile,
                         //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
-                        new ProfileSettingDrawerItem().withName("添加第三方服务").withDescription("添加内容源").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5)).withIdentifier(1),
-                        new ProfileSettingDrawerItem().withName("管理内容源").withIcon(GoogleMaterial.Icon.gmd_settings)
+                        new ProfileSettingDrawerItem().withName("添加第三方服务").withDescription("添加内容源").withIcon(GoogleMaterial.Icon.gmd_add).withIdentifier(1)
                 )
                 .build();
+
+        headerResult.getView().findViewById(R.id.material_drawer_account_header_current).setVisibility(View.GONE);
 
 
 
@@ -486,6 +494,7 @@ public class MainActivity extends BaseActivity {
         drawer = new DrawerBuilder().withActivity(this)
                 .withActivity(this)
                 .withToolbar(toolbar)
+                .withTranslucentStatusBar(true)
                 .withAccountHeader(headerResult)
                 .addDrawerItems((IDrawerItem[]) Objects.requireNonNull(subItems.toArray(new IDrawerItem[subItems.size()])))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {

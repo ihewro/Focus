@@ -3,6 +3,7 @@ package com.ihewro.focus.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
@@ -22,7 +25,9 @@ import com.ihewro.focus.adapter.BaseViewPagerAdapter;
 import com.ihewro.focus.adapter.FeedCategoryLeftAdapter;
 import com.ihewro.focus.adapter.FeedCategoryRightAdapter;
 import com.ihewro.focus.adapter.FeedListAdapter;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.FeedRequire;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Website;
@@ -34,6 +39,9 @@ import com.ihewro.focus.http.HttpUtil;
 import com.ihewro.focus.view.RequireListPopupView;
 import com.lxj.xpopup.XPopup;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -321,6 +329,15 @@ public class FeedCategoryActivity extends BackActivity {
                         .asCustom(new RequireListPopupView(FeedCategoryActivity.this, list, "手动订阅", "适用于高级玩家", new Help(false), new Feed(), getSupportFragmentManager()))
                         .show();
 
+                break;
+
+            case R.id.action_share:
+                new MaterialDialog.Builder(this)
+                        .title("：）")
+                        .content("分享市场开发中……")
+                        .positiveText("确定")
+                        .negativeText("取消")
+                        .show();
                 break;
         }
 

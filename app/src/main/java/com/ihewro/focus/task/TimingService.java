@@ -51,8 +51,9 @@ public class TimingService extends Service {
     }
 
 
-    public static void startService(Context context){
+    public static void startService(Context context,boolean isNewAlarm){
         Intent intent = new Intent(context, TimingService.class);
+        intent.putExtra("isNewAlarm",isNewAlarm);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent);
         } else {
@@ -66,7 +67,7 @@ public class TimingService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        boolean isNewAlarm = intent.getBooleanExtra("isNewAlarm",false);//是否需要重新设置定时器
 
         this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
         int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
@@ -84,9 +85,23 @@ public class TimingService extends Service {
             long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
 //            long triggerAtTime = SystemClock.elapsedRealtime() + 30*1000;//每隔30s执行一次
             Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
-            //如果存在这个pendingIntent 则将已有的取消，重新生成一个
-            PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);
-            manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+            //如果存在这个pendingIntent 则复用
+
+            PendingIntent pi = null;
+
+            if (isNewAlarm){
+                PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);//重新创建定时器
+            }else {
+                PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT);//复用之前的定时器
+            }
+
+            // pendingIntent 为发送广播
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                //android 6.0以上
+                manager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pi);
+            } else{
+                manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+            }
 
             //执行任务
             if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务

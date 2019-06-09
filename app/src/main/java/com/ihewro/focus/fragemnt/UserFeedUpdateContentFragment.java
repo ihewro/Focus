@@ -171,7 +171,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        adapter.enableSwipeItem();
+  /*      adapter.enableSwipeItem();
         adapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -194,7 +194,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
 
             }
-        });
+        });*/
 
     }
 
