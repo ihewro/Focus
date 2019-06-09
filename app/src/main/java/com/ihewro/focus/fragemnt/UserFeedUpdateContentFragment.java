@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import android.widget.Toolbar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
+import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
+import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
@@ -161,6 +165,37 @@ public class UserFeedUpdateContentFragment extends Fragment {
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
         adapter.bindToRecyclerView(recyclerView);
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
+
+
+        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        adapter.enableSwipeItem();
+        adapter.setOnItemSwipeListener(new OnItemSwipeListener() {
+            @Override
+            public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
+                ALog.d("onItemSwipeStart");
+
+            }
+
+            @Override
+            public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {
+                ALog.d("clearView");
+            }
+
+            @Override
+            public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
+                ALog.d("onItemSwiped");
+
+            }
+
+            @Override
+            public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
+
+            }
+        });
+
     }
 
     /**

@@ -113,6 +113,8 @@ public class MyApplication extends LitePalApplication {
     }
 
 
+
+
     private void initErrorHandle(){
 
         Recovery.getInstance()

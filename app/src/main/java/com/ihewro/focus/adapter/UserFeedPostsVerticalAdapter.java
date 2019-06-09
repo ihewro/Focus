@@ -1,38 +1,27 @@
 package com.ihewro.focus.adapter;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.blankj.ALog;
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
-import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
-import com.ihewro.focus.callback.ImageLoaderCallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.StringUtil;
-import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import org.greenrobot.eventbus.EventBus;
-import org.litepal.LitePal;
-
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +37,7 @@ import skin.support.utils.SkinPreference;
  *     version: 1.0
  * </pre>
  */
-public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, BaseViewHolder> {
+public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedItem, BaseViewHolder> {
 
     private Activity activity;
     private String feedName;
@@ -87,6 +76,10 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
         //绑定事件
         bindListener(helper,item);
 
+        if (helper.getAdapterPosition() == 0){
+            ALog.d("第一个项目" + item.getTitle());
+        }
+
 //        ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
         helper.setText(R.id.rss_name,item.getFeedName());
@@ -107,7 +100,11 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                 }
 //                ALog.d("图片地址是" + imageUrl);
                 helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
-                ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
+
+                ImageLoader.getInstance().displayImage(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic),ImageLoaderManager.getSubsciptionIconOptions(activity));
+
+
+                /*ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
                     @Override
                     public void onFailed(ImageView imageView, FailReason failReason) {
                         imageView.setVisibility(View.GONE);
@@ -130,7 +127,7 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                         }
 
                     }
-                });
+                });*/
             }else {
                 helper.getView(R.id.post_pic).setVisibility(View.GONE);
             }
@@ -147,27 +144,27 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
             helper.setTextColor(R.id.rss_name,activity.getResources().getColor(read_content_color));
             helper.setTextColor(R.id.post_summay,activity.getResources().getColor(read_content_color));
             helper.setTextColor(R.id.post_time,activity.getResources().getColor(read_content_color));
-            helper.setText(R.id.markRead,"标记未读");
+//            helper.setText(R.id.markRead,"标记未读");
         }else {
             helper.setTextColor(R.id.post_title,activity.getResources().getColor(not_read_color));
             helper.setTextColor(R.id.rss_name,activity.getResources().getColor(not_read_content_color));
             helper.setTextColor(R.id.post_summay,activity.getResources().getColor(not_read_content_color));
             helper.setTextColor(R.id.post_time,activity.getResources().getColor(not_read_content_color));
-            helper.setText(R.id.markRead,"标记已读");
+//            helper.setText(R.id.markRead,"标记已读");
         }
         if (item.isFavorite()){
             helper.getView(R.id.favorite).setVisibility(View.VISIBLE);
-            helper.setText(R.id.star,"取消收藏");
+//            helper.setText(R.id.star,"取消收藏");
         }else {
             helper.getView(R.id.favorite).setVisibility(View.GONE);
-            helper.setText(R.id.star,"收藏");
+//            helper.setText(R.id.star,"收藏");
         }
 
     }
 
 
     private void bindListener(final BaseViewHolder helper, final FeedItem item){
-
+/*
 //        ((EasySwipeMenuLayout)helper.getView(R.id.swipe));
         helper.getView(R.id.markRead).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,11 +184,14 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                 notifyItemChanged(helper.getAdapterPosition());
                 EventBus.getDefault().post(new EventMessage(EventMessage.EDIT_ITEM_READ));
             }
-        });
+        });*/
 
-        helper.getView(R.id.star).setOnClickListener(new View.OnClickListener() {
+
+
+
+        helper.getView(R.id.content_container).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onLongClick(View v) {
                 item.setFavorite(!item.isFavorite());
 
                 //保存到数据库
@@ -205,11 +205,12 @@ public class UserFeedPostsVerticalAdapter extends BaseQuickAdapter<FeedItem, Bas
                     Toasty.success(activity,"取消收藏成功").show();
                 }
                 notifyItemChanged(helper.getAdapterPosition());
+                return true;
             }
         });
 
         //跳转页面
-        helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
+        helper.getView(R.id.content_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (UserPreference.queryValueByKey(UserPreference.FIRST_INTRO_MAIN_FEED_ITEM, "0").equals("0")){

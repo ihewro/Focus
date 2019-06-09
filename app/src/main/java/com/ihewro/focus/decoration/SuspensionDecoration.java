@@ -28,7 +28,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
     private LayoutInflater mInflater;
 
     private int mTitleHeight;//title的高
-    private static int COLOR_TITLE_BG = Color.parseColor("#ffeeeeee");
+    private static int COLOR_TITLE_BG = Color.parseColor("#eeeeee");
     private static int COLOR_TITLE_FONT = Color.parseColor("#FF999999");
     private static int mTitleFontSize;//title字体大小
 
@@ -41,7 +41,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
             COLOR_TITLE_BG = Color.parseColor("#424242");
             COLOR_TITLE_FONT = Color.parseColor("#eeeeee");
         }else {
-            COLOR_TITLE_BG = Color.parseColor("#FFDFDFDF");
+            COLOR_TITLE_BG = Color.parseColor("#eeeeee");
             COLOR_TITLE_FONT = Color.parseColor("#FF999999");
         }
         mDatas = datas;
@@ -135,7 +135,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
      */
     private void drawTitleArea(Canvas c, int left, int right, View child, RecyclerView.LayoutParams params, int position) {//最先调用，绘制在最下层
         mPaint.setColor(COLOR_TITLE_BG);
-        c.drawRect(left, child.getTop() - params.topMargin - mTitleHeight, right, child.getTop() - params.topMargin, mPaint);
+        c.drawRect(left, child.getTop() - params.topMargin - mTitleHeight, right, child.getTop() - params.topMargin + 20, mPaint);
         mPaint.setColor(COLOR_TITLE_FONT);
 /*
         Paint.FontMetricsInt fontMetrics = mPaint.getFontMetricsInt();
@@ -168,11 +168,11 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
 
                     //一种头部折叠起来的视效，个人觉得也还不错~
                     //可与123行 c.drawRect 比较，只有bottom参数不一样，由于 child.getHeight() + child.getTop() < mTitleHeight，所以绘制区域是在不断的减小，有种折叠起来的感觉
-                    c.clipRect(parent.getPaddingLeft(), parent.getPaddingTop(), parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + child.getHeight() + child.getTop());
+                 /*   c.clipRect(parent.getPaddingLeft(), parent.getPaddingTop(), parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + child.getHeight() + child.getTop());*/
 
                     //类似饿了么点餐时,商品列表的悬停头部切换“动画效果”
                     //上滑时，将canvas上移 （y为负数） ,所以后面canvas 画出来的Rect和Text都上移了，有种切换的“动画”感觉
-//                    c.translate(0, child.getHeight() + child.getTop() - mTitleHeight);
+                    c.translate(0, child.getHeight() + child.getTop() - mTitleHeight);
                 }
             }
         }

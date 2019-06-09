@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
-    android:id="@+id/swipe"
+
+<android.support.v7.widget.CardView
+    android:id="@+id/content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/bg_round"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:contentView="@+id/content"
-    app:rightMenuView="@+id/right">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/content"
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="true"
@@ -28,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingBottom="10dp"
@@ -42,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLines="2"
-                        android:textSize="16dp"
+                        android:textSize="15sp"
                         android:paddingRight="20dp"
                         android:layout_alignParentLeft="true"
                         android:text="内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题内容标题"/>
@@ -56,25 +59,7 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
-                    <ImageView
-                        android:id="@+id/rss_icon"
-                        android:layout_width="21dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_rss_feed_grey_24dp"/>
-                    <TextView
-                        android:id="@+id/rss_name"
-                        android:layout_marginLeft="15dp"
-                        android:layout_toRightOf="@id/rss_icon"
-                        android:layout_centerVertical="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="人民一学的bilibili动态"/>
-                </RelativeLayout>
+
 
                 <TextView
                     android:id="@+id/post_summay"
@@ -82,6 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
+                    android:textSize="13sp"
                     android:text="@string/test_summary"/>
 
                 <RelativeLayout
@@ -89,10 +75,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/feed_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:id="@+id/rss_icon"
+                            android:layout_width="21dp"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_rss_feed_grey_24dp"/>
+                        <TextView
+                            android:id="@+id/rss_name"
+                            android:layout_toRightOf="@id/rss_icon"
+                            android:layout_centerVertical="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+
+                            android:text="人民一学的bilibili动态"/>
+                    </RelativeLayout>
+
                     <TextView
                         android:id="@+id/post_time"
+                        android:layout_marginLeft="15dp"
+                        android:layout_toRightOf="@id/feed_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
+
                         android:text="下午6:31"/>
 
                     <TextView
@@ -100,6 +113,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="已收藏"
+                        android:textSize="13sp"
+
                         android:layout_alignParentRight="true"
                         />
 
@@ -110,6 +125,7 @@
             <View
                 android:layout_height="1.5px"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:background="@color/divider"/>
 
         </LinearLayout>
@@ -119,36 +135,11 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_logo"
+            android:src="@mipmap/ic_focus_launcher_round"
             android:scaleType="centerCrop"
             />
     </LinearLayout>
 
 
+</android.support.v7.widget.CardView>
 
-    <!-- 以下都是侧滑菜单的内容依序排列 -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/right"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/markRead"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:background="#a9c6de"
-            android:clickable="true"
-            android:text="标记未读"
-            android:textColor="@android:color/white"/>
-
-        <Button
-            android:id="@+id/star"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="#d9dee4"
-            android:text="收藏"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
-
-</com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>

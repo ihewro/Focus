@@ -76,7 +76,6 @@ dependencies {
     }
 
     //滑动菜单
-    implementation 'com.github.anzaizai:EasySwipeMenuLayout:1.1.2'
 
     //dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'

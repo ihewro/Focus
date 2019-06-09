@@ -50,6 +50,31 @@ public class ImageLoaderManager {
         ImageLoader.getInstance().init(config);
     }
 
+
+    public static DisplayImageOptions getSubsciptionIconOptions(Context context) {
+
+        Drawable defaultDrawable;
+        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+            defaultDrawable = context.getResources().getDrawable(R.drawable.ic_night_loading);
+        } else {
+            defaultDrawable = context.getResources().getDrawable(R.drawable.ic_day_loading);
+
+        }
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(defaultDrawable)
+                .showImageForEmptyUri(defaultDrawable)
+                .showImageOnFail(defaultDrawable)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        return options;
+    }
+
+
+
+
     public static void loadImageUrlToImageView(String imageUrl, final ImageView imageView, final ImageLoaderCallback imageLoaderCallback){
 
         //TODO: 根据夜间模式，加载中的图片不同
