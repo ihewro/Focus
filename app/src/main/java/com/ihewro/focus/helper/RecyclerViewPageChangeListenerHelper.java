@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.view.View;
 
+import com.blankj.ALog;
+
 /**
  * <pre>
  *     author : hewro
@@ -27,7 +29,7 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-
+        ALog.d("滚动了");
         if (onPageChangeListener != null) {
             if (firstPosition){
                 onPageChangeListener.onFirstScroll();

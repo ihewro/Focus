@@ -229,18 +229,30 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
             @Override
             public void onClick(View view) {
 
+                String[] list = new String[]{"将以上部分标记为已读","将当前文章标记已（未）读", "将以下部分标记为已读"};
+
+                if (item.isRead()){
+                    list[1] = "将当前文章标记未读";
+                }else {
+                    list[1] = "将当前文章标记已读";
+                }
                 new XPopup.Builder(activity)
                         .atView(helper.getView(R.id.operations))  // 依附于所点击的View，内部会自动判断在上方或者下方显示
                         .hasShadowBg(false)
-                        .asAttachList(new String[]{"将以上部分标记为已读", "将以下部分标记为已读"},
+                        .asAttachList(list,
                                 new int[]{},
                                 new OnSelectListener() {
                                     @Override
                                     public void onSelect(int position, String text) {
                                         if (position == 0){
                                             markReadOfTop(helper,item);
-                                        }else if (position == 1){
+                                        }else if (position == 2){
                                             markReadOfBottom(helper,item);
+                                        }else if (position == 1){
+                                            //当前项目标记已读/未读
+                                            item.setRead(!item.isRead());
+                                            item.saveAsync();
+                                            notifyItemChanged(helper.getAdapterPosition());
                                         }
                                     }
                                 })

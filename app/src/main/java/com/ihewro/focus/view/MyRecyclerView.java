@@ -35,4 +35,9 @@ public class MyRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        ALog.d("recyclerview 点击事件");
+        return super.onTouchEvent(e);
+    }
 }

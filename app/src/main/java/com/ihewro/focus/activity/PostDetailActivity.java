@@ -32,6 +32,7 @@ import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.WebViewUtil;
+import com.ihewro.focus.view.MyRecyclerView;
 import com.ihewro.focus.view.MyScrollView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +56,7 @@ public class PostDetailActivity extends BackActivity {
     @BindView(R.id.appbar)
     AppBarLayout appbar;
     @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    MyRecyclerView recyclerView;
 
 
 
@@ -74,6 +75,8 @@ public class PostDetailActivity extends BackActivity {
 
     private List<Integer> feedItemIdList;
     private int notReadNum = 0;
+
+    private  LinearLayoutManager linearLayoutManager;
 
 
 
@@ -136,7 +139,7 @@ public class PostDetailActivity extends BackActivity {
 
 
         //显示空+加载的界面
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
+        linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -178,16 +181,24 @@ public class PostDetailActivity extends BackActivity {
                         adapter.setNewData(feedItemList);
 
                         //移动到当前文章的位置
-                        linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
+                        if (mIndex==0){
+                            linearLayoutManager.scrollToPositionWithOffset(mIndex, 1);
+                            linearLayoutManager.scrollToPositionWithOffset(mIndex, -1);
+                        }else {
+                            linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
+                        }
                         linearLayoutManager.setStackFromEnd(true);
+
+
+
 
                         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
                             @Override
                             public void onFirstScroll() {
-                                initPostClickListener();
-                                setCurrentItemStatus();
+                                //首次滚动显示当前页面
                                 ALog.d("首次加载");
-
+                                setCurrentItemStatus();
+                                initPostClickListener();
                             }
 
                             @Override
@@ -209,7 +220,7 @@ public class PostDetailActivity extends BackActivity {
                                 initData();
                                 //修改顶部导航栏的收藏状态
                                 setLikeButton();
-                                initPostClickListener();
+//                                initPostClickListener();
                                 setCurrentItemStatus();
 
 
@@ -244,7 +255,7 @@ public class PostDetailActivity extends BackActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void initPostClickListener(){
 
-        //文章的touch事件
+        //文章双击收藏事件
         final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
             @Override
@@ -255,7 +266,7 @@ public class PostDetailActivity extends BackActivity {
                 }else {
                     currentFeedItem.setFavorite(true);
                 }
-                currentFeedItem.save();
+                currentFeedItem.saveAsync();
                 if (!isUpdateMainReadMark) {
                     EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
                 } else {
@@ -266,6 +277,8 @@ public class PostDetailActivity extends BackActivity {
             }
         });
 
+
+        //双击顶栏回顶部事件
         final GestureDetector gestureDetector1 = new GestureDetector(PostDetailActivity.this,new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onDoubleTap(MotionEvent e) {
@@ -278,8 +291,7 @@ public class PostDetailActivity extends BackActivity {
             toolbar.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
-                    gestureDetector1.onTouchEvent(motionEvent);
-                    return false;
+                    return gestureDetector1.onTouchEvent(motionEvent);
                 }
             });
         }
@@ -287,6 +299,7 @@ public class PostDetailActivity extends BackActivity {
             adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    ALog.d("什么情况？？双击事件");
                     return gestureDetector.onTouchEvent(event);
                 }
             });
