@@ -25,6 +25,7 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.DatabaseHelper;
 import com.ihewro.focus.util.DataCleanManager;
 import com.ihewro.focus.util.StringUtil;
+import com.ihewro.focus.util.UIUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -144,7 +145,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                                                 @Override
                                                 public void run() {
                                                     importData(backupFilesPath.get(which));
-                                                    activity.runOnUiThread(new Runnable() {
+                                                    UIUtil.runOnUiThread(activity,new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             dialog1.dismiss();

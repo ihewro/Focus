@@ -34,6 +34,8 @@ public class EventMessage {
     public static final String SHOW_FEED_FOLDER_MANAGE = "SHOW_FEED_FOLDER_MANAGE";
     public static final String SHOW_FEED_LIST_MANAGE = "SHOW_FEED_LIST_MANAGE";
     public static final String MAIN_SWITCH_FRAGMENT_USE_FEED_ID = "MAIN_SWITCH_FRAGMENT_USE_FOLDER_ID";
+    public static final String GO_TO_LIST_TOP = "GO_TO_LIST_TOP";//首页列表回顶部
+
 
 
     //feed、feedFolder操作

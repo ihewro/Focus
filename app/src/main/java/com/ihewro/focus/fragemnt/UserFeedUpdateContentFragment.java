@@ -29,6 +29,7 @@ import android.widget.Toolbar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -43,6 +44,7 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
+import com.ihewro.focus.helper.MyLinearLayoutManager;
 import com.ihewro.focus.task.RequestFeedListDataService;
 import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.ihewro.focus.util.UIUtil;
@@ -77,6 +79,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     SmartRefreshLayout refreshLayout;
     private SuspensionDecoration mDecoration;
     List<FeedItem> eList = new ArrayList<FeedItem>();
+    List<FeedItem> tempList = new ArrayList<FeedItem>();
     public static final String FEED_LIST_ID = "FEED_LIST_ID";
 
     UserFeedPostsVerticalAdapter adapter;
@@ -87,7 +90,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
     private View view;//toolbar的view,用来显示列表依存的view
     private View subView;//toolbar下面的文字view,用来显示当前未读数目
     private boolean isFirstOpen = true;//首次打开
-    ArrayList<String> feedIdList = new ArrayList<>();
+    private ArrayList<String> feedIdList = new ArrayList<>();
 
     private boolean isconnet = false;//
     private int feedItemNum;
@@ -160,7 +163,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     public void initEmptyView() {
         //初始化列表
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
         adapter.bindToRecyclerView(recyclerView);
@@ -170,31 +173,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
         ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-  /*      adapter.enableSwipeItem();
-        adapter.setOnItemSwipeListener(new OnItemSwipeListener() {
-            @Override
-            public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-                ALog.d("onItemSwipeStart");
-
-            }
-
-            @Override
-            public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {
-                ALog.d("clearView");
-            }
-
-            @Override
-            public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-                ALog.d("onItemSwiped");
-
-            }
-
-            @Override
-            public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
-
-            }
-        });*/
 
     }
 
@@ -223,7 +201,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 @Override
                 public void run() {
                     //子线程
-                    UIUtil.logCurrentThread();
                     whileServiceConnect(iBinder);
                 }
             }).start();
@@ -259,7 +236,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
         final List<Feed> finalFeedList = feedList;
 
-        getActivity().runOnUiThread(new Runnable() {
+        UIUtil.runOnUiThread(getActivity(),new Runnable() {
             @Override
             public void run() {
                 //主线程
@@ -279,22 +256,41 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
                                 if (newNum > 0){//有新文章时候才会去更新界面
                                     //根据是否显示新文章来判断
-                                    eList.clear();
-                                    eList.addAll(feedItems);
 
-                                    getActivity().runOnUiThread(new Runnable() {
+
+                                    UIUtil.runOnUiThread(getActivity(),new Runnable() {
                                         @Override
                                         public void run() {
+                                            ALog.d("请求过程中！");
+
                                             snackbar= Snackbar.make(recyclerView, newNum + "篇新文章，点击显示", Snackbar.LENGTH_INDEFINITE)
                                                     .setActionTextColor(Color.WHITE)
                                                     .setAction("显示", new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
-                                                            adapter.setNewData(eList);
-                                                            if (eList.size()==0){
-                                                                adapter.setNewData(null);
-                                                                adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
-                                                            }
+                                                            ALog.d("请求过程中刷新界面！");
+
+                                                            new Thread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    eList.clear();
+                                                                    eList.addAll(feedItems);
+
+
+                                                                    UIUtil.runOnUiThread(getActivity(), new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            if (eList.size()==0){
+                                                                                adapter.setNewData(null);
+                                                                                adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
+                                                                            }else {
+                                                                                //一定是网络请求才会调用这里，所以用diff比较
+                                                                                adapter.setNewDataByDiff(feedItems,notReadNum);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }).start();
                                                             //最后再去更新就行
 //                                                            EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
                                                         }
@@ -313,6 +309,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
                     @Override
                     public void onFinish(final List<FeedItem> feedList, final int newNum) {
+
+                        ALog.d("请求结束了！");
                         //主线程
                         new Thread(new Runnable() {
                             @Override
@@ -321,13 +319,13 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                 eList.clear();
                                 eList.addAll(feedList);
 
-
+                                ALog.d("列表数目" + eList.size());
                                if (newNum > 0){//获取到新的数据才自动备份
                                    //备份数据库
                                    UIUtil.autoBackUpWhenItIsNecessary();
                                }
 
-                                getActivity().runOnUiThread(new Runnable() {
+                                UIUtil.runOnUiThread(getActivity(),new Runnable() {
                                     @Override
                                     public void run() {
                                         //主线程
@@ -335,7 +333,11 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                             adapter.setNewData(null);
                                             adapter.setEmptyView(R.layout.simple_empty_view,recyclerView);
                                         }else {
-                                            adapter.setNewData(eList);
+                                            if (newNum > 0){//网络请求再使用diff比较
+                                                adapter.setNewDataByDiff(feedList,notReadNum);
+                                            }else {
+                                                adapter.setNewData(eList);
+                                            }
                                         }
 
                                         //显示通知
@@ -356,11 +358,12 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                         //取消刷新
                                         refreshLayout.finishRefresh(true);
 
-
                                         updateNotReadNum();
-                                        //更新侧边栏和其他接收这个通知的组件
-                                        //TODO: 如果不是网络请求，不用发消息
-                                        EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+                                        if (newNum>0){
+                                            //TODO: 如果不是网络请求，不用发消息
+                                            //更新侧边栏和其他接收这个通知的组件
+                                            EventBus.getDefault().post(new EventMessage(EventMessage.REFRESH_FEED_ITEM_LIST));
+                                        }
 
                                         //解除绑定
                                         if (isconnet){
@@ -389,6 +392,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
 
     }
+
 
 
     @Override
@@ -522,6 +526,29 @@ public class UserFeedUpdateContentFragment extends Fragment {
             //显示所有文章
             updateData(new ArrayList<String>());
             ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
+        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.GO_TO_LIST_TOP)){
+            //列表回顶部
+
+            if (feedIdList.size()>0){
+                recyclerView.smoothScrollToPosition(0);//这个方法只保证指定的item被滑动到屏幕中，意味着自下往上滑的话，可以将指定item置顶，但是如果已经在屏幕中的话，那他就不会起作用，并且如果是自上往下滑的话，则置顶的item就会被滑到底部
+            }
+
         }
+    }
+
+    public int getNotReadNum(){
+        return this.notReadNum;
+    }
+
+    public int getFeedItemNum(){
+        this.feedItemNum = 0;
+        if (feedIdList.size() >0){
+            for (int i = 0; i < feedIdList.size(); i++) {
+                this.feedItemNum+= LitePal.where("feedid = ?",feedIdList.get(i)).count(FeedItem.class);
+            }
+        }else {//为空表示显示所有的feedId
+            this.feedItemNum = LitePal.count(FeedItem.class);
+        }
+        return this.feedItemNum;
     }
 }

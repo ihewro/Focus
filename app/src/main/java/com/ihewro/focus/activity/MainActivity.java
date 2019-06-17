@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -17,14 +18,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -45,6 +49,7 @@ import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
 import com.ihewro.focus.task.TimingService;
 import com.ihewro.focus.util.StringUtil;
+import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -75,6 +80,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
+import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +88,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 import skin.support.SkinCompatManager;
@@ -254,6 +261,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initListener() {
 
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
@@ -292,13 +300,65 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        playButton.setOnClickListener(new View.OnClickListener() {
+
+        /*playButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                //显示弹窗
+            public void onClick(View v) {
+                ALog.d("单击");
                 toggleFeedListPopupView();
             }
+        });*/
+        playButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new MaterialDialog.Builder(MainActivity.this)
+                        .title(toolbarTitle.getText())
+                        .content("全部数目" + feedPostsFragment.getFeedItemNum() + "\n" + "未读数目" + feedPostsFragment.getNotReadNum())
+                        .show();
+                return true;
+            }
         });
+
+        final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {//双击事件
+                //回顶部
+                ALog.d("双击");
+                EventBus.getDefault().post(new EventMessage(EventMessage.GO_TO_LIST_TOP));
+
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+
+                ALog.d("单击");
+                toggleFeedListPopupView();
+                return true;
+            }
+
+
+            /*   @Override
+            public void onLongPress(MotionEvent e) {
+                //显示当前列表的的信息
+                super.onLongPress(e);
+                new MaterialDialog.Builder(MainActivity.this)
+                        .title(toolbarTitle.getText())
+                        .content("全部数目" + feedPostsFragment.getFeedItemNum() + "\n" + "未读数目" + feedPostsFragment.getNotReadNum())
+                        .show();
+
+            }*/
+        });
+
+
+        playButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
+
     }
 
     private void createTabLayout() {
@@ -359,7 +419,7 @@ public class MainActivity extends BaseActivity {
                 searchResult3s = LitePal.where("name like ?", text2).find(FeedFolder.class);
 
 
-                MainActivity.this.runOnUiThread(new Runnable() {
+                UIUtil.runOnUiThread(MainActivity.this,new Runnable() {
                     @Override
                     public void run() {
                         searchFeedItemListFragment.updateData(searchResults);

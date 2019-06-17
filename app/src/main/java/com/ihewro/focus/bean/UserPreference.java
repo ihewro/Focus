@@ -1,12 +1,16 @@
 package com.ihewro.focus.bean;
 
+import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 
 import org.litepal.LitePal;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
+import org.litepal.crud.callback.FindMultiCallback;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <pre>
@@ -81,6 +85,21 @@ public class UserPreference extends LitePalSupport {
     }
 
 
+    public  static  Map<String,String> map = new HashMap<>();
+
+
+    public static void initCacheMap(){
+        map.clear();
+        LitePal.findAllAsync(UserPreference.class).listen(new FindMultiCallback<UserPreference>() {
+            @Override
+            public void onFinish(List<UserPreference> list) {
+                for (UserPreference userPreference:list){
+                    map.put(userPreference.getKey(),userPreference.getValue());
+                }
+            }
+        });
+    }
+
     public UserPreference(String key, String value) {
         this.key = key;
         this.value = value;
@@ -93,14 +112,21 @@ public class UserPreference extends LitePalSupport {
     }
 
     public static String queryValueByKey(String key, String defaultValue){
-        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
-        if (userPreferences.size()>0){
-            UserPreference temp = userPreferences.get(0);
-            return temp.getValue();
+        if (map.containsKey(key)){
+            ALog.d("缓存数据");
+            return map.get(key);
         }else {
-            return defaultValue;
+            List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
+            if (userPreferences.size()>0){
+                UserPreference temp = userPreferences.get(0);
+                return temp.getValue();
+            }else {
+                return defaultValue;
+            }
         }
     }
+
+
 
 
     private static void setValueByKey(String key,String value){

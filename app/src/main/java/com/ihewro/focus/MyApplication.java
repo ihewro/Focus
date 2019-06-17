@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.blankj.ALog;
 import com.ihewro.focus.activity.MainActivity;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -65,6 +66,7 @@ public class MyApplication extends LitePalApplication {
     public void initALog() {
         ALog.Config config = ALog.init(this)
                 .setLogSwitch(BuildConfig.DEBUG)// 设置 log 总开关，包括输出到控制台和文件，默认开
+//                .setLogSwitch(false)// 设置 log 总开关，包括输出到控制台和文件，默认开
                 .setConsoleSwitch(BuildConfig.DEBUG)// 设置是否输出到控制台开关，默认开
                 .setGlobalTag(null)// 设置 log 全局标签，默认为空
                 // 当全局标签不为空时，我们输出的 log 全部为该 tag，
@@ -109,6 +111,9 @@ public class MyApplication extends LitePalApplication {
                 .setSkinStatusBarColorEnable(true)                     // 关闭状态栏换肤，默认打开[可选]
                 .setSkinWindowBackgroundEnable(true)                   // 关闭windowBackground换肤，默认打开[可选]
                 .loadSkin();
+
+
+        UserPreference.initCacheMap();
 
     }
 

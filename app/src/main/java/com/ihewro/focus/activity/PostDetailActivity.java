@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,12 +32,14 @@ import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
+import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.util.WebViewUtil;
 import com.ihewro.focus.view.MyRecyclerView;
 import com.ihewro.focus.view.MyScrollView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
+import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +81,7 @@ public class PostDetailActivity extends BackActivity {
 
     private  LinearLayoutManager linearLayoutManager;
 
-
+    private final List<FeedItem> feedItemList = new ArrayList<>();
 
 
     public static void activityStart(Activity activity,int indexInList, ArrayList<Integer> feedItemIdList,boolean flag,boolean isStar) {
@@ -109,14 +112,6 @@ public class PostDetailActivity extends BackActivity {
         isUpdateMainReadMark = intent.getBooleanExtra(Constants.IS_UPDATE_MAIN_READ_MARK,false);
 
 
-        initData();
-
-        initRecyclerView();
-
-
-        initListener();
-
-
     }
 
 
@@ -130,8 +125,12 @@ public class PostDetailActivity extends BackActivity {
     }
 
 
-    public void initData() {
-        currentFeedItem = LitePal.find(FeedItem.class,mId);
+    public void initData(boolean isDatabase) {
+        if (isDatabase){
+            currentFeedItem = LitePal.find(FeedItem.class,mId);
+        }else {
+            currentFeedItem = feedItemList.get(mIndex);
+        }
 
     }
 
@@ -157,7 +156,7 @@ public class PostDetailActivity extends BackActivity {
                 //获取所有文章的对象
 
                 PostDetailActivity.this.notReadNum = 0;
-                final List<FeedItem> feedItemList = new ArrayList<>();
+                feedItemList.clear();
                 for (Integer id: feedItemIdList){
                     FeedItem feedItem;
                     feedItem = LitePal.find(FeedItem.class,id);
@@ -168,7 +167,10 @@ public class PostDetailActivity extends BackActivity {
                     feedItemList.add(feedItem);
                 }
 
-                PostDetailActivity.this.runOnUiThread(new Runnable() {
+                //初始化当前文章的对象
+                initData(false);
+
+                UIUtil.runOnUiThread(PostDetailActivity.this,new Runnable() {
                     @Override
                     public void run() {
 
@@ -190,14 +192,13 @@ public class PostDetailActivity extends BackActivity {
                         linearLayoutManager.setStackFromEnd(true);
 
 
-
-
                         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
                             @Override
                             public void onFirstScroll() {
                                 //首次滚动显示当前页面
                                 ALog.d("首次加载");
                                 setCurrentItemStatus();
+                                setLikeButton();
                                 initPostClickListener();
                             }
 
@@ -214,15 +215,27 @@ public class PostDetailActivity extends BackActivity {
 
                             @Override
                             public void onPageSelected(int position) {
-                                ALog.d("onPageSelected" + position + feedItemList.get(position));
+                                ALog.d("onPageSelected" + position);
                                 mIndex = position;
                                 mId = feedItemIdList.get(mIndex);
-                                initData();
+                                initData(false);
                                 //修改顶部导航栏的收藏状态
-                                setLikeButton();
-//                                initPostClickListener();
-                                setCurrentItemStatus();
 
+                                //UI修改
+                                /*new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setLikeButton();
+                                    }
+                                },500);*/
+                                setLikeButton();
+
+                                initPostClickListener();
+                                setCurrentItemStatus();
+                            }
+
+                            @Override
+                            public void onPageScrolled(int position) {
 
                             }
                         }));
@@ -237,19 +250,34 @@ public class PostDetailActivity extends BackActivity {
 
     /**
      * 为什么不在adapter里面写，因为recyclerview有缓存机制，没滑到这个时候就给标记为已读了
+     * TODO: 优化性能
      */
     private void setCurrentItemStatus(){
         //将该文章标记为已读，并且通知首页修改布局
         if (!currentFeedItem.isRead()){
             currentFeedItem.setRead(true);
-            currentFeedItem.save();
-            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
-            } else {
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
-            }
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    currentFeedItem.save();
+
+                    if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
+                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
+                    } else {
+                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
+                    }
+
+                }
+            }).start();
+
+
+
             updateNotReadNum();
+
         }
+
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -263,16 +291,26 @@ public class PostDetailActivity extends BackActivity {
                 ALog.d("双击");
                 if (currentFeedItem.isFavorite()){
                     currentFeedItem.setFavorite(false);
+                    Toasty.success(PostDetailActivity.this,"取消收藏成功").show();
                 }else {
                     currentFeedItem.setFavorite(true);
+                    Toasty.success(PostDetailActivity.this,"收藏成功").show();
+
                 }
-                currentFeedItem.saveAsync();
-                if (!isUpdateMainReadMark) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
-                } else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
-                }
+
                 setLikeButton();
+
+                currentFeedItem.saveAsync().listen(new SaveCallback() {
+                    @Override
+                    public void onFinish(boolean success) {
+                        if (!isUpdateMainReadMark) {
+                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
+                        } else {
+                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
+                        }
+                    }
+                });
+
                 return true;
             }
         });
@@ -287,6 +325,8 @@ public class PostDetailActivity extends BackActivity {
             }
         });
 
+
+        //TODO: 优化这个数据库查询
         if (UserPreference.queryValueByKey(UserPreference.notToTop,"0").equals("0")){
             toolbar.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -295,11 +335,13 @@ public class PostDetailActivity extends BackActivity {
                 }
             });
         }
+
         if (UserPreference.queryValueByKey(UserPreference.notStar,"0").equals("0")){
             adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     ALog.d("什么情况？？双击事件");
+
                     return gestureDetector.onTouchEvent(event);
                 }
             });
@@ -317,6 +359,13 @@ public class PostDetailActivity extends BackActivity {
 
         starItem = menu.findItem(R.id.action_star);
         showStarActionView(starItem);
+
+        //加载完menu才去加载后面的内容
+        initRecyclerView();
+
+        initListener();
+
+
         return true;
     }
 
@@ -522,11 +571,19 @@ public class PostDetailActivity extends BackActivity {
 
     private void updateNotReadNum(){
         this.notReadNum --;
-        if (notReadNum <= 0){
-            toolbar.setTitle("");
-        }else {
-            toolbar.setTitle(notReadNum+"");
-        }
+
+        //UI修改
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (notReadNum <= 0){
+                    toolbar.setTitle("");
+                }else {
+                    toolbar.setTitle(notReadNum+"");
+                }
+            }
+        },400);
+
     }
 
     @Override

@@ -70,6 +70,8 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
         void onScrolled(RecyclerView recyclerView, int dx, int dy);
 
         void onPageSelected(int position);
+
+        void onPageScrolled(int position);
     }
 
 }

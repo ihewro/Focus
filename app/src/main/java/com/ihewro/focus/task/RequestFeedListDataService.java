@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -25,7 +24,6 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.RequestDataCallback;
 import com.ihewro.focus.callback.RequestFeedItemListCallback;
-import com.ihewro.focus.fragemnt.UserFeedUpdateContentFragment;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FilterPopupView;
 
@@ -67,7 +65,7 @@ public class RequestFeedListDataService extends Service {
     private View view;
     private TextView subTitle;
     private List<Feed> feedList = new ArrayList<>();
-    private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复
+    private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复，是之前的数据+当前请求的数据
     private RequestFeedItemListCallback callback;
 
 
@@ -125,7 +123,8 @@ public class RequestFeedListDataService extends Service {
 
 
             if (num>0){//请求总数大于1才会进行请求
-                if (!flag && !isForce){//加载本地数据就可以了，没有网络请求
+                if (!flag && !isForce){
+                    //加载本地数据就可以了，没有网络请求
                     handleData(new RequestDataCallback() {
                         @Override
                         public void onSuccess(List<FeedItem> feedItemList) {
@@ -177,7 +176,8 @@ public class RequestFeedListDataService extends Service {
                 @Override
                 public void onSuccess(List<FeedItem> feedItemList) {
                     //主线程
-                    if (okNum >= num){//数据全部请求完毕
+                    //使用了网络请求
+                   /* if (okNum >= num){//数据全部请求完毕
 
                         int num = LitePal.count(FeedItem.class);
                         final int sub = num - RequestFeedListDataService.this.feedItemNum;
@@ -192,11 +192,11 @@ public class RequestFeedListDataService extends Service {
                         //结束当前服务
                         stopSelf();
                     }else {//任务没有结束
-                        int temp = LitePal.count(FeedItem.class);
+                        *//*int temp = LitePal.count(FeedItem.class);
                         final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
-                        RequestFeedListDataService.this.feedItemNumTemp = temp;
-                        callback.onUpdate(feedItemList,sub);
-                    }
+                        RequestFeedListDataService.this.feedItemNumTemp = temp;*//*
+//                        callback.onUpdate(feedItemList,sub);
+                    }*/
                 }
             });
 
@@ -211,6 +211,12 @@ public class RequestFeedListDataService extends Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+
+                    if (UIUtil.isMainThread()){
+                        ALog.d("主线程");
+                    }else {
+                        ALog.d("子线程");
+                    }
                     //子线程
                     //进行数据处理
                     //合并旧数据没必要合并数据，请求数据的时候都已经保存到本地数据库了。
@@ -272,9 +278,11 @@ public class RequestFeedListDataService extends Service {
                             }
                         });
                     }
-                    activity.runOnUiThread(new Runnable() {
+                    UIUtil.runOnUiThread(activity,new Runnable() {
                         @Override
                         public void run() {
+                            //主线程
+                            //数据整理完毕
                             callback.onSuccess(list);
                         }
                     });

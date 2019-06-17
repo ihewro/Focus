@@ -2,6 +2,9 @@ package com.ihewro.focus.adapter;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
+import android.support.v7.recyclerview.extensions.AsyncListDiffer;
+import android.support.v7.util.DiffUtil;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -21,6 +24,8 @@ import com.ihewro.focus.util.StringUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +48,21 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     private String feedName;
     private List<FeedItem> feedItemList;
 
+    private AsyncListDiffer<FeedItem> mDiffer;
+
+    private DiffUtil.ItemCallback<FeedItem> diffCallback = new DiffUtil.ItemCallback<FeedItem>() {
+        @Override
+        public boolean areItemsTheSame(FeedItem oldItem, FeedItem newItem) {
+            return TextUtils.equals(oldItem.getId()+"", newItem.getId()+"");
+        }
+
+        @Override
+        public boolean areContentsTheSame(FeedItem oldItem, FeedItem newItem) {
+            return oldItem.getTitle().equals(newItem.getTitle());
+        }
+    };
+
+
     private int not_read_color;
     private int read_color;
     private int not_read_content_color;
@@ -55,6 +75,13 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         this.activity = activity;
         this.feedItemList = data;
 
+
+        //初始化
+        mDiffer = new AsyncListDiffer<>(this, diffCallback);
+
+
+
+        //初始化颜色参数
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             read_color = R.color.text_read_night;
             read_content_color = R.color.text_read_content_night;
@@ -69,6 +96,20 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
             not_read_color = R.color.text_unread;
             not_read_content_color = R.color.text_unread_content;
         }
+    }
+
+    public void setNewDataByDiff(@Nullable List<FeedItem> data,int notReadNum) {
+        ALog.d("设置新的数据" + data.size());
+        if (notReadNum==0){
+            this.setNewData(data);
+        }else {
+            mDiffer.submitList(data);
+        }
+    }
+
+    @Override
+    public void setNewData(@Nullable List<FeedItem> data) {
+        super.setNewData(data);
     }
 
     @Override
@@ -251,8 +292,12 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
                                         }else if (position == 1){
                                             //当前项目标记已读/未读
                                             item.setRead(!item.isRead());
-                                            item.saveAsync();
-                                            notifyItemChanged(helper.getAdapterPosition());
+                                            item.saveAsync().listen(new SaveCallback() {
+                                                @Override
+                                                public void onFinish(boolean success) {
+                                                    notifyItemChanged(helper.getAdapterPosition());
+                                                }
+                                            });
                                         }
                                     }
                                 })

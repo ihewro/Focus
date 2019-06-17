@@ -93,14 +93,14 @@ public class MyWebViewClient extends com.just.agentweb.WebViewClient {
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        ALog.d("请求的url有" + url);
+//        ALog.d("请求的url有" + url);
 
         //拦截https://focus.com/content.css 替换成本地的css
         AssetManager am = context.getAssets();
        if (url.equals("https://focus.com/content.css")){
            try {
                InputStream is = context.getAssets().open("css/" + "webview.css");
-               ALog.i("shouldInterceptRequest", "use offline resource for: " + url);
+//               ALog.i("shouldInterceptRequest", "use offline resource for: " + url);
                return new WebResourceResponse("text/css", "UTF-8", is);
            } catch (IOException e) {
                e.printStackTrace();
