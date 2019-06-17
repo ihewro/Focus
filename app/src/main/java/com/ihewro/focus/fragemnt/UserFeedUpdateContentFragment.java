@@ -453,87 +453,92 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void refreshUI(EventMessage eventBusMessage) {
+    public void refreshUI(final EventMessage eventBusMessage) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
-        //更新未读数目
-        if (EventMessage.feedItemReadStatusOperation.contains(eventBusMessage.getType())){
-            updateNotReadNum();
-        }
-        if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {//已读状态修改
-            //更新已读标志
-            int indexInList = eventBusMessage.getInteger();
-            if (indexInList!=-1){
-                eList.get(indexInList).setRead(true);
-                adapter.notifyItemChanged(indexInList);
-            }
-        }
-        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_ID)){//已读状态修改
-            //寻找到id的位置
-            int pos = -1;
-            for (int i = 0;i<eList.size();i++){
-                if (eList.get(i).getId() == eventBusMessage.getInteger()){
-                    pos = i;
-                    break;
+                //更新未读数目
+                if (EventMessage.feedItemReadStatusOperation.contains(eventBusMessage.getType())){
+                    updateNotReadNum();
                 }
-            }
-            eList.get(pos).setRead(true);
-            adapter.notifyItemChanged(pos);
-        }
-        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){//收藏状态修改
-            //更新收藏状态
-            int indexInList = eventBusMessage.getInteger();
-            boolean flag = eventBusMessage.isFlag();
-            eList.get(indexInList).setFavorite(flag);
-            adapter.notifyItemChanged(indexInList);
-        }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//收藏状态修改
-            //寻找到id的位置
-            int pos = -1;
-            for (int i = 0;i<eList.size();i++){
-                if (eList.get(i).getId() == eventBusMessage.getInteger()){
-                    pos = i;
-                    break;
+                if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX)) {//已读状态修改
+                    //更新已读标志
+                    int indexInList = eventBusMessage.getInteger();
+                    if (indexInList!=-1){
+                        eList.get(indexInList).setRead(true);
+                        adapter.notifyItemChanged(indexInList);
+                    }
                 }
-            }
-            boolean flag = eventBusMessage.isFlag();
-            eList.get(pos).setFavorite(flag);
-            adapter.notifyItemChanged(pos);
-        }
-        else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//有文章的已读状态修改
-            //检查feedid是否在本碎片的内容内
-            //如果在，则让这部分
-            List<Integer> feedIdList = new ArrayList<>();
-            if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ)){
-                feedIdList.add(eventBusMessage.getInteger());
-            }else{//整个文件夹都标记为已读
-                List<Feed>feedList = LitePal.where("feedfolderid = ?", String.valueOf(eventBusMessage.getInteger())).find(Feed.class);
-                for(Feed feed:feedList){
-                    feedIdList.add(feed.getId());
+                else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_ID)){//已读状态修改
+                    //寻找到id的位置
+                    int pos = -1;
+                    for (int i = 0;i<eList.size();i++){
+                        if (eList.get(i).getId() == eventBusMessage.getInteger()){
+                            pos = i;
+                            break;
+                        }
+                    }
+                    eList.get(pos).setRead(true);
+                    adapter.notifyItemChanged(pos);
                 }
-            }
-            //找到当前内容是否有在 标记已读的文件夹
-            for (int i = 0; i< eList.size();i++){
-                if (feedIdList.contains(eList.get(i).getFeedId())){
-                    eList.get(i).setRead(true);//设置为已读
-                    adapter.notifyItemChanged(i);//修改UI
+                else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_INDEX)){//收藏状态修改
+                    //更新收藏状态
+                    int indexInList = eventBusMessage.getInteger();
+                    boolean flag = eventBusMessage.isFlag();
+                    eList.get(indexInList).setFavorite(flag);
+                    adapter.notifyItemChanged(indexInList);
+                }else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_STAR_STATUS_BY_ID)){//收藏状态修改
+                    //寻找到id的位置
+                    int pos = -1;
+                    for (int i = 0;i<eList.size();i++){
+                        if (eList.get(i).getId() == eventBusMessage.getInteger()){
+                            pos = i;
+                            break;
+                        }
+                    }
+                    boolean flag = eventBusMessage.isFlag();
+                    eList.get(pos).setFavorite(flag);
+                    adapter.notifyItemChanged(pos);
                 }
+                else if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ) || Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_FOLDER_READ)){//有文章的已读状态修改
+                    //检查feedid是否在本碎片的内容内
+                    //如果在，则让这部分
+                    List<Integer> feedIdList = new ArrayList<>();
+                    if (Objects.equals(eventBusMessage.getType(), EventMessage.MARK_FEED_READ)){
+                        feedIdList.add(eventBusMessage.getInteger());
+                    }else{//整个文件夹都标记为已读
+                        List<Feed>feedList = LitePal.where("feedfolderid = ?", String.valueOf(eventBusMessage.getInteger())).find(Feed.class);
+                        for(Feed feed:feedList){
+                            feedIdList.add(feed.getId());
+                        }
+                    }
+                    //找到当前内容是否有在 标记已读的文件夹
+                    for (int i = 0; i< eList.size();i++){
+                        if (feedIdList.contains(eList.get(i).getFeedId())){
+                            eList.get(i).setRead(true);//设置为已读
+                            adapter.notifyItemChanged(i);//修改UI
+                        }
+                    }
+
+                }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){//删除了订阅或者文件夹，直接显示全部文章
+
+                    updateData(new ArrayList<String>());
+                    ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
+                }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){//恢复数据，通过OPML或者数据库的方式
+                    //显示所有文章
+                    updateData(new ArrayList<String>());
+                    ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
+                }else if (Objects.equals(eventBusMessage.getType(),EventMessage.GO_TO_LIST_TOP)){
+                    //列表回顶部
+
+                    if (feedIdList.size()>0){
+                        recyclerView.smoothScrollToPosition(0);//这个方法只保证指定的item被滑动到屏幕中，意味着自下往上滑的话，可以将指定item置顶，但是如果已经在屏幕中的话，那他就不会起作用，并且如果是自上往下滑的话，则置顶的item就会被滑到底部
+                    }
+                }
+
             }
-
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DELETE_FEED_FOLDER)){//删除了订阅或者文件夹，直接显示全部文章
-
-            updateData(new ArrayList<String>());
-            ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.IMPORT_OPML_FEED) || Objects.equals(eventBusMessage.getType(),EventMessage.DATABASE_RECOVER)){//恢复数据，通过OPML或者数据库的方式
-            //显示所有文章
-            updateData(new ArrayList<String>());
-            ((TextView)view.findViewById(R.id.toolbar_title)).setText("全部文章");
-        }else if (Objects.equals(eventBusMessage.getType(),EventMessage.GO_TO_LIST_TOP)){
-            //列表回顶部
-
-            if (feedIdList.size()>0){
-                recyclerView.smoothScrollToPosition(0);//这个方法只保证指定的item被滑动到屏幕中，意味着自下往上滑的话，可以将指定item置顶，但是如果已经在屏幕中的话，那他就不会起作用，并且如果是自上往下滑的话，则置顶的item就会被滑到底部
-            }
-
-        }
+        },1000);
     }
 
     public int getNotReadNum(){

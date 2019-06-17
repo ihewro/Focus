@@ -197,8 +197,8 @@ public class PostDetailActivity extends BackActivity {
                             public void onFirstScroll() {
                                 //首次滚动显示当前页面
                                 ALog.d("首次加载");
-                                setCurrentItemStatus();
                                 setLikeButton();
+                                setCurrentItemStatus();
                                 initPostClickListener();
                             }
 
@@ -222,14 +222,8 @@ public class PostDetailActivity extends BackActivity {
                                 //修改顶部导航栏的收藏状态
 
                                 //UI修改
-                                /*new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setLikeButton();
-                                    }
-                                },500);*/
-                                setLikeButton();
 
+                                setLikeButton();
                                 initPostClickListener();
                                 setCurrentItemStatus();
                             }
@@ -257,20 +251,18 @@ public class PostDetailActivity extends BackActivity {
         if (!currentFeedItem.isRead()){
             currentFeedItem.setRead(true);
 
-            new Thread(new Runnable() {
+            currentFeedItem.saveAsync().listen(new SaveCallback() {
                 @Override
-                public void run() {
-                    currentFeedItem.save();
-
-                    if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
-                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
-                    } else {
-                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
-                    }
+                public void onFinish(boolean success) {
 
                 }
-            }).start();
+            });
 
+            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
+            } else {
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
+            }
 
 
             updateNotReadNum();
@@ -533,7 +525,7 @@ public class PostDetailActivity extends BackActivity {
 
     private void setLikeButton() {
         //设置收藏状态
-        if (currentFeedItem == null) {
+        if (currentFeedItem == null) {//其实没有执行，因为在initdata里面进行赋值了
             currentFeedItem = LitePal.where("id = ?", String.valueOf(mId)).limit(1).find(FeedItem.class).get(0);
         }
         if (currentFeedItem.isFavorite()){
@@ -546,6 +538,8 @@ public class PostDetailActivity extends BackActivity {
             }
         }
     }
+
+
 
 
 
@@ -573,23 +567,23 @@ public class PostDetailActivity extends BackActivity {
         this.notReadNum --;
 
         //UI修改
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (notReadNum <= 0){
-                    toolbar.setTitle("");
-                }else {
-                    toolbar.setTitle(notReadNum+"");
-                }
-            }
-        },400);
+        if (notReadNum <= 0){
+            toolbar.setTitle("");
+        }else {
+            toolbar.setTitle(notReadNum+"");
+        }
 
     }
 
     @Override
     protected void onDestroy() {
+
+        //TODO:销毁的时候发送通知给首页，更新UI
+
+
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         ALog.d("postDetail 被销毁");
+
     }
 }

@@ -116,6 +116,7 @@ public class UserPreference extends LitePalSupport {
             ALog.d("缓存数据");
             return map.get(key);
         }else {
+            ALog.d("非缓存数据");
             List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
             if (userPreferences.size()>0){
                 UserPreference temp = userPreferences.get(0);
