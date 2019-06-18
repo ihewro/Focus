@@ -10,9 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.view.MyScrollView;
 import com.ihewro.focus.view.WebLayout;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.DefaultWebClient;
@@ -160,6 +164,26 @@ public class WebViewActivity extends BackActivity {
         webSettings.setJavaScriptEnabled(true);*/
 //        webView.loadUrl(url);
 //        webView.loadData();
+
+
+
+
+        //双击顶栏回顶部事件
+        final GestureDetector gestureDetector1 = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mAgentWeb.getWebCreator().getWebView().scrollTo(0,0);
+                return super.onDoubleTap(e);
+            }
+        });
+
+
+        toolbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector1.onTouchEvent(motionEvent);
+            }
+        });
     }
 
 

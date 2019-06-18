@@ -66,7 +66,7 @@ public class WebViewUtil {
 
 
         webView.setLayerType(View.LAYER_TYPE_HARDWARE,null);//开启硬件加速
-        webView.getSettings().setBlockNetworkImage(true);//一开始禁止图片加载
+//        webView.getSettings().setBlockNetworkImage(true);//一开始禁止图片加载
 
 
         //加载HTML

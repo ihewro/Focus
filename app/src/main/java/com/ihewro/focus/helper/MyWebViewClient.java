@@ -32,7 +32,7 @@ public class MyWebViewClient extends com.just.agentweb.WebViewClient {
     public void onPageFinished(WebView view, String url) {
         view.getSettings().setJavaScriptEnabled(true);
         super.onPageFinished(view, url);
-        view.getSettings().setBlockNetworkImage(false);
+//        view.getSettings().setBlockNetworkImage(false);
         addClickListener(view);//待网页加载完全后设置图片点击的监听方法
     }
 
