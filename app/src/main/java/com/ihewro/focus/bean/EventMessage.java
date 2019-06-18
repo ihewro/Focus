@@ -17,14 +17,18 @@ public class EventMessage {
     //对文章Item的操作
     public static final String MAKE_READ_STATUS_BY_INDEX = "MAKE_READ_STATUS_BY_INDEX";
     public static final String MAKE_READ_STATUS_BY_ID = "MAKE_READ_STATUS_BY_ID";
+    public static final String MAKE_READ_STATUS_BY_INDEX_LIST = "MAKE_READ_STATUS_BY_INDEX_LIST";
+    public static final String MAKE_READ_STATUS_BY_ID_LIST = "MAKE_READ_STATUS_BY_ID_LIST";
     public static final String MAKE_STAR_STATUS_BY_INDEX = "MAKE_STAR_STATUS";
     public static final String MAKE_STAR_STATUS_BY_ID = "MAKE_STAR_STATUS_BY_ID";
     public static final String EDIT_ITEM_READ = "EDIT_ITEM_READ";//修改了文章的已读状态
     public static final String MARK_ITEM_READED = "MARK_ITEM_READED";//标记文章为已读
 
+    public static final String MAIN_READ_NUM_EDIT = "MAIN_READ_NUM_EDIT";//修改首页的未读数目
+
+
     public static final String MARK_FEED_READ = "MARK_FEED_READ";//给一个订阅全部文章标记已读
     public static final String MARK_FEED_FOLDER_READ = "MARK_FEED_FOLDER_READ";//一个订阅文件夹全部标记已读
-    public static final String REFRESH_FEED_ITEM_LIST = "REFRESH_FEED_ITEM_LIST";//刷新订阅列表
 
 
     //TODO: 对这个事情需要进行UI更新出来
@@ -58,10 +62,10 @@ public class EventMessage {
 
 
     //影响文章已读未读的操作集合
-    public static final List<String> feedItemReadStatusOperation = Arrays.asList(MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,MAKE_STAR_STATUS_BY_INDEX,EDIT_ITEM_READ,MARK_ITEM_READED,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
+    public static final List<String> feedItemReadStatusOperation = Arrays.asList(MAIN_READ_NUM_EDIT,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,REFRESH_FEED_ITEM_LIST,MAKE_READ_STATUS_BY_INDEX,MAKE_READ_STATUS_BY_ID,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED,ORDER_FOLDER);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,MAIN_READ_NUM_EDIT,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED,ORDER_FOLDER);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);
@@ -82,6 +86,7 @@ public class EventMessage {
     private String message3;
     private boolean flag;
     private List<String> ids;
+    private List<Integer> intIds;
 
 
     public EventMessage(String type) {
@@ -93,7 +98,10 @@ public class EventMessage {
         this.integer = index;
     }
 
-
+    public EventMessage(String type, List<Integer> intIds) {
+        this.type = type;
+        this.intIds = intIds;
+    }
 
     public EventMessage(String type, int index, boolean flag) {
         this.type = type;
@@ -107,10 +115,6 @@ public class EventMessage {
     }
 
 
-    public EventMessage(String type,List<String> ids){
-        this.type = type;
-        this.ids = ids;
-    }
 
     public EventMessage(String type, String message, String message2) {
         this.type = type;
@@ -183,6 +187,14 @@ public class EventMessage {
 
     public void setIds(List<String> ids) {
         this.ids = ids;
+    }
+
+    public List<Integer> getIntIds() {
+        return intIds;
+    }
+
+    public void setIntIds(List<Integer> intIds) {
+        this.intIds = intIds;
     }
 
     @Override

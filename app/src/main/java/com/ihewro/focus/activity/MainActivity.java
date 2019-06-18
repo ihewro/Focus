@@ -911,7 +911,7 @@ public class MainActivity extends BaseActivity {
                 public void run() {
                     updateDrawer();
                 }
-            }, 1500); // 延迟一下，因为数据异步存储需要时间
+            }, 300); // 延迟一下，因为数据异步存储需要时间
         } else if (Objects.equals(eventBusMessage.getType(), EventMessage.FEED_PULL_DATA_ERROR)) {
 //            ALog.d("收到错误FeedId List");
 //            errorFeedIdList = eventBusMessage.getIds();

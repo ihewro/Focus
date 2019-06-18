@@ -61,6 +61,9 @@ public class PostDetailActivity extends BackActivity {
     @BindView(R.id.recycler_view)
     MyRecyclerView recyclerView;
 
+    private List<Integer> readList = new ArrayList<>();
+
+
 
 
     private PostDetailListAdapter adapter;
@@ -254,16 +257,15 @@ public class PostDetailActivity extends BackActivity {
             currentFeedItem.saveAsync().listen(new SaveCallback() {
                 @Override
                 public void onFinish(boolean success) {
-
+                    if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
+                        readList.add(currentFeedItem.getId());
+//                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
+                    } else {
+                        readList.add(mIndex);
+//                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
+                    }
                 }
             });
-
-            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
-            } else {
-                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
-            }
-
 
             updateNotReadNum();
 
@@ -578,7 +580,16 @@ public class PostDetailActivity extends BackActivity {
     @Override
     protected void onDestroy() {
 
-        //TODO:销毁的时候发送通知给首页，更新UI
+        //将首页中已读的文章样式标记为已读
+        if (readList.size()>0){
+            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID_LIST, readList));
+            } else {
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX_LIST, readList));
+            }
+            //修改首页未读数目
+            EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_READ_NUM_EDIT, mIndex));
+        }
 
 
         super.onDestroy();
@@ -586,4 +597,5 @@ public class PostDetailActivity extends BackActivity {
         ALog.d("postDetail 被销毁");
 
     }
+
 }

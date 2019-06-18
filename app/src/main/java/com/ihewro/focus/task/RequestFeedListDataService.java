@@ -177,7 +177,7 @@ public class RequestFeedListDataService extends Service {
                 public void onSuccess(List<FeedItem> feedItemList) {
                     //主线程
                     //使用了网络请求
-                   /* if (okNum >= num){//数据全部请求完毕
+                    if (okNum >= num){//数据全部请求完毕
 
                         int num = LitePal.count(FeedItem.class);
                         final int sub = num - RequestFeedListDataService.this.feedItemNum;
@@ -192,11 +192,11 @@ public class RequestFeedListDataService extends Service {
                         //结束当前服务
                         stopSelf();
                     }else {//任务没有结束
-                        *//*int temp = LitePal.count(FeedItem.class);
+                        int temp = LitePal.count(FeedItem.class);
                         final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
-                        RequestFeedListDataService.this.feedItemNumTemp = temp;*//*
-//                        callback.onUpdate(feedItemList,sub);
-                    }*/
+                        RequestFeedListDataService.this.feedItemNumTemp = temp;
+                        callback.onUpdate(feedItemList,sub);
+                    }
                 }
             });
 
