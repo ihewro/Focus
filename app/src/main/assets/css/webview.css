@@ -602,6 +602,7 @@
         }
 .entry-dark{
             color: #c9c9c9;
-            background:##2e2e2e;
+            background:#2e2e2e;
         }
         video{height:auto!important;width:100%;display:block}
+        iframe{max-width: 100%!important;max-height: 100%!important;}

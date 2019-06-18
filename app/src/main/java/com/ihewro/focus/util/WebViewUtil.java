@@ -70,6 +70,7 @@ public class WebViewUtil {
 
 
         //加载HTML
+        String meta = "<meta name=\"viewport\" content=\"initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width\">";
         String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";
         String mclass = "";
         if(SkinPreference.getInstance().getSkinName().equals("night")){
@@ -84,7 +85,6 @@ public class WebViewUtil {
         String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+"}</style>\n";
 
 
-        String meta = "";
         String body = "<html><header>"  + meta +css + settingCss+ "</header><body class=\"entry "+mclass+"\">" + html
                 + "</body></html>";
 
