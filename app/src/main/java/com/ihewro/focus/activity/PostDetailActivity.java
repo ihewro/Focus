@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.bean.EventMessage;
@@ -186,7 +187,10 @@ public class PostDetailActivity extends BackActivity {
                         adapter.setNewData(feedItemList);
 
                         //移动到当前文章的位置
+//                        recyclerView.scrollToPosition(mIndex);
+
                         if (mIndex==0){
+                            ALog.d("第一项");
                             linearLayoutManager.scrollToPositionWithOffset(mIndex, 1);
                             linearLayoutManager.scrollToPositionWithOffset(mIndex, -1);
                         }else {
@@ -195,14 +199,16 @@ public class PostDetailActivity extends BackActivity {
                         linearLayoutManager.setStackFromEnd(true);
 
 
+                        ALog.d("首次加载");
+                        setLikeButton();
+                        setCurrentItemStatus();
+                        initPostClickListener();
+
+
                         recyclerView.addOnScrollListener(new RecyclerViewPageChangeListenerHelper(snapHelper, new RecyclerViewPageChangeListenerHelper.OnPageChangeListener() {
                             @Override
                             public void onFirstScroll() {
                                 //首次滚动显示当前页面
-                                ALog.d("首次加载");
-                                setLikeButton();
-                                setCurrentItemStatus();
-                                initPostClickListener();
                             }
 
                             @Override
@@ -253,8 +259,14 @@ public class PostDetailActivity extends BackActivity {
         //将该文章标记为已读，并且通知首页修改布局
         if (!currentFeedItem.isRead()){
             currentFeedItem.setRead(true);
-
-            currentFeedItem.saveAsync().listen(new SaveCallback() {
+            updateNotReadNum();
+            currentFeedItem.save();
+            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
+                readList.add(currentFeedItem.getId());
+            } else {
+                readList.add(mIndex);
+            }
+            /*currentFeedItem.saveAsync().listen(new SaveCallback() {
                 @Override
                 public void onFinish(boolean success) {
                     if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
@@ -265,9 +277,8 @@ public class PostDetailActivity extends BackActivity {
 //                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
                     }
                 }
-            });
+            });*/
 
-            updateNotReadNum();
 
         }
 
@@ -320,7 +331,6 @@ public class PostDetailActivity extends BackActivity {
         });
 
 
-        //TODO: 优化这个数据库查询
         if (UserPreference.queryValueByKey(UserPreference.notToTop,"0").equals("0")){
             toolbar.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -331,14 +341,19 @@ public class PostDetailActivity extends BackActivity {
         }
 
         if (UserPreference.queryValueByKey(UserPreference.notStar,"0").equals("0")){
-            adapter.getViewByPosition(mIndex,R.id.post_content).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    ALog.d("什么情况？？双击事件");
+            //todo:第一篇文章进入的时候这个view为null，我也不知道为什么！
+            View content = adapter.getViewByPosition(mIndex,R.id.post_content);
+            if (content!=null){
+                content.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        ALog.d("什么情况？？双击事件");
 
-                    return gestureDetector.onTouchEvent(event);
-                }
-            });
+                        return gestureDetector.onTouchEvent(event);
+                    }
+                });
+            }
+
         }
     }
 
