@@ -809,9 +809,10 @@ public class MainActivity extends BaseActivity {
                 if (current_notReadNum != 0) {
                     secondaryDrawerItem.withBadge(current_notReadNum + "");
                 }
-                if (isUpdate) {
+                //不需要这样了，因为都是直接setitems来更新的
+                /*if (isUpdate) {
                     drawer.updateItem(secondaryDrawerItem);
-                }
+                }*/
                 feedItems.add(secondaryDrawerItem);
 
                 notReadNum += current_notReadNum;
