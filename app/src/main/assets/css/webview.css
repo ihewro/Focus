@@ -606,3 +606,10 @@
         }
         video{height:auto!important;width:100%;display:block}
         iframe{max-width: 100%!important;max-height: 100%!important;}
+        table{
+          max-width:100% !important;//强制替换掉网页内表格的宽度最大为100%
+          table-layout:fixed !important;
+        }
+        img{
+          max-width:100% !important;//强制替换掉网页内图片的宽度最大为100%
+        }

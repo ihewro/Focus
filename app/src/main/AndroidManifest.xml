@@ -60,8 +60,7 @@
         <activity android:name=".activity.ErrorActivity" />
         <activity
             android:name=".activity.PostDetailActivity"
-            android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true" />
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -61,11 +61,11 @@ public class WebViewUtil {
         webView.setHorizontalScrollBarEnabled(false);
 
         String[] imageUrls = {};
-        webView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls), "imagelistener");
+        webView.addJavascriptInterface(new MJavascriptInterface(context,imageUrls,webView), "imagelistener");
         webView.setWebViewClient(new MyWebViewClient(context,url));
 
 
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE,null);//开启硬件加速
+        webView.setLayerType(View.LAYER_TYPE_NONE,null);//关闭硬件加速
 //        webView.getSettings().setBlockNetworkImage(true);//一开始禁止图片加载
 
 

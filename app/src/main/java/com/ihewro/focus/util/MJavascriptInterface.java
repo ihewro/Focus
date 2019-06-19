@@ -3,7 +3,10 @@ package com.ihewro.focus.util;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.blankj.ALog;
 import com.lxj.xpopup.XPopup;
@@ -12,6 +15,8 @@ import com.lxj.xpopup.interfaces.XPopupImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+
+import static com.ihewro.focus.util.UIUtil.getResources;
 
 /**
  * <pre>
@@ -26,10 +31,12 @@ import java.io.File;
 public class MJavascriptInterface {
     private Activity activity;
     private String[] imageUrls;
+    private WebView webView;
 
-    MJavascriptInterface(Activity context, String[] imageUrls) {
+    MJavascriptInterface(Activity context, String[] imageUrls, WebView webView) {
         this.activity = context;
         this.imageUrls = imageUrls;
+        this.webView = webView;
     }
 
     @android.webkit.JavascriptInterface
@@ -46,9 +53,7 @@ public class MJavascriptInterface {
     @android.webkit.JavascriptInterface
     public void openUrl(String url) {
         WebViewUtil.openLink(url, activity);
-
     }
-
 
 
     class MyImageLoader implements XPopupImageLoader {
