@@ -20,7 +20,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Feed extends LitePalSupport {
 
-    public static final int DEFAULT_TIMEOUT = 30;
+    public static final int DEFAULT_TIMEOUT = 25;
 
     @Column(unique = true)
     private int id;//真实主键

@@ -142,6 +142,11 @@ public class UserPreference extends LitePalSupport {
             UserPreference temp = userPreferences.get(0);
             temp.setValue(value);
             temp.save();
+            //修改缓存中键值对
+            if (map.containsKey(key)){
+                map.remove(key);
+                map.put(key,value);
+            }
         }else {
             setValueByKey(key,value);
         }

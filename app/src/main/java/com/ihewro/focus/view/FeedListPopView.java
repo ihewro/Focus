@@ -61,13 +61,15 @@ public class FeedListPopView extends BottomPopupView {
     RecyclerView recyclerView;
     TextView textInfo;
 
+    FragmentManager fragmentManager;
 
     public FeedListPopView(@NonNull Context context) {
         super(context);
     }
 
-    public FeedListPopView(@NonNull Activity context, String title, String info, Help help) {
+    public FeedListPopView(@NonNull FragmentManager fragmentManager,Activity context, String title, String info, Help help) {
         super(context);
+        this.fragmentManager = fragmentManager;
         this.title = title;
         this.info = info;
         this.help = help;
@@ -123,10 +125,13 @@ public class FeedListPopView extends BottomPopupView {
         if (!help.isHelp()){
             actionHelp.setVisibility(View.GONE);
         }else {
+            actionHelp.setVisibility(View.VISIBLE);
             actionHelp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //打开帮助页面。是一个网页
+                    int accentColor = ContextCompat.getColor(getContext(), R.color.accent);
+                    HelpDialog.create(false, accentColor, help.getContent()).show(fragmentManager, "changelog");
                 }
             });
         }

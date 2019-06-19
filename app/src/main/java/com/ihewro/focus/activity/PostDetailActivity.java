@@ -253,33 +253,22 @@ public class PostDetailActivity extends BackActivity {
 
     /**
      * 为什么不在adapter里面写，因为recyclerview有缓存机制，没滑到这个时候就给标记为已读了
-     * TODO: 优化性能
      */
     private void setCurrentItemStatus(){
         //将该文章标记为已读，并且通知首页修改布局
         if (!currentFeedItem.isRead()){
             currentFeedItem.setRead(true);
             updateNotReadNum();
-            currentFeedItem.save();
-            if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
-                readList.add(currentFeedItem.getId());
-            } else {
-                readList.add(mIndex);
-            }
-            /*currentFeedItem.saveAsync().listen(new SaveCallback() {
+            currentFeedItem.saveAsync().listen(new SaveCallback() {
                 @Override
                 public void onFinish(boolean success) {
                     if (!isUpdateMainReadMark) {//isUpdateMainReadMark 为false表示不是首页进来的
                         readList.add(currentFeedItem.getId());
-//                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID, currentFeedItem.getId()));
                     } else {
                         readList.add(mIndex);
-//                EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX, mIndex));
                     }
                 }
-            });*/
-
-
+            });
         }
 
 
@@ -341,18 +330,24 @@ public class PostDetailActivity extends BackActivity {
         }
 
         if (UserPreference.queryValueByKey(UserPreference.notStar,"0").equals("0")){
-            //todo:第一篇文章进入的时候这个view为null，我也不知道为什么！
-            View content = adapter.getViewByPosition(mIndex,R.id.post_content);
-            if (content!=null){
-                content.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        ALog.d("什么情况？？双击事件");
+            //第一篇文章进入的时候这个view为null，我也不知道为什么！
+            new Handler().postDelayed(new Runnable() {//做一个延迟绑定
+                @Override
+                public void run() {
+                    View content = adapter.getViewByPosition(mIndex,R.id.post_content);
+                    if (content!=null){
+                        content.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                ALog.d("什么情况？？双击事件");
 
-                        return gestureDetector.onTouchEvent(event);
+                                return gestureDetector.onTouchEvent(event);
+                            }
+                        });
                     }
-                });
-            }
+                }
+            },1000);
+
 
         }
     }
@@ -418,13 +413,17 @@ public class PostDetailActivity extends BackActivity {
 
             case R.id.action_star:
                 currentFeedItem.setFavorite(!currentFeedItem.isFavorite());
-                currentFeedItem.save();
+                currentFeedItem.saveAsync().listen(new SaveCallback() {
+                    @Override
+                    public void onFinish(boolean success) {
+                        if (!isUpdateMainReadMark) {
+                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
+                        } else {
+                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
+                        }
+                    }
+                });
 
-                if (!isUpdateMainReadMark) {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
-                } else {
-                    EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
-                }
                 setLikeButton();
 
                 break;

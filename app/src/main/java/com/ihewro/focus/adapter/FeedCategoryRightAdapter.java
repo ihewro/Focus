@@ -91,7 +91,15 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Website item = FeedCategoryRightAdapter.this.getData().get(position);
-                FeedListPopView feedListPopView = new FeedListPopView(activity,item.getName(),"",new Help(false));
+
+                Help help;
+                if (!StringUtil.trim(item.getExtra()).equals("")){
+                    help = new Help(true,item.getExtra());
+                }else {
+                    help = new Help(false);
+                }
+
+                FeedListPopView feedListPopView = new FeedListPopView(((FragmentActivity)activity).getSupportFragmentManager(),activity,item.getName(),"",help);
 
                 new XPopup.Builder(activity)
                         .enableDrag(false)

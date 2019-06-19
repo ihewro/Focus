@@ -19,6 +19,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
@@ -55,6 +56,7 @@ public class HttpUtil {
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
 
+
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
@@ -88,6 +90,8 @@ public class HttpUtil {
         builder.sslSocketFactory(socketFactory,new HttpsUtil.UnSafeTrustManager());
 
         OkHttpClient client = builder.build();
+        client.dispatcher().setMaxRequests(100);//最大并发数
+        client.dispatcher().setMaxRequestsPerHost(100);//单域名的并发数
 
         return client;
     }

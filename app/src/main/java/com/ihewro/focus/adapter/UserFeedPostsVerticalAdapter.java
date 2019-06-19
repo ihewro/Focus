@@ -15,6 +15,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.util.DataUtil;
@@ -25,6 +26,7 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
@@ -296,6 +298,8 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
                                                 @Override
                                                 public void onFinish(boolean success) {
                                                     notifyItemChanged(helper.getAdapterPosition());
+                                                    //修改首页未读数目相关界面
+                                                    EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_READ_NUM_EDIT));
                                                 }
                                             });
                                         }

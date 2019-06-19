@@ -419,19 +419,29 @@ public class UserFeedUpdateContentFragment extends Fragment {
 
     private void updateNotReadNum(){
         //修改顶部的未读数据
-        this.notReadNum  = 0;
-        if (feedIdList.size() >0){
-            for (int i = 0; i < feedIdList.size(); i++) {
-                this.notReadNum += LitePal.where("read = ? and feedid = ?","0",feedIdList.get(i)).count(FeedItem.class);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                notReadNum  = 0;
+                if (feedIdList.size() >0){
+                    for (int i = 0; i < feedIdList.size(); i++) {
+                        notReadNum += LitePal.where("read = ? and feedid = ?","0",feedIdList.get(i)).count(FeedItem.class);
+                    }
+                }else {//为空表示显示所有的feedId
+                    notReadNum = LitePal.where("read = ?","0").count(FeedItem.class);
+                }
+                UIUtil.runOnUiThread(getActivity(), new Runnable() {
+                    @Override
+                    public void run() {
+                        if (notReadNum == 0){
+                            ((TextView)subView).setText("无未读文章");
+                        }else {
+                            ((TextView)subView).setText("共有"+notReadNum+"篇未读");
+                        }
+                    }
+                });
             }
-        }else {//为空表示显示所有的feedId
-            this.notReadNum = LitePal.where("read = ?","0").count(FeedItem.class);
-        }
-        if (this.notReadNum == 0){
-            ((TextView)subView).setText("无未读文章");
-        }else {
-            ((TextView)subView).setText("共有"+this.notReadNum+"篇未读");
-        }
+        }).start();
     }
 
     @Override

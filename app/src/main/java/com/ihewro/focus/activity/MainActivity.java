@@ -311,10 +311,31 @@ public class MainActivity extends BaseActivity {
         playButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new MaterialDialog.Builder(MainActivity.this)
-                        .title(toolbarTitle.getText())
-                        .content("全部数目" + feedPostsFragment.getFeedItemNum() + "\n" + "未读数目" + feedPostsFragment.getNotReadNum())
-                        .show();
+                //加载框
+                final MaterialDialog loading = new MaterialDialog.Builder(MainActivity.this)
+                        .content("统计数据中……")
+                        .progress(false, 0, true)
+                        .build();
+                loading.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final int feedItemNum = feedPostsFragment.getFeedItemNum();
+                        final int notReadNum = feedPostsFragment.getNotReadNum();
+                        UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.dismiss();
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title(toolbarTitle.getText())
+                                        .content("全部数目" + feedItemNum + "\n" + "未读数目" + notReadNum)
+                                        .show();
+                            }
+                        });
+                    }
+                }).start();
+
+
                 return true;
             }
         });
@@ -634,8 +655,18 @@ public class MainActivity extends BaseActivity {
 
     private void updateDrawer() {
         //初始化侧边栏
-        refreshLeftDrawerFeedList(true);
-        drawer.setItems(subItems);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                refreshLeftDrawerFeedList(true);
+                UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        drawer.setItems(subItems);
+                    }
+                });
+            }
+        }).start();
     }
 
     private void drawerItemClick(IDrawerItem drawerItem) {
@@ -801,7 +832,6 @@ public class MainActivity extends BaseActivity {
 
         //要记得把这个list置空
         errorFeedIdList.clear();
-        ;
 
     }
 

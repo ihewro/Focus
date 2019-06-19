@@ -29,6 +29,9 @@ public class Website extends LitePalSupport {
     private String icon;//图标地址
 
     @Column(ignore = true)
+    private String extra;//website的订阅参数额外信息，只会在在线订阅的时候会使用到该参数
+
+    @Column(ignore = true)
     private List<Feed> feedList = new ArrayList<>();
 
 
@@ -78,5 +81,13 @@ public class Website extends LitePalSupport {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 }
