@@ -213,18 +213,18 @@ public class PostDetailActivity extends BackActivity {
 
                             @Override
                             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                                ALog.d("onScrollStateChanged");
+//                                ALog.d("onScrollStateChanged");
                             }
 
                             @Override
                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                                ALog.d("onScrolled");
+//                                ALog.d("onScrolled");
 
                             }
 
                             @Override
                             public void onPageSelected(int position) {
-                                ALog.d("onPageSelected" + position);
+//                                ALog.d("onPageSelected" + position);
                                 mIndex = position;
                                 mId = feedItemIdList.get(mIndex);
                                 initData(false);

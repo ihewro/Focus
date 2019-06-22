@@ -37,6 +37,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import es.dmoral.toasty.Toasty;
 
@@ -67,10 +68,11 @@ public class RequestFeedListDataService extends Service {
     private List<Feed> feedList = new ArrayList<>();
     private LinkedHashSet<FeedItem> eList = new LinkedHashSet<>();//使用set保证不重复，是之前的数据+当前请求的数据
     private RequestFeedItemListCallback callback;
+    private boolean isFinish = false;
 
 
-    private int num;//总共需要请求的数目
-    private int okNum = 0;//已经请求的数目
+    private AtomicInteger num = new AtomicInteger();//总共需要请求的数目
+    private volatile AtomicInteger okNum = new AtomicInteger() ;//已经请求的数目
 
     private int feedItemNum;
     private int feedItemNumTemp;
@@ -107,7 +109,7 @@ public class RequestFeedListDataService extends Service {
         public void startTask(){
             //主线程
 
-            num = feedList.size();
+            num.set(feedList.size());;
             eList.clear();
             String value = UserPreference.queryValueByKey(UserPreference.USE_INTERNET_WHILE_OPEN, "0");
             if (value != null && value.equals("1")){//强制刷新数据
@@ -115,14 +117,14 @@ public class RequestFeedListDataService extends Service {
             }else {
                 flag = false;
             }
-            okNum = 0;
+            okNum.set(0);;
             callback.onBegin();
 
             //必须要开启前台通知
             startForeground(1,createNotice("初始化数据获取服务…",0));
 
 
-            if (num>0){//请求总数大于1才会进行请求
+            if (num.get()>0){//请求总数大于1才会进行请求
                 if (!flag && !isForce){
                     //加载本地数据就可以了，没有网络请求
                     handleData(new RequestDataCallback() {
@@ -164,42 +166,56 @@ public class RequestFeedListDataService extends Service {
 
         //主线程
         private void updateUI(){
-            //主线程
-            okNum++;
-
-            //计算出当前的process
-            int process = (int) (okNum *1.0 / num * 100);
-            mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",process));
-
-            //没请求完也需要
-            handleData(new RequestDataCallback() {
+            //子线程
+            new Thread(new Runnable() {
                 @Override
-                public void onSuccess(List<FeedItem> feedItemList) {
-                    //主线程
-                    //使用了网络请求
-                    if (okNum >= num){//数据全部请求完毕
+                public void run() {
+                    synchronized (this){
+                        okNum.incrementAndGet();
 
-                        int num = LitePal.count(FeedItem.class);
-                        final int sub = num - RequestFeedListDataService.this.feedItemNum;
-                        stopForeground(true);
-                        if (sub>0){
-                            mNotificationManager.notify(1, createNotice("共有"+sub+"篇新文章",100));
-                        }else {
-                            mNotificationManager.notify(1, createNotice("暂无新数据",100));
-                        }
-                        //通知activity修改数据
-                        callback.onFinish(feedItemList,sub);
-                        //结束当前服务
-                        stopSelf();
-                    }else {//任务没有结束
-                        int temp = LitePal.count(FeedItem.class);
-                        final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
-                        RequestFeedListDataService.this.feedItemNumTemp = temp;
-                        callback.onUpdate(feedItemList,sub);
+                        UIUtil.runOnUiThread(activity, new Runnable() {
+                            @Override
+                            public void run() {
+                                //计算出当前的process
+                                int process = (int) (okNum.get() *1.0 / num.get() * 100);
+                                mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",process));
+                            }
+                        });
+
+                        //没请求完也需要
+                        handleData(new RequestDataCallback() {
+                            @Override
+                            public void onSuccess(List<FeedItem> feedItemList) {
+                                //主线程
+                                //使用了网络请求
+                                if (okNum.get() >= num.get() && !isFinish){//数据全部请求完毕
+                                    isFinish = true;
+                                    ALog.d("请求数据完毕");
+                                    int num = LitePal.count(FeedItem.class);
+                                    final int sub = num - RequestFeedListDataService.this.feedItemNum;
+                                    stopForeground(true);
+                                    if (sub>0){
+                                        mNotificationManager.notify(1, createNotice("共有"+sub+"篇新文章",100));
+                                    }else {
+                                        mNotificationManager.notify(1, createNotice("暂无新数据",100));
+                                    }
+                                    //通知activity修改数据
+                                    callback.onFinish(feedItemList,sub);
+                                    //结束当前服务
+                                    stopSelf();
+                                }else {//任务没有结束
+                                    int temp = LitePal.count(FeedItem.class);
+                                    final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
+                                    RequestFeedListDataService.this.feedItemNumTemp = temp;
+                                    callback.onUpdate(feedItemList,sub);
+                                }
+                            }
+                        });
+
+
                     }
                 }
-            });
-
+            }).start();
 
 
 //            ALog.d("完成数目"+okNum+"总数目"+num);
@@ -207,88 +223,81 @@ public class RequestFeedListDataService extends Service {
         }
 
         private void handleData (final RequestDataCallback callback){
+            //子线程
+            if (UIUtil.isMainThread()){
+                ALog.d("主线程");
+            }else {
+                ALog.d("子线程" + okNum);
+            }
+            //子线程
+            //进行数据处理
+            //合并旧数据没必要合并数据，请求数据的时候都已经保存到本地数据库了。
+            for (int i = 0; i < num.get();i++){
+                Feed temp = feedList.get(i);
+                String url = temp.getUrl();
+                getFeedItems(url);
+            }
+//                    ALog.d("开始对数据排序");
+            final List<FeedItem> list = new ArrayList<>(eList);
 
-            new Thread(new Runnable() {
+            orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,FilterPopupView.ORDER_BY_NEW);
+            filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,FilterPopupView.SHOW_ALL);
+
+            //对数据进行过滤
+            if (filterChoice.equals(FilterPopupView.SHOW_STAR)){
+                Iterator<FeedItem> sListIterator = list.iterator();
+                while (sListIterator.hasNext()) {
+                    FeedItem feedItem = sListIterator.next();
+                    if (!feedItem.isFavorite()) {//非收藏数据删除
+                        sListIterator.remove();
+                    }
+                }
+            }else if (filterChoice.equals(FilterPopupView.SHOW_UNREAD)){
+                Iterator<FeedItem> sListIterator = list.iterator();
+                while (sListIterator.hasNext()) {
+                    FeedItem feedItem = sListIterator.next();
+                    if (feedItem.isRead()) {//已经阅读过的数据删除
+                        sListIterator.remove();
+                    }
+                }
+            }
+            //对数据排序
+            //选择排序方式
+            if (orderChoice.equals(FilterPopupView.ORDER_BY_NEW)){
+                Collections.sort(list, new Comparator<FeedItem>() {
+                    @Override
+                    public int compare(FeedItem t0, FeedItem t1) {//新的在前
+                        if (t0.getDate() < t1.getDate()){
+                            return 1;
+                        }else if (t0.getDate() > t1.getDate()){
+                            return -1;
+                        }else {
+                            return 0;
+                        }
+                    }
+                });
+            }else {//旧的在前
+                Collections.sort(list, new Comparator<FeedItem>() {
+                    @Override
+                    public int compare(FeedItem t0, FeedItem t1) {//新的在前
+                        if (t0.getDate() > t1.getDate()){
+                            return 1;
+                        }else if (t0.getDate() < t1.getDate()){
+                            return -1;
+                        }else {
+                            return 0;
+                        }
+                    }
+                });
+            }
+            UIUtil.runOnUiThread(activity,new Runnable() {
                 @Override
                 public void run() {
-
-                    if (UIUtil.isMainThread()){
-                        ALog.d("主线程");
-                    }else {
-                        ALog.d("子线程" + num);
-                    }
-                    //子线程
-                    //进行数据处理
-                    //合并旧数据没必要合并数据，请求数据的时候都已经保存到本地数据库了。
-                    for (int i = 0; i < num;i++){
-                        Feed temp = feedList.get(i);
-                        String url = temp.getUrl();
-                        getFeedItems(url);
-                    }
-//                    ALog.d("开始对数据排序");
-                    final List<FeedItem> list = new ArrayList<>(eList);
-
-                    orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,FilterPopupView.ORDER_BY_NEW);
-                    filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,FilterPopupView.SHOW_ALL);
-
-                    //对数据进行过滤
-                    if (filterChoice.equals(FilterPopupView.SHOW_STAR)){
-                        Iterator<FeedItem> sListIterator = list.iterator();
-                        while (sListIterator.hasNext()) {
-                            FeedItem feedItem = sListIterator.next();
-                            if (!feedItem.isFavorite()) {//非收藏数据删除
-                                sListIterator.remove();
-                            }
-                        }
-                    }else if (filterChoice.equals(FilterPopupView.SHOW_UNREAD)){
-                        Iterator<FeedItem> sListIterator = list.iterator();
-                        while (sListIterator.hasNext()) {
-                            FeedItem feedItem = sListIterator.next();
-                            if (feedItem.isRead()) {//已经阅读过的数据删除
-                                sListIterator.remove();
-                            }
-                        }
-                    }
-                    //对数据排序
-                    //选择排序方式
-                    if (orderChoice.equals(FilterPopupView.ORDER_BY_NEW)){
-                        Collections.sort(list, new Comparator<FeedItem>() {
-                            @Override
-                            public int compare(FeedItem t0, FeedItem t1) {//新的在前
-                                if (t0.getDate() < t1.getDate()){
-                                    return 1;
-                                }else if (t0.getDate() > t1.getDate()){
-                                    return -1;
-                                }else {
-                                    return 0;
-                                }
-                            }
-                        });
-                    }else {//旧的在前
-                        Collections.sort(list, new Comparator<FeedItem>() {
-                            @Override
-                            public int compare(FeedItem t0, FeedItem t1) {//新的在前
-                                if (t0.getDate() > t1.getDate()){
-                                    return 1;
-                                }else if (t0.getDate() < t1.getDate()){
-                                    return -1;
-                                }else {
-                                    return 0;
-                                }
-                            }
-                        });
-                    }
-                    UIUtil.runOnUiThread(activity,new Runnable() {
-                        @Override
-                        public void run() {
-                            //主线程
-                            //数据整理完毕
-                            callback.onSuccess(list);
-                        }
-                    });
+                    //主线程
+                    //数据整理完毕
+                    callback.onSuccess(list);
                 }
-            }).start();
-
+            });
         }
 
         private void getFeedItems(String url){
@@ -299,7 +308,7 @@ public class RequestFeedListDataService extends Service {
                 Feed temp = tempList.get(0);
 //                ALog.d(temp);
                 List<FeedItem> tempFeedItemList = LitePal.where("feedid = ?", String.valueOf(temp.getId())).find(FeedItem.class);
-                ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
+//                ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
                 eList.addAll(tempFeedItemList);
             }
         }

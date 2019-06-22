@@ -1,6 +1,7 @@
 package com.ihewro.focus;
 
 import android.content.Context;
+import android.database.CursorWindow;
 import android.util.Log;
 
 import com.blankj.ALog;
@@ -21,6 +22,8 @@ import com.zxy.recovery.core.Recovery;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
+
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 import skin.support.SkinCompatManager;

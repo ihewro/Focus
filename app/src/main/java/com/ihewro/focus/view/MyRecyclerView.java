@@ -37,7 +37,7 @@ public class MyRecyclerView extends RecyclerView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        ALog.d("recyclerview 点击事件");
+//        ALog.d("recyclerview 点击事件");
         return super.onTouchEvent(e);
     }
 }

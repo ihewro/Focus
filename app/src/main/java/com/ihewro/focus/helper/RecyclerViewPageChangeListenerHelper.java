@@ -29,7 +29,7 @@ public class RecyclerViewPageChangeListenerHelper extends RecyclerView.OnScrollL
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-        ALog.d("滚动了");
+//        ALog.d("滚动了");
         if (onPageChangeListener != null) {
             if (firstPosition){
                 onPageChangeListener.onFirstScroll();

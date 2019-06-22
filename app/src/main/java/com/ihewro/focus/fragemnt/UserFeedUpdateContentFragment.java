@@ -252,12 +252,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-
-
                                 if (newNum > 0){//有新文章时候才会去更新界面
                                     //根据是否显示新文章来判断
-
-
                                     UIUtil.runOnUiThread(getActivity(),new Runnable() {
                                         @Override
                                         public void run() {
@@ -268,6 +264,8 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                                     .setAction("显示", new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
+
+                                                            //点击的时候执行刷新界面
                                                             ALog.d("请求过程中刷新界面！");
 
                                                             new Thread(new Runnable() {
@@ -275,7 +273,6 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                                                 public void run() {
                                                                     eList.clear();
                                                                     eList.addAll(feedItems);
-
 
                                                                     UIUtil.runOnUiThread(getActivity(), new Runnable() {
                                                                         @Override
@@ -287,6 +284,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                                                                 //一定是网络请求才会调用这里，所以用diff比较
                                                                                 adapter.setNewDataByDiff(feedItems,notReadNum);
                                                                             }
+
+                                                                            //TODO:滚动到添加数据的地方
+//                                                                            recyclerView.smoothScrollToPosition();
                                                                         }
                                                                     });
                                                                 }
@@ -309,7 +309,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     @Override
                     public void onFinish(final List<FeedItem> feedList, final int newNum) {
 
-                        ALog.d("请求结束了！");
+                         ALog.d("请求结束了！");
                         //主线程
                         new Thread(new Runnable() {
                             @Override

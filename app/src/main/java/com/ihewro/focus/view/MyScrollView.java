@@ -61,14 +61,14 @@ public class MyScrollView extends NestedScrollView {
                 int deltaX = x - mLastX;
                 int deltaY = y - mLastY;
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    ALog.d("水平滑动");
+//                    ALog.d("水平滑动");
                     if (!is_current_scroll){
                         // 如果水平方向滑动的距离多一点，那就表示让父容器水平滑动，子控件不滑动，让父容器拦截事件
                         getParent().getParent().requestDisallowInterceptTouchEvent(false);
                     }
                 }else {
                     is_current_scroll = true;
-                    ALog.d("上下滑动");
+//                    ALog.d("上下滑动");
                 }
                 break;
             }

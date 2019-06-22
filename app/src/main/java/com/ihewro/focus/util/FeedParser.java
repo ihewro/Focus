@@ -65,7 +65,7 @@ public class FeedParser {
      * @param xmlStr
      * @return[
      */
-    public static synchronized Feed parseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
+    public static Feed parseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         if (Strings.isNullOrEmpty(xmlStr)) {
             return null;
         }
@@ -88,7 +88,7 @@ public class FeedParser {
     }
 
 
-    private static synchronized Feed beginParseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
+    private static Feed beginParseStr2Feed(String xmlStr,String url) throws UnsupportedEncodingException {
         feedUrl = url;
         XmlPullParser parser = Xml.newPullParser();
         try {
@@ -121,7 +121,7 @@ public class FeedParser {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private static synchronized Feed readRssForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static Feed readRssForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, RSS);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -145,7 +145,7 @@ public class FeedParser {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private static synchronized Feed readChannelForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static Feed readChannelForFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         Feed feed = new Feed();
         feed.setUrl(feedUrl);
         List<FeedItem> feedItems = new ArrayList<>();
@@ -203,7 +203,7 @@ public class FeedParser {
      * @throws IOException
      * @throws XmlPullParserException
      */
-    private static synchronized FeedItem readItemForFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private static FeedItem readItemForFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, null, ITEM);
         String title = null;
         String link = null;
@@ -343,7 +343,7 @@ public class FeedParser {
      * @param feed
      * @return
      */
-    public synchronized static Feed HandleFeed(int id,Response<String> response, Feed feed) throws IOException {
+    public static Feed HandleFeed(int id,Response<String> response, Feed feed) throws IOException {
         if (feed !=null){
             int count = LitePal.where("feedid = ?", String.valueOf(id)).count(FeedItem.class);
 
@@ -395,7 +395,7 @@ public class FeedParser {
             }
 
             int count2 = LitePal.where("feedid = ?", String.valueOf(id)).count(FeedItem.class);
-            ALog.d("请求前数目" + count + "请求后数目" + count2 + "时间");
+//            ALog.d("请求前数目" + count + "请求后数目" + count2 + "时间");
             FeedRequest feedRequire = new FeedRequest(feed.getId(),true,count2 - count,"",response.code(), DateUtil.getNowDateRFCInt());
             feedRequire.save();
         }

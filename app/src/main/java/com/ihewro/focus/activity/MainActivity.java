@@ -749,7 +749,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 获取用户的订阅数据，显示在左侧边栏的drawer中
      */
-    public void refreshLeftDrawerFeedList(boolean isUpdate) {
+    public synchronized void refreshLeftDrawerFeedList(boolean isUpdate) {
         subItems.clear();
         subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(SHOW_ALL));
         subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(SHOW_STAR));
@@ -940,6 +940,7 @@ public class MainActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    ALog.d("更新左侧边栏");
                     updateDrawer();
                 }
             }, 300); // 延迟一下，因为数据异步存储需要时间

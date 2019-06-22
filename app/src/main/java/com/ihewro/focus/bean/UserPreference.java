@@ -113,10 +113,10 @@ public class UserPreference extends LitePalSupport {
 
     public static String queryValueByKey(String key, String defaultValue){
         if (map.containsKey(key)){
-            ALog.d("缓存数据");
+//            ALog.d("缓存数据");
             return map.get(key);
         }else {
-            ALog.d("非缓存数据");
+//            ALog.d("非缓存数据");
             List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
             if (userPreferences.size()>0){
                 UserPreference temp = userPreferences.get(0);

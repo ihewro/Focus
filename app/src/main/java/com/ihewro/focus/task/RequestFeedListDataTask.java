@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -126,13 +127,27 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
                 call = request.getRSSDataWith(with);
             }
 
+           /* call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+
+                }
+            });
+*/
+
+
             try {
                 Response<String> response = call.execute();
                 if (response != null && response.isSuccessful()){
                     feed.setErrorGet(false);
                     feed.save();
+                    //处理数据库的时候我们进行同步处理
                     synchronized(this){
-                        //
                         Feed feed2 = FeedParser.HandleFeed(feed.getId(),response,FeedParser.parseStr2Feed(response.body(),originUrl));
                         //feed更新到当前的时间流中。
                         if (feed2!=null){
@@ -142,6 +157,7 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
                             return new Message(false);
                         }
                     }
+
                 }else {
                     String reason;
                     if (response.errorBody()!=null){

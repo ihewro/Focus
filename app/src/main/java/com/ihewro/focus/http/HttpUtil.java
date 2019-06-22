@@ -57,8 +57,12 @@ public class HttpUtil {
 
 
 
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequestsPerHost(100);
+        dispatcher.setMaxRequests(100);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .dispatcher(dispatcher)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
@@ -90,8 +94,8 @@ public class HttpUtil {
         builder.sslSocketFactory(socketFactory,new HttpsUtil.UnSafeTrustManager());
 
         OkHttpClient client = builder.build();
-        client.dispatcher().setMaxRequests(100);//最大并发数
-        client.dispatcher().setMaxRequestsPerHost(100);//单域名的并发数
+      /*  client.dispatcher().setMaxRequests(100);//最大并发数
+        client.dispatcher().setMaxRequestsPerHost(100);//单域名的并发数*/
 
         return client;
     }

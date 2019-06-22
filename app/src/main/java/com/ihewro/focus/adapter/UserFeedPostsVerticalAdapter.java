@@ -120,7 +120,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         bindListener(helper,item);
 
         if (helper.getAdapterPosition() == 0){
-            ALog.d("第一个项目" + item.getTitle());
+//            ALog.d("第一个项目" + item.getTitle());
         }
 
 //        ALog.d(item.getTitle() + "日期：" + item.getDate());
