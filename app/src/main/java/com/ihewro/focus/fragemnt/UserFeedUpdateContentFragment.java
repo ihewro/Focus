@@ -318,7 +318,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                 eList.clear();
                                 eList.addAll(feedList);
 
-                                ALog.d("列表数目" + eList.size());
+//                                ALog.d("列表数目" + eList.size());
                                if (newNum > 0){//获取到新的数据才自动备份
                                    //备份数据库
                                    UIUtil.autoBackUpWhenItIsNecessary();

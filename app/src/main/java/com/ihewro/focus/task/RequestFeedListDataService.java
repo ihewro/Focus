@@ -28,6 +28,7 @@ import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FilterPopupView;
 
 import org.litepal.LitePal;
+import org.litepal.crud.callback.CountCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,16 +128,21 @@ public class RequestFeedListDataService extends Service {
             if (num.get()>0){//请求总数大于1才会进行请求
                 if (!flag && !isForce){
                     //加载本地数据就可以了，没有网络请求
-                    handleData(new RequestDataCallback() {
+                    new Thread(new Runnable() {
                         @Override
-                        public void onSuccess(List<FeedItem> feedItemList) {
-                            //主线程
-                            ALog.d("无网络请求结束");
-                            callback.onFinish(feedItemList,0);
-                            stopForeground(true);
-                            mNotificationManager.cancel(1);//无网络情况下状态栏不需要留下通知
+                        public void run() {
+                            handleData(new RequestDataCallback() {
+                                @Override
+                                public void onSuccess(List<FeedItem> feedItemList) {
+                                    //主线程
+                                    ALog.d("无网络请求结束");
+                                    callback.onFinish(feedItemList,0);
+                                    stopForeground(true);
+                                    mNotificationManager.cancel(1);//无网络情况下状态栏不需要留下通知
+                                }
+                            });
                         }
-                    });
+                    }).start();
                 }else {//网络请求
                     int num = LitePal.count(FeedItem.class);
                     RequestFeedListDataService.this.feedItemNum = num;
@@ -185,7 +191,7 @@ public class RequestFeedListDataService extends Service {
                         //没请求完也需要
                         handleData(new RequestDataCallback() {
                             @Override
-                            public void onSuccess(List<FeedItem> feedItemList) {
+                            public void onSuccess(final List<FeedItem> feedItemList) {
                                 //主线程
                                 //使用了网络请求
                                 if (okNum.get() >= num.get() && !isFinish){//数据全部请求完毕
@@ -204,10 +210,15 @@ public class RequestFeedListDataService extends Service {
                                     //结束当前服务
                                     stopSelf();
                                 }else {//任务没有结束
-                                    int temp = LitePal.count(FeedItem.class);
-                                    final int sub = temp - RequestFeedListDataService.this.feedItemNumTemp;
-                                    RequestFeedListDataService.this.feedItemNumTemp = temp;
-                                    callback.onUpdate(feedItemList,sub);
+                                    LitePal.countAsync(FeedItem.class).listen(new CountCallback() {
+                                        @Override
+                                        public void onFinish(int count) {
+                                            final int sub = count - RequestFeedListDataService.this.feedItemNumTemp;
+                                            RequestFeedListDataService.this.feedItemNumTemp = count;
+                                            callback.onUpdate(feedItemList,sub);
+                                        }
+                                    });
+
                                 }
                             }
                         });
@@ -227,7 +238,7 @@ public class RequestFeedListDataService extends Service {
             if (UIUtil.isMainThread()){
                 ALog.d("主线程");
             }else {
-                ALog.d("子线程" + okNum);
+//                ALog.d("子线程" + okNum);
             }
             //子线程
             //进行数据处理

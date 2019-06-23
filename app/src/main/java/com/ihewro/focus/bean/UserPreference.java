@@ -136,20 +136,25 @@ public class UserPreference extends LitePalSupport {
     }
 
 
-    public static void updateOrSaveValueByKey(String key, String value){
-        List<UserPreference> userPreferences = LitePal.where("key = ?", key).find(UserPreference.class);
-        if (userPreferences.size()>0){
-            UserPreference temp = userPreferences.get(0);
-            temp.setValue(value);
-            temp.save();
-            //修改缓存中键值对
-            if (map.containsKey(key)){
-                map.remove(key);
-                map.put(key,value);
+    public static void updateOrSaveValueByKey(final String key, final String value){
+        LitePal.where("key = ?", key).limit(0).findAsync(UserPreference.class).listen(new FindMultiCallback<UserPreference>() {
+            @Override
+            public void onFinish(List<UserPreference> list) {
+                if (list.size()>0){
+                    UserPreference temp = list.get(0);
+                    temp.setValue(value);
+                    temp.save();
+                    //修改缓存中键值对
+                    if (map.containsKey(key)){
+                        map.remove(key);
+                        map.put(key,value);
+                    }
+                }else {
+                    setValueByKey(key,value);
+                }
             }
-        }else {
-            setValueByKey(key,value);
-        }
+        });
+
     }
 
 

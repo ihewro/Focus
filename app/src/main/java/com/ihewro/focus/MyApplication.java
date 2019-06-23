@@ -7,6 +7,7 @@ import android.util.Log;
 import com.blankj.ALog;
 import com.ihewro.focus.activity.MainActivity;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.helper.BlockDetectByPrinter;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -100,6 +101,7 @@ public class MyApplication extends LitePalApplication {
         initALog();
         initErrorHandle();
 
+        BlockDetectByPrinter.start();
         ImageLoaderManager.init(this);
 
         Toasty.Config.getInstance()

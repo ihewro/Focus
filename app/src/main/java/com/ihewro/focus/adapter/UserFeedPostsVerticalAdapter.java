@@ -101,7 +101,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     }
 
     public void setNewDataByDiff(@Nullable List<FeedItem> data,int notReadNum) {
-        ALog.d("设置新的数据" + data.size());
+//        ALog.d("设置新的数据" + data.size());
         if (notReadNum==0){
             this.setNewData(data);
         }else {
