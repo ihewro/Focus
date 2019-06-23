@@ -11,6 +11,8 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.bean.UserPreference;
 import com.lxj.xpopup.core.DrawerPopupView;
 
+import org.litepal.crud.callback.FindMultiCallback;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -174,21 +176,26 @@ public class FilterPopupView extends DrawerPopupView {
      * 点击了排序的列表
      * @param position
      */
-    private void clickOrderList(int position){
+    private void clickOrderList(final int position){
         orderChoice = orderOperation.get(position);
-        UserPreference.updateOrSaveValueByKey(UserPreference.ODER_CHOICE,orderChoice);
-        //修改当前项为高亮
-        ((TextView)findViewById(orderTextViews.get(position))).setTextColor(normalTextColor);
-        ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(normalBGColor);
+        UserPreference.updateOrSaveValueByKeyAsync(UserPreference.ODER_CHOICE, orderChoice, new FindMultiCallback<UserPreference>() {
+            @Override
+            public void onFinish(List<UserPreference> list) {
+                //修改当前项为高亮
+                ((TextView)findViewById(orderTextViews.get(position))).setTextColor(normalTextColor);
+                ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(normalBGColor);
 
-        //修改其他项为普通颜色
-        for (int i = 0; i < orderOperation.size(); i++){
-            if (i != position){
-                ((TextView)findViewById(orderTextViews.get(i))).setTextColor(highlightTextColor);
-                ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
+                //修改其他项为普通颜色
+                for (int i = 0; i < orderOperation.size(); i++){
+                    if (i != position){
+                        ((TextView)findViewById(orderTextViews.get(i))).setTextColor(highlightTextColor);
+                        ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
 
+                    }
+                }
             }
-        }
+        });
+
 
     }
 

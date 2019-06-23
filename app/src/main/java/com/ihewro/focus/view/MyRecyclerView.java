@@ -40,4 +40,20 @@ public class MyRecyclerView extends RecyclerView {
 //        ALog.d("recyclerview 点击事件");
         return super.onTouchEvent(e);
     }
+
+    @Override
+    public void onScrolled(int dx, int dy) {
+        super.onScrolled(dx, dy);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
+
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+        return super.onInterceptTouchEvent(e);
+    }
 }

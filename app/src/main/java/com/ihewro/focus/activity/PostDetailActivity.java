@@ -214,6 +214,7 @@ public class PostDetailActivity extends BackActivity {
                             @Override
                             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 //                                ALog.d("onScrollStateChanged");
+
                             }
 
                             @Override
@@ -339,7 +340,7 @@ public class PostDetailActivity extends BackActivity {
                         content.setOnTouchListener(new View.OnTouchListener() {
                             @Override
                             public boolean onTouch(View v, MotionEvent event) {
-                                ALog.d("什么情况？？双击事件");
+//                                ALog.d("什么情况？？双击事件");
 
                                 return gestureDetector.onTouchEvent(event);
                             }
