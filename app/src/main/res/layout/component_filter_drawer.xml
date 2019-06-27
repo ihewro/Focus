@@ -21,35 +21,49 @@
             android:textSize="17sp" />
 
         <android.support.v7.widget.CardView
-            android:id="@+id/newest_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            app:cardCornerRadius="10dp" >
-            <TextView
-                android:id="@+id/newest_tv"
+            android:layout_margin="10dp">
+
+            <LinearLayout
+                android:id="@+id/newest_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="最新的优先"/>
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/newest_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="最新的优先"/>
+            </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/old_card"
             android:layout_width="match_parent"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="10dp">
-            <TextView
-                android:id="@+id/old_tv"
+            android:layout_margin="10dp">
+
+            <LinearLayout
+                android:id="@+id/old_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="旧的优先"/>
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/old_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="旧的优先"/>
+            </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
         <TextView
@@ -58,55 +72,73 @@
             android:padding="16dp"
             android:text="筛选器"
             android:textColor="@color/text_unread"
-            android:textSize="17sp" />
+            android:textSize="17sp"/>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/all_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            app:cardCornerRadius="10dp">
-            <TextView
-                android:id="@+id/all_tv"
+            android:layout_margin="10dp">
+
+            <LinearLayout
+                android:id="@+id/all_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="不筛选"/>
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/all_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="不筛选"/>
+            </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/read_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            app:cardCornerRadius="10dp">
-            <TextView
-                android:id="@+id/read_tv"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:id="@+id/read_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="只包含未读" />
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:id="@+id/read_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="只包含未读" />
+            </LinearLayout>
+
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/star_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="10dp"
-            android:focusable="true">
-            <TextView
-                android:id="@+id/star_tv"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:id="@+id/star_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="只包含收藏" />
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:id="@+id/star_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="只包含收藏" />
+            </LinearLayout>
+
+
         </android.support.v7.widget.CardView>
 
 

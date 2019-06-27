@@ -210,15 +210,16 @@ public class RequestFeedListDataService extends Service {
                                     //结束当前服务
                                     stopSelf();
                                 }else {//任务没有结束
-                                    LitePal.countAsync(FeedItem.class).listen(new CountCallback() {
-                                        @Override
-                                        public void onFinish(int count) {
-                                            final int sub = count - RequestFeedListDataService.this.feedItemNumTemp;
-                                            RequestFeedListDataService.this.feedItemNumTemp = count;
-                                            callback.onUpdate(feedItemList,sub);
-                                        }
-                                    });
-
+                                    if (!isFinish){//如果已经结束了，就无需再update了！
+                                        LitePal.countAsync(FeedItem.class).listen(new CountCallback() {
+                                            @Override
+                                            public void onFinish(int count) {
+                                                final int sub = count - RequestFeedListDataService.this.feedItemNumTemp;
+                                                RequestFeedListDataService.this.feedItemNumTemp = count;
+                                                callback.onUpdate(feedItemList,sub);
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         });
@@ -354,7 +355,7 @@ public class RequestFeedListDataService extends Service {
             builderProgress.setProgress(100, progress, false);
         }
         if (progress == 100){
-            subTitle.setText("请求完毕");
+            subTitle.setText("请求完毕，整理数据中……");
             builderProgress.setContentText(title);
         }
         //绑定点击事件

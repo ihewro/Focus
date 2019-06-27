@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ihewro.focus.R;
@@ -37,17 +38,17 @@ public class FilterPopupView extends DrawerPopupView {
     public static final String SHOW_STAR = "SHOW_STAR";
 
     TextView newestTv;
-    CardView newestCard;
+    LinearLayout newestCard;
     TextView oldTv;
-    CardView oldCard;
+    LinearLayout oldCard;
     TextView allTv;
-    CardView allCard;
+    LinearLayout allCard;
     TextView readTv;
-    CardView readCard;
+    LinearLayout readCard;
     TextView starTv;
-    CardView starCard;
+    LinearLayout starCard;
 
-    private CardView newestC;
+    private LinearLayout newestC;
     private boolean isNeedUpdate = false;
 
     private String orderChoice = ORDER_BY_NEW;//当前排序选择
@@ -183,13 +184,13 @@ public class FilterPopupView extends DrawerPopupView {
             public void onFinish(List<UserPreference> list) {
                 //修改当前项为高亮
                 ((TextView)findViewById(orderTextViews.get(position))).setTextColor(normalTextColor);
-                ((CardView)findViewById(orderCardViews.get(position))).setCardBackgroundColor(normalBGColor);
+                findViewById(orderCardViews.get(position)).setBackgroundColor(normalBGColor);
 
                 //修改其他项为普通颜色
                 for (int i = 0; i < orderOperation.size(); i++){
                     if (i != position){
                         ((TextView)findViewById(orderTextViews.get(i))).setTextColor(highlightTextColor);
-                        ((CardView)findViewById(orderCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
+                        findViewById(orderCardViews.get(i)).setBackgroundColor(highlightBGColor);
 
                     }
                 }
@@ -208,13 +209,13 @@ public class FilterPopupView extends DrawerPopupView {
         UserPreference.updateOrSaveValueByKey(UserPreference.FILTER_CHOICE,filterChoice);
         //修改当前项为高亮
         ((TextView)findViewById(filterTextViews.get(position))).setTextColor(normalTextColor);
-        ((CardView)findViewById(filterCardViews.get(position))).setCardBackgroundColor(normalBGColor);
+        findViewById(filterCardViews.get(position)).setBackgroundColor(normalBGColor);
 
         //修改其他项为普通颜色
         for (int i = 0; i < filterOperation.size();i++){
             if (i != position){
                 ((TextView)findViewById(filterTextViews.get(i))).setTextColor(highlightTextColor);
-                ((CardView)findViewById(filterCardViews.get(i))).setCardBackgroundColor(highlightBGColor);
+                findViewById(filterCardViews.get(i)).setBackgroundColor(highlightBGColor);
             }
         }
     }

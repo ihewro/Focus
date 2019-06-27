@@ -56,6 +56,7 @@ import com.ihewro.focus.view.FeedOperationPopupView;
 import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.enums.PopupPosition;
+import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -490,7 +491,7 @@ public class MainActivity extends BaseActivity {
             popupView = (FeedListShadowPopupView) new XPopup.Builder(MainActivity.this)
                     .atView(playButton)
                     .hasShadowBg(true)
-                    .setPopupCallback(new XPopupCallback() {
+                    .setPopupCallback(new SimpleCallback() {
                         @Override
                         public void onShow() {
                             popupView.getAdapter().setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -955,7 +956,7 @@ public class MainActivity extends BaseActivity {
         drawerPopupView = (FilterPopupView) new XPopup.Builder(this)
                 .popupPosition(PopupPosition.Right)//右边
                 .hasStatusBarShadow(true) //启用状态栏阴影
-                .setPopupCallback(new XPopupCallback() {
+                .setPopupCallback(new SimpleCallback() {
                     @Override
                     public void onShow() {
 

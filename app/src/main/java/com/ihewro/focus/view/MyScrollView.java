@@ -58,7 +58,7 @@ public class MyScrollView extends NestedScrollView {
                 if(lastY ==scroller.getScrollY()) {
                     handleStop(scroller);
                 }else {
-                    handler.sendMessageDelayed(handler.obtainMessage(touchEventId,scroller), 50);
+                    handler.sendMessageDelayed(handler.obtainMessage(touchEventId,scroller), 200);
                     lastY = scroller.getScrollY();
                 }
             }

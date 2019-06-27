@@ -68,12 +68,13 @@
             app:title="发现市场"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:elevation="6dp"/>
+            android:elevation="3dp"/>
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:elevation="6dp"/>
 
         <LinearLayout
             android:id="@+id/search_view_content"

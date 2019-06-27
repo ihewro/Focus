@@ -26,11 +26,12 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:text="博主"
+                android:text="选择收藏单"
                 android:textColor="@color/text_unread" />
 
             <TextView
                 android:id="@+id/subtitle"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/weak_text"
@@ -48,12 +49,12 @@
 
             <ImageView
 
-                android:id="@+id/action_help"
+                android:id="@+id/action_add"
                 android:clickable="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_help_black_24dp"/>
+                android:src="@drawable/ic_add_black_24dp"/>
 
             <ImageView
                 android:id="@+id/action_close"
@@ -75,34 +76,5 @@
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
         android:orientation="vertical" />
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:id="@+id/text_info"
-            android:textColor="@color/weak_text"
-            android:textSize="13sp"
-            android:layout_alignParentLeft="true"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"/>
-
-        <Button
-            android:id="@+id/btn_finish"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:text="收藏"
-            android:clickable="true"
-            android:background="@drawable/button_round"
-            android:textColor="@color/white" />
-
-    </RelativeLayout>
 
 </LinearLayout>
