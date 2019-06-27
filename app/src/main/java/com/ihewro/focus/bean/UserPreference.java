@@ -48,6 +48,8 @@ public class UserPreference extends LitePalSupport {
 
 
     private int id;//主键
+
+    @Column(unique = true)
     private String key;
     private String value;
     private String defaultValue;
@@ -133,6 +135,7 @@ public class UserPreference extends LitePalSupport {
     private static void setValueByKey(String key,String value){
         UserPreference userPreference = new UserPreference(key,value);
         userPreference.save();
+        map.put(key,value);
     }
 
 

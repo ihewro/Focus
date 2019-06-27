@@ -109,6 +109,7 @@ public class FilterPopupView extends DrawerPopupView {
         //获取用户设置中的位置
         orderChoice = UserPreference.queryValueByKey(UserPreference.ODER_CHOICE,ORDER_BY_NEW);
         filterChoice = UserPreference.queryValueByKey(UserPreference.FILTER_CHOICE,SHOW_ALL);
+
         clickOrderList(orderOperation.indexOf(orderChoice));
 
         clickFilterList(filterOperation.indexOf(filterChoice));
