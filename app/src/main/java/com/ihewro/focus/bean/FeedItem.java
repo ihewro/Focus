@@ -1,10 +1,15 @@
 package com.ihewro.focus.bean;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.blankj.ALog;
+import com.ihewro.focus.activity.PostDetailActivity;
+import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.decoration.ISuspensionInterface;
 import com.ihewro.focus.util.DateUtil;
+import com.ihewro.focus.view.CollectionFolderListPopupView;
+import com.lxj.xpopup.XPopup;
 
 import org.litepal.LitePal;
 import org.litepal.annotation.Column;
@@ -205,5 +210,12 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
     @Override
     public boolean save() {
         return super.save();
+    }
+
+    public void clickWhenNotFavorite(Activity activity,Collection collection,UICallback uiCallback){
+        //点击进行收藏
+        new XPopup.Builder(activity)
+                .asCustom(new CollectionFolderListPopupView(activity,collection,uiCallback))
+                .show();
     }
 }

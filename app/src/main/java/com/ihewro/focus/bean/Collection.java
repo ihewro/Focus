@@ -1,5 +1,9 @@
 package com.ihewro.focus.bean;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.ihewro.focus.decoration.ISuspensionInterface;
+import com.ihewro.focus.util.DateUtil;
+
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
@@ -12,10 +16,11 @@ import org.litepal.crud.LitePalSupport;
  *     version: 1.0
  * </pre>
  */
-public class Collection extends LitePalSupport {
+public class Collection extends LitePalSupport implements MultiItemEntity, ISuspensionInterface {
 
-    private static final String FEED_ITEM = "FEED_ITEM";//文章
-    private static final String WEBSITE = "WEBSITE";//网页
+
+    public static final int FEED_ITEM = 794;//文章
+    public static final int WEBSITE = 580;//网页
 
     @Column(unique = true)
     private int id;
@@ -25,14 +30,41 @@ public class Collection extends LitePalSupport {
 
     private String summary;//文章简介
     private String content;//文章内容
+    private String feedName;//订阅名称
 
 
     @Column(unique = true)
     private String url;//文章指向的链接，作为文章的唯一标识符
-    private String type;//收藏类型
+
+    private int itemType;//收藏类型
+
 
     private Long time;//收藏时间
 
+
+    public Collection() {
+    }
+
+    //收藏文章的构造器
+    public Collection(String title, String feedName, Long date, String summary, String content, String url, int itemType, Long time) {
+        this.title = title;
+        this.feedName = feedName;
+        this.date = date;
+        this.summary = summary;
+        this.content = content;
+        this.url = url;
+        this.itemType = itemType;
+        this.time = time;
+    }
+
+
+    //收藏网站的构造器
+    public Collection(String title, String url, int itemType, Long time) {
+        this.title = title;
+        this.url = url;
+        this.itemType = itemType;
+        this.time = time;
+    }
 
     public int getId() {
         return id;
@@ -82,12 +114,8 @@ public class Collection extends LitePalSupport {
         this.url = url;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
     }
 
     public Long getTime() {
@@ -96,5 +124,28 @@ public class Collection extends LitePalSupport {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    @Override
+    public int getItemType() {
+        return itemType;
+    }
+
+    public String getFeedName() {
+        return feedName;
+    }
+
+    public void setFeedName(String feedName) {
+        this.feedName = feedName;
+    }
+
+    @Override
+    public boolean isShowSuspension() {
+        return true;
+    }
+
+    @Override
+    public String getSuspensionTag() {
+        return DateUtil.getTimeStringByInt(time);//返回年/月/日格式的日期
     }
 }

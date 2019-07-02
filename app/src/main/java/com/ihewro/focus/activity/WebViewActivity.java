@@ -72,8 +72,10 @@ public class WebViewActivity extends BackActivity {
             ALog.d("接收到网站的标题");
             if (toolbar != null) {
                 toolbar.setTitle(title);
+                ((TextView)webLayout.getLayout().findViewById(R.id.header)).setText("网页由 " + webView.getUrl() + " 提供");
             }
         }
+
     };
 
 
@@ -130,7 +132,6 @@ public class WebViewActivity extends BackActivity {
         webLayout = new WebLayout(this);
 
 
-        ((TextView)webLayout.getLayout().findViewById(R.id.header)).setText("网页由 " + url + " 提供");
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(container, new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator()

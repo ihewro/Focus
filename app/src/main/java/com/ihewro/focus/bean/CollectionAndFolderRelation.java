@@ -17,6 +17,14 @@ public class CollectionAndFolderRelation extends LitePalSupport {
     private int collectionId;
     private int collectionFolderId;
 
+    public CollectionAndFolderRelation() {
+    }
+
+    public CollectionAndFolderRelation(int collectionId, int collectionFolderId) {
+        this.collectionId = collectionId;
+        this.collectionFolderId = collectionFolderId;
+    }
+
     public int getId() {
         return id;
     }

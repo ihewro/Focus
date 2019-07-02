@@ -77,4 +77,34 @@
         android:paddingBottom="20dp"
         android:orientation="vertical" />
 
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/text_info"
+            android:textColor="@color/weak_text"
+            android:textSize="13sp"
+            android:layout_alignParentLeft="true"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+
+        <Button
+            android:id="@+id/btn_finish"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:text="收藏"
+            android:clickable="true"
+            android:background="@drawable/button_round"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
 </LinearLayout>

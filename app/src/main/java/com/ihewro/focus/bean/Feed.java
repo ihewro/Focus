@@ -38,7 +38,7 @@ public class Feed extends LitePalSupport {
     private String websiteCategoryName;
     private Long time;
     private int feedFolderId;//feed文件夹id
-    private String type;
+    private String type;//属于哪个来源，比如本地或者别的第三方平台
 
     private double orderValue;//顺序权限，用来排序的
     private String rsshub;//源地址

@@ -1,6 +1,9 @@
 package com.ihewro.focus.util;
 
+import android.database.Cursor;
+
 import com.google.common.base.Strings;
+import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.FeedItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -45,5 +48,47 @@ public class DataUtil {
             }
         }
         return null;
+    }
+
+
+    public static String getCollectionItemImageUrl(Collection item){
+        String content;
+        if (!Strings.isNullOrEmpty(item.getContent())) {
+            content =  item.getContent();
+        }else {
+
+            content =  item.getSummary();
+        }
+        if (content!=null && !content.equals("")){
+            Document doc = Jsoup.parse(content);
+            if (doc != null) {
+                Elements images = doc.select("img");
+                if (images.size() > 0) {
+                    return images.get(0).attr("src");
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+    public static String getColumnString(Cursor cursor, String column,String defaultValue){
+        int index = cursor.getColumnIndex(column);
+        if (index == -1){
+            return defaultValue;
+        }else {
+            return cursor.getString(index);
+        }
+    }
+
+
+    public static int getColumnInt(Cursor cursor, String column,int defaultValue){
+        int index = cursor.getColumnIndex(column);
+        if (index == -1){
+            return defaultValue;
+        }else {
+            return cursor.getInt(index);
+        }
     }
 }

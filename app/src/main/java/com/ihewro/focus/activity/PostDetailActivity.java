@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.PostDetailListAdapter;
+import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
@@ -32,11 +34,15 @@ import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
+import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.util.WebViewUtil;
+import com.ihewro.focus.view.CollectionFolderListPopupView;
 import com.ihewro.focus.view.MyRecyclerView;
 import com.ihewro.focus.view.MyScrollView;
+import com.ihewro.focus.view.RequireListPopupView;
+import com.lxj.xpopup.XPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -285,10 +291,17 @@ public class PostDetailActivity extends BackActivity {
             public boolean onDoubleTap(MotionEvent e) {//双击事件
                 ALog.d("双击");
                 if (currentFeedItem.isFavorite()){
-                    currentFeedItem.setFavorite(false);
-                    Toasty.success(PostDetailActivity.this,"取消收藏成功").show();
+
+//                    currentFeedItem.setFavorite(false);
+//                    Toasty.success(PostDetailActivity.this,"取消收藏成功").show();
+
+
                 }else {
                     currentFeedItem.setFavorite(true);
+                    Collection collection = new Collection(currentFeedItem.getTitle(),currentFeedItem.getFeedName(),currentFeedItem.getDate(),currentFeedItem.getSummary(),currentFeedItem.getContent(),currentFeedItem.getUrl(),Collection.FEED_ITEM, DateUtil.getNowDateRFCInt());
+                    new XPopup.Builder(PostDetailActivity.this)
+                            .asCustom(new CollectionFolderListPopupView(PostDetailActivity.this,collection))
+                            .show();
                     Toasty.success(PostDetailActivity.this,"收藏成功").show();
 
                 }
@@ -610,7 +623,6 @@ public class PostDetailActivity extends BackActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         ALog.d("postDetail 被销毁");
-
     }
 
 }

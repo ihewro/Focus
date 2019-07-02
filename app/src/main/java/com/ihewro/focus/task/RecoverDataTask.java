@@ -17,6 +17,9 @@ import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.Collection;
+import com.ihewro.focus.bean.CollectionAndFolderRelation;
+import com.ihewro.focus.bean.CollectionFolder;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
@@ -24,6 +27,8 @@ import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.helper.DatabaseHelper;
 import com.ihewro.focus.util.DataCleanManager;
+import com.ihewro.focus.util.DataUtil;
+import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 
@@ -193,6 +198,9 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
         LitePal.deleteAll(Feed.class);
         LitePal.deleteAll(FeedItem.class);
         LitePal.deleteAll(UserPreference.class);
+        LitePal.deleteAll(Collection.class);
+        LitePal.deleteAll(CollectionFolder.class);
+        LitePal.deleteAll(CollectionAndFolderRelation.class);
 
         //TODO: 对于新加入的字段的恢复
         Cursor feedFolderCur = database.rawQuery("SELECT * from feedfolder", null);
@@ -200,8 +208,13 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
             do{
                 FeedFolder feedFolder = new FeedFolder();
                 String name = feedFolderCur.getString(feedFolderCur.getColumnIndex("name"));
+                String rsshub = DataUtil.getColumnString(feedFolderCur,"rsshub",UserPreference.DEFAULT_RSSHUB);
+                int timeout = DataUtil.getColumnInt(feedFolderCur,"timeout",Feed.DEFAULT_TIMEOUT);
                 int feedfolderId = feedFolderCur.getInt(feedFolderCur.getColumnIndex("id"));
+
                 feedFolder.setName(name);
+                feedFolder.setRsshub(rsshub);
+                feedFolder.setTimeout(timeout);
                 feedFolder.save();
 
                 Cursor feedCur = database.rawQuery("select * from feed where feedfolderid = ?", new String[]{""+feedfolderId});
@@ -216,7 +229,7 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                         Long time = feedCur.getLong(feedCur.getColumnIndex("time"));
                         int feedFolderId = feedFolder.getId();
                         String type = feedCur.getString(feedCur.getColumnIndex("type"));
-                        int timeout = feedCur.getInt(feedCur.getColumnIndex("timeout"));
+                        int timeout2 = feedCur.getInt(feedCur.getColumnIndex("timeout"));
                         String temp = feedCur.getString(feedCur.getColumnIndex("errorget"));
                         boolean errorGet;
                         if (StringUtil.trim(temp).equals("1")){
@@ -224,8 +237,10 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                         }else {
                             errorGet = false;
                         }
+                        String rsshub2 = DataUtil.getColumnString(feedCur,"rsshub",UserPreference.DEFAULT_RSSHUB);
                         int feedId = feedCur.getInt(feedCur.getColumnIndex("id"));
-                        Feed feed = new Feed(name2,desc,url,link,websiteName,websiteCategoryName,time,feedFolderId,type,timeout,errorGet);
+                        Feed feed = new Feed(name2,desc,url,link,websiteName,websiteCategoryName,time,feedFolderId,type,timeout2,errorGet);
+                        feed.setRsshub(rsshub2);
                         feed.save();
 
                         //绑定该feed下面的所有文章
@@ -277,6 +292,13 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
                 }while (userCur.moveToNext());
                 userCur.close();
             }
+
+            //恢复用户收藏表
+
+
+            //恢复用户收藏分类表
+
+            //恢复用户收藏分类关系表
 
             database.close();
         }

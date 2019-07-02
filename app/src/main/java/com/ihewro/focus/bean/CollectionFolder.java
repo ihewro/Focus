@@ -14,6 +14,8 @@ import org.litepal.crud.LitePalSupport;
  */
 public class CollectionFolder extends LitePalSupport {
 
+    private int id;
+
     @Column(unique = true, defaultValue = "")
     private String name;//分类的名称
 
@@ -30,6 +32,14 @@ public class CollectionFolder extends LitePalSupport {
         this.name = name;
     }
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
