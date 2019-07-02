@@ -22,10 +22,13 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:roundIcon">
+        <activity android:name=".activity.CollectionDetailActivity"></activity>
+        <activity android:name=".activity.CollectionFolderManageActivity" />
+
         <receiver
             android:name=".task.AutoUpdateReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service
             android:name=".task.TimingService"

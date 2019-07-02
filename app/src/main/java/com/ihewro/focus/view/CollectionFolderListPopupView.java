@@ -3,7 +3,6 @@ package com.ihewro.focus.view;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -18,14 +17,11 @@ import com.ihewro.focus.adapter.CollectionFolderListAdapter;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionAndFolderRelation;
 import com.ihewro.focus.bean.CollectionFolder;
-import com.ihewro.focus.bean.EventMessage;
-import com.ihewro.focus.bean.FeedFolder;
-import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.callback.UICallback;
+import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.core.BottomPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
 
-import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 import org.litepal.exceptions.LitePalSupportException;
 
@@ -70,6 +66,7 @@ public class CollectionFolderListPopupView extends BottomPopupView {
     public CollectionFolderListPopupView(Activity context, Collection collection, UICallback callback) {
         super(context);
         this.collection = collection;
+        this.uiCallback = callback;
     }
 
 
@@ -123,17 +120,29 @@ public class CollectionFolderListPopupView extends BottomPopupView {
                         //先删掉旧的关联，再新建新的关联
                         LitePal.deleteAll(CollectionAndFolderRelation.class,"collectionid = ?", String.valueOf(collection.getId()));
 
-                        List<Integer> folderIds = adapter.getSelectFolderIds();
+                        final List<Integer> folderIds = adapter.getSelectFolderIds();
                         for (int i = 0;i<folderIds.size();i++){
                             new CollectionAndFolderRelation(collection.getId(),folderIds.get(i)).save();
                         }
 
-                        //如果size = 0说明取消收藏了，否则说明仍然是首次
-                        if (folderIds.size()>0){
-                            uiCallback.doUI(true);
-                        }else {
-                            uiCallback.doUI(false);
-                        }
+
+
+                        UIUtil.runOnUiThread((Activity) getContext(), new Runnable() {
+                            @Override
+                            public void run() {
+
+                                //如果size = 0说明取消收藏了，否则说明仍然是收藏
+                                uiCallback.doUIWithIds(folderIds);
+
+
+                                if (folderIds.size()>0){
+                                    uiCallback.doUIWithFlag(true);
+                                }else {
+                                    uiCallback.doUIWithFlag(false);
+                                }
+                            }
+                        });
+
                     }
                 }).start();
 

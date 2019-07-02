@@ -5,13 +5,17 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionFolder;
+import com.ihewro.focus.bean.FeedItem;
+import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
@@ -33,15 +37,16 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
 
     private List<Collection> collectionList;
     private Activity activity;
+    private int folderid;
 
-    public CollectionListAdapter(@Nullable List<Collection> data, Activity activity) {
+    public CollectionListAdapter(int folderid, @Nullable List<Collection> data, Activity activity) {
         super(data);
         this.activity = activity;
         addItemType(Collection.FEED_ITEM, R.layout.item_post);
         addItemType(Collection.WEBSITE, R.layout.item_website);
 
+        this.folderid = folderid;
         collectionList = data;
-        initListener();
     }
 
     @Override
@@ -75,6 +80,7 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
                     helper.getView(R.id.post_pic).setVisibility(View.GONE);
                 }
 
+                initListener(helper,item);
 
                 break;
             case Collection.WEBSITE:
@@ -83,24 +89,36 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
         }
     }
 
-    private void initListener(){
-        this.setOnItemClickListener(new OnItemClickListener() {
+    private void initListener(final BaseViewHolder helper, Collection item){
+
+
+
+        helper.getView(R.id.content_container).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Collection collection = collectionList.get(position);
-                switch (collection.getItemType()){
-                    case Collection.FEED_ITEM:
-                        //跳转到文章收藏页面
+            public boolean onLongClick(View v) {
+                FeedItem.clickWhenNotFavorite(activity, collectionList.get(helper.getAdapterPosition()), new UICallback() {
+                    @Override
+                    public void doUIWithIds(List<Integer> ids) {
+                        //刷新一下界面
+                        if (!ids.contains(folderid)){
+                            remove(helper.getAdapterPosition());
+                        }
+                        notifyDataSetChanged();
 
-                        break;
-                    case Collection.WEBSITE:
-                        //跳转到链接
-
-
-                        break;
-                }
+                    }
+                });
+                return true;
             }
         });
 
+
+        helper.getView(R.id.content_container).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到文章页面
+
+
+            }
+        });
     }
 }

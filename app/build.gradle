@@ -130,7 +130,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //更方便的RecyclerView库
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.36'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'
 
     //侧边栏
     implementation("com.mikepenz:materialdrawer:6.0.9@aar") {
@@ -165,7 +165,6 @@ dependencies {
     //全局错误异常捕捉
 //    implementation 'cat.ereza:customactivityoncrash:2.2.0'
     implementation 'com.zxy.android:recovery:1.0.0'
-
 
     //toast
     implementation 'com.github.GrenderG:Toasty:1.4.0'

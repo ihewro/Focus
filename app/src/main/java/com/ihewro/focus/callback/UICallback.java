@@ -1,5 +1,7 @@
 package com.ihewro.focus.callback;
 
+import java.util.List;
+
 /**
  * <pre>
  *     author : hewro
@@ -9,6 +11,8 @@ package com.ihewro.focus.callback;
  *     version: 1.0
  * </pre>
  */
-public interface UICallback {
-    void doUI(boolean flag);
+public abstract class UICallback {
+    public void doUIWithFlag(boolean flag){};
+
+    public void doUIWithIds(List<Integer> ids){};
 }

@@ -32,6 +32,7 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.DateUtil;
@@ -288,36 +289,11 @@ public class PostDetailActivity extends BackActivity {
         final GestureDetector gestureDetector = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
             @Override
-            public boolean onDoubleTap(MotionEvent e) {//双击事件
+            public boolean onDoubleTap(final MotionEvent e) {//双击事件
                 ALog.d("双击");
-                if (currentFeedItem.isFavorite()){
-
-//                    currentFeedItem.setFavorite(false);
-//                    Toasty.success(PostDetailActivity.this,"取消收藏成功").show();
 
 
-                }else {
-                    currentFeedItem.setFavorite(true);
-                    Collection collection = new Collection(currentFeedItem.getTitle(),currentFeedItem.getFeedName(),currentFeedItem.getDate(),currentFeedItem.getSummary(),currentFeedItem.getContent(),currentFeedItem.getUrl(),Collection.FEED_ITEM, DateUtil.getNowDateRFCInt());
-                    new XPopup.Builder(PostDetailActivity.this)
-                            .asCustom(new CollectionFolderListPopupView(PostDetailActivity.this,collection))
-                            .show();
-                    Toasty.success(PostDetailActivity.this,"收藏成功").show();
-
-                }
-
-                setLikeButton();
-
-                currentFeedItem.saveAsync().listen(new SaveCallback() {
-                    @Override
-                    public void onFinish(boolean success) {
-                        if (!isUpdateMainReadMark) {
-                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_ID, mId, currentFeedItem.isFavorite()));
-                        } else {
-                            EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_STAR_STATUS_BY_INDEX, mIndex, currentFeedItem.isFavorite()));
-                        }
-                    }
-                });
+                clickStarButton();
 
                 return true;
             }
@@ -426,7 +402,35 @@ public class PostDetailActivity extends BackActivity {
                 break;
 
             case R.id.action_star:
-                currentFeedItem.setFavorite(!currentFeedItem.isFavorite());
+
+                clickStarButton();
+
+                break;
+
+            case android.R.id.home:
+                finish();
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void clickStarButton(){
+
+        FeedItem.clickWhenNotFavorite(PostDetailActivity.this, currentFeedItem, new UICallback() {
+            @Override
+            public void doUIWithFlag(boolean flag) {
+                currentFeedItem.setFavorite(flag);
+                if (flag){//收藏了
+                    Toasty.success(PostDetailActivity.this,"收藏成功").show();
+                }else {
+                    Toasty.success(PostDetailActivity.this,"取消收藏成功").show();
+                }
+
+                setLikeButton();
+
                 currentFeedItem.saveAsync().listen(new SaveCallback() {
                     @Override
                     public void onFinish(boolean success) {
@@ -438,17 +442,8 @@ public class PostDetailActivity extends BackActivity {
                     }
                 });
 
-                setLikeButton();
-
-                break;
-
-            case android.R.id.home:
-                finish();
-                break;
-
-        }
-
-        return super.onOptionsItemSelected(item);
+            }
+        });
     }
 
     //根据现有的设置，恢复布局

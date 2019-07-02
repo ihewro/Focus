@@ -18,6 +18,7 @@ import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
+import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
@@ -235,19 +236,29 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         helper.getView(R.id.content_container).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                item.setFavorite(!item.isFavorite());
 
-                //保存到数据库
-                item.setFavorite(item.isFavorite());
-                item.save();
+                FeedItem.clickWhenNotFavorite(activity, item, new UICallback() {
+                    @Override
+                    public void doUIWithFlag(final boolean flag) {
 
-                //通知
-                if (item.isFavorite()){
-                    Toasty.success(activity,"收藏成功").show();
-                }else {
-                    Toasty.success(activity,"取消收藏成功").show();
-                }
-                notifyItemChanged(helper.getAdapterPosition());
+                        //保存到数据库
+                        item.setFavorite(flag);
+                        item.saveAsync().listen(new SaveCallback() {
+                            @Override
+                            public void onFinish(boolean success) {
+                                //通知
+                                if (flag){
+                                    Toasty.success(activity,"收藏成功").show();
+                                }else {
+                                    Toasty.success(activity,"取消收藏成功").show();
+                                }
+                                notifyItemChanged(helper.getAdapterPosition());
+                            }
+                        });
+
+                    }
+                });
+
                 return true;
             }
         });

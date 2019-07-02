@@ -4,11 +4,9 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CheckBox;
 
-import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
-import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionFolder;
 
 import java.util.ArrayList;
@@ -54,23 +52,34 @@ public class CollectionFolderListAdapter extends BaseQuickAdapter<CollectionFold
         this.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ALog.d("点击了");
 
-                CollectionFolder current = data.get(position);
-                current.setSelect(!current.isSelect());
-
-                if (current.isSelect()){
-                    selectFolderIds.add(current.getId());
-                }else {
-                    //剔除掉该id的文件夹
-                    selectFolderIds.remove((Integer) current.getId());
-                }
-                ((CheckBox)(view.findViewById(R.id.select))).setChecked(current.isSelect());
-                notifyItemChanged(position);
-
-
+                click(view,position);
             }
         });
+
+        this.setOnItemChildClickListener(new OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                if (view.getId() == R.id.select){
+                    click(view,position);
+                }
+            }
+        });
+    }
+
+    private void click(View view,int position){
+        boolean status = ((CheckBox)(view.findViewById(R.id.select))).isChecked();
+
+        CollectionFolder current = data.get(position);
+
+        if (!status){//添加到收藏分类中
+            selectFolderIds.add(current.getId());
+            ((CheckBox)(view.findViewById(R.id.select))).setChecked(true);
+        }else {
+            //剔除掉该id的文件夹
+            selectFolderIds.remove((Integer) current.getId());
+            ((CheckBox)(view.findViewById(R.id.select))).setChecked(false);
+        }
     }
 
     public List<Integer> getSelectFolderIds() {

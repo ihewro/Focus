@@ -70,7 +70,6 @@ public class CollectionListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             collectionFolderId = getArguments().getInt(COLLECTION_FOLDER_ID);
         }
@@ -82,23 +81,33 @@ public class CollectionListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_collection_folder, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
-
     }
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         createRecyclerView();
         initListener();
+
+        initData();
     }
 
     private void initListener() {
     }
 
     private void createRecyclerView() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        adapter = new CollectionListAdapter(collectionFolderId,collectionList,activity);
+        adapter.bindToRecyclerView(recyclerView);
 
+        adapter.setNewData(null);
+        adapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
+    }
+
+
+    private void initData(){
         //查询数据库
 
         new Thread(new Runnable() {
@@ -113,12 +122,12 @@ public class CollectionListFragment extends Fragment {
                 UIUtil.runOnUiThread(activity, new Runnable() {
                     @Override
                     public void run() {
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        adapter = new CollectionListAdapter(collectionList,activity);
-                        adapter.bindToRecyclerView(recyclerView);
-                        recyclerView.addItemDecoration(new SuspensionDecoration(getActivity(), collectionList));
-
+                        if (collectionList.size() == 0){
+                            adapter.setEmptyView(R.layout.collction_empty_view,recyclerView);
+                        }else {
+                            adapter.setNewData(collectionList);
+                            recyclerView.addItemDecoration(new SuspensionDecoration(getActivity(), collectionList));
+                        }
                     }
                 });
             }

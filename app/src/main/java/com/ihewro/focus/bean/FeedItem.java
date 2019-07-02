@@ -212,10 +212,18 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface {
         return super.save();
     }
 
-    public void clickWhenNotFavorite(Activity activity,Collection collection,UICallback uiCallback){
+    public static void clickWhenNotFavorite(Activity activity,Collection collection,UICallback uiCallback){
         //点击进行收藏
         new XPopup.Builder(activity)
                 .asCustom(new CollectionFolderListPopupView(activity,collection,uiCallback))
                 .show();
+    }
+
+
+    public static void clickWhenNotFavorite(Activity activity,FeedItem feedItem,UICallback uiCallback){
+        //点击进行收藏
+        Collection collection = new Collection(feedItem.getTitle(),feedItem.getFeedName(),feedItem.getDate(),feedItem.getSummary(),feedItem.getContent(),feedItem.getUrl(),Collection.FEED_ITEM, DateUtil.getNowDateRFCInt());
+
+        clickWhenNotFavorite(activity,collection,uiCallback);
     }
 }
