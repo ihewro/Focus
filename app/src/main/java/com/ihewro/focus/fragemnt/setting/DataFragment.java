@@ -14,6 +14,7 @@ import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.callback.FileOperationCallback;
+import com.ihewro.focus.task.FixDataTask;
 import com.ihewro.focus.task.RecoverDataTask;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
@@ -42,6 +43,7 @@ public class DataFragment extends SettingFragment{
     private Preference feed_info;
     private Preference clean_data;
     private Preference database_version;
+    private Preference fix_database;
 
 
     @Override
@@ -57,6 +59,9 @@ public class DataFragment extends SettingFragment{
         recover_data = findPreference(getString(R.string.pref_key_recover));
         clean_data = findPreference(getString(R.string.pref_key_clean_database));
         database_version = findPreference(getString(R.string.pref_key_database_version));
+
+        fix_database = findPreference(getString(R.string.pref_key_fix_database));
+
     }
 
     @Override
@@ -67,6 +72,26 @@ public class DataFragment extends SettingFragment{
 
     @Override
     public void initListener() {
+
+        fix_database.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new MaterialDialog.Builder(getActivity())
+                        .title("确定修复数据库？")
+                        .content("修复数据库可以删除错误数据。如果您是从旧版本升级到2.0+版本，使用该功能可以将您的收藏数据恢复。")
+                        .positiveText("修复")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                new FixDataTask(getActivity()).execute();
+                            }
+                        })
+                        .show();
+
+                return false;
+            }
+        });
 
         back_up.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

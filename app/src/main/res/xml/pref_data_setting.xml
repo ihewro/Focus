@@ -35,6 +35,11 @@
         android:summary="@string/pref_summary_clean_database"/>
 
 
+    <android.support.v7.preference.Preference
+        android:key="@string/pref_key_fix_database"
+        android:title="@string/pref_title_fix_database"
+        android:summary="@string/pref_summary_fix_database"/>
+
 
 
     <android.support.v7.preference.Preference

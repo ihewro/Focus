@@ -162,29 +162,42 @@ public class PostDetailActivity extends BackActivity {
         adapter.setEmptyView(R.layout.simple_loading_view,recyclerView);
 
 
+        //显示未读数目
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PostDetailActivity.this.notReadNum = 0;
+                if (origin!=ORIGIN_STAR){
+                    for(FeedItem feedItem: feedItemList){
+                        if (!feedItem.isRead()){
+                            PostDetailActivity.this.notReadNum ++;
+                        }
+                    }
+                }
+
+                UIUtil.runOnUiThread(PostDetailActivity.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (notReadNum <= 0){
+                            toolbar.setTitle("");
+                        }else {
+                            toolbar.setTitle(notReadNum+"");
+                        }
+
+                    }
+                });
+            }
+        }).start();
 
         //初始化当前文章的对象
         initData();
 
 
-        if (notReadNum <= 0){
-            toolbar.setTitle("");
-        }else {
-            toolbar.setTitle(notReadNum+"");
-        }
-
         adapter.setNewData(feedItemList);
 
         //移动到当前文章的位置
-//                        recyclerView.scrollToPosition(mIndex);
+        linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
 
-        if (mIndex==0){
-            ALog.d("第一项");
-            linearLayoutManager.scrollToPositionWithOffset(mIndex, 1);
-            linearLayoutManager.scrollToPositionWithOffset(mIndex, -1);
-        }else {
-            linearLayoutManager.scrollToPositionWithOffset(mIndex, 0);
-        }
         linearLayoutManager.setStackFromEnd(true);
 
 

@@ -1,7 +1,16 @@
 package com.ihewro.focus.bean;
 
+import android.content.Context;
+import android.text.InputType;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.ihewro.focus.callback.OperationCallback;
+
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
+import org.litepal.exceptions.LitePalSupportException;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * <pre>
@@ -71,5 +80,30 @@ public class CollectionFolder extends LitePalSupport {
 
     public void setSelect(boolean select) {
         isSelect = select;
+    }
+
+    public static void addNewFolder(final Context context, final OperationCallback callback){
+        new MaterialDialog.Builder(context)
+                .title("输入新增的收藏分类名称：")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input("", "", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog2, CharSequence input) {
+                        //TODO:不能重命名
+                        String name = dialog2.getInputEditText().getText().toString().trim();
+                        CollectionFolder collectionFolder = new CollectionFolder(name);
+                        try {
+                            collectionFolder.saveThrows();
+                            Toasty.success(context,"新建成功！").show();
+                            callback.run(collectionFolder);
+
+                        }catch (LitePalSupportException e){
+                            //名称重复了
+                            Toasty.info(context,"已经有该收藏分类了！").show();
+                        }
+
+                    }
+                }).show();
+
     }
 }

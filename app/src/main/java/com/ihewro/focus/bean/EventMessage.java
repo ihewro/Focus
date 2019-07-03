@@ -41,6 +41,10 @@ public class EventMessage {
     public static final String GO_TO_LIST_TOP = "GO_TO_LIST_TOP";//首页列表回顶部
 
 
+    //collection、collectionFolder操作
+    public static final String COLLECTION_FOLDER_OPERATION = "COLLECTION_FOLDER_OPERATION";
+    public static final String COLLECTION_OPERATION = "COLLECTION_OPERATION";
+
 
     //feed、feedFolder操作
     public static final String ADD_FEED = "ADD_FEED";//添加新的订阅

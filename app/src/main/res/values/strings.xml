@@ -87,9 +87,12 @@
     <string name="pref_key_donate">pref_key_donate</string>
     <string name="pref_title_donate">捐赠</string>
     <string name="pref_summary_donate">这不是必须的，捐赠可以给开发者更多动力更新。你也可以使用任何其他方式表达你对该应用的喜爱💝</string>
+
+
     <string name="pref_key_fix_database">pref_key_fix_database</string>
     <string name="pref_title_fix_database">修复数据库</string>
     <string name="pref_summary_fix_database">当你的数据出现异常的时候（比如收藏内容丢失），可以尝试使用该工具</string>
+
     <string name="pref_key_clean_database">pref_key_clean_database</string>
     <string name="pref_title_clean_database">清理数据库</string>
     <string name="pref_summary_clean_database">你可以控制当前数据库文章的数量，以便保证文章数目在可控范围内</string>
@@ -119,5 +122,9 @@
     <string name="pref_key_not_use_chrome">pref_key_not_use_chrome</string>
     <string name="pref_title_not_use_chrome">浏览器不使用Chrome内核</string>
     <string name="pref_summary_not_use_chrome">如果你的手机内有Chrome内核的浏览器，文章内链接优先默认调用Chrome内核，你可以关闭该选项</string>
+
+
+
+
 
 </resources>

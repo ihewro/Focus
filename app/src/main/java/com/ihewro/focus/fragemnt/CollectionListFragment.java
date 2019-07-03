@@ -17,14 +17,18 @@ import com.ihewro.focus.adapter.CollectionListAdapter;
 import com.ihewro.focus.adapter.FeedListAdapter;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionAndFolderRelation;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.util.UIUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 import org.litepal.crud.callback.FindCallback;
 import org.litepal.crud.callback.FindMultiCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -35,6 +39,8 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class CollectionListFragment extends Fragment {
+
+    private List<Collection> collectionList = new ArrayList<>();
 
     private static final String COLLECTION_FOLDER_ID = "COLLECTION_FOLDER_ID";
     @BindView(R.id.recycler_view)
@@ -53,7 +59,6 @@ public class CollectionListFragment extends Fragment {
 
 
     private int collectionFolderId;
-    private List<Collection> collectionList = new ArrayList<>();
     private Activity activity;
     private CollectionListAdapter adapter;
 
@@ -113,20 +118,34 @@ public class CollectionListFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                collectionList.clear();
                 final List<CollectionAndFolderRelation> list = LitePal.where("collectionfolderid = ?", String.valueOf(collectionFolderId)).find(CollectionAndFolderRelation.class);
 
                 for (CollectionAndFolderRelation collectionAndFolderRelation : list) {
                     collectionList.add(LitePal.find(Collection.class, collectionAndFolderRelation.getCollectionId()));
                 }
+
+                Collections.sort(collectionList, new Comparator<Collection>() {
+                    @Override
+                    public int compare(Collection o1, Collection o2) {
+                        if (o1.getTime() > o2.getTime()){
+                            return -1;
+                        }else {
+                            return 1;
+                        }
+                    }
+                });
                 //切换到主线程更新界面
                 UIUtil.runOnUiThread(activity, new Runnable() {
                     @Override
                     public void run() {
-                        if (collectionList.size() == 0){
-                            adapter.setEmptyView(R.layout.collction_empty_view,recyclerView);
-                        }else {
-                            adapter.setNewData(collectionList);
-                            recyclerView.addItemDecoration(new SuspensionDecoration(getActivity(), collectionList));
+                        if (recyclerView!=null){
+                            if (collectionList.size() == 0){
+                                adapter.setEmptyView(R.layout.collction_empty_view,recyclerView);
+                            }else {
+                                adapter.setNewData(collectionList);
+                                recyclerView.addItemDecoration(new SuspensionDecoration(getActivity(), collectionList));
+                            }
                         }
                     }
                 });

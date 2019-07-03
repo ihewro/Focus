@@ -13,6 +13,7 @@ import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionFolder;
+import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.UserPreference;
@@ -22,6 +23,8 @@ import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.StringUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,10 +105,14 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
                     @Override
                     public void doUIWithIds(List<Integer> ids) {
                         //刷新一下界面
+                        EventBus.getDefault().post(new EventMessage(EventMessage.COLLECTION_FOLDER_OPERATION));
+/*
+
                         if (!ids.contains(folderid)){
                             remove(helper.getAdapterPosition());
                         }
                         notifyDataSetChanged();
+*/
 
                     }
                 });
@@ -123,7 +130,7 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
 
                 list.add(new FeedItem(item.getTitle(),item.getDate(),item.getSummary(),item.getContent(),item.getUrl(),true,true));
 
-                PostDetailActivity.activityStart(activity, helper.getAdapterPosition(), list, PostDetailActivity.ORIGIN_STAR);
+                PostDetailActivity.activityStart(activity, 0, list, PostDetailActivity.ORIGIN_STAR);
             }
         });
     }

@@ -17,6 +17,7 @@ import com.ihewro.focus.adapter.CollectionFolderListAdapter;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionAndFolderRelation;
 import com.ihewro.focus.bean.CollectionFolder;
+import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.util.UIUtil;
 import com.lxj.xpopup.core.BottomPopupView;
@@ -44,7 +45,7 @@ public class CollectionFolderListPopupView extends BottomPopupView {
 
 
     private CollectionFolderListAdapter adapter;
-    private List<CollectionFolder> collectionList = new ArrayList<>();
+    private List<CollectionFolder> collectionFolderList = new ArrayList<>();
     private String info;
     private Collection collection;
     private UICallback uiCallback;
@@ -155,33 +156,16 @@ public class CollectionFolderListPopupView extends BottomPopupView {
         actionAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //新建收藏单弹窗
-                new MaterialDialog.Builder(getContext())
-                        .title("输入新增的收藏分类名称：")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .input("", "", new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog2, CharSequence input) {
-                                //TODO:不能重命名
-                                String name = dialog2.getInputEditText().getText().toString().trim();
-                                CollectionFolder collectionFolder = new CollectionFolder(name);
-                                try {
-                                    collectionFolder.saveThrows();
-                                    Toasty.success(getContext(),"新建成功！").show();
-//在当前弹窗的recyclerView更新界面
-                                    collectionList.add(collectionFolder);
-                                    if (adapter!=null){
-                                        adapter.notifyItemInserted(collectionList.size());
-                                    }
-                                }catch (LitePalSupportException e){
-                                    //名称重复了
-                                    Toasty.info(getContext(),"已经有该收藏分类了！").show();
-                                }
 
-                            }
-                        }).show();
-
-
+                CollectionFolder.addNewFolder(getContext(), new OperationCallback() {
+                    @Override
+                    public void run(Object o) {
+                        collectionFolderList.add((CollectionFolder) o);
+                        if (adapter!=null){
+                            adapter.notifyItemInserted(collectionFolderList.size());
+                        }
+                    }
+                });
             }
         });
 
@@ -196,7 +180,7 @@ public class CollectionFolderListPopupView extends BottomPopupView {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         //查询数据库
-        collectionList = LitePal.findAll(CollectionFolder.class);
+        collectionFolderList = LitePal.findAll(CollectionFolder.class);
         //TODO: 给文件夹的isSelect变量赋值
         List<Integer> folderIds = new ArrayList<>();
         List<Collection> tempCollections = LitePal.where("url = ?",collection.getUrl()).find(Collection.class);
@@ -210,7 +194,7 @@ public class CollectionFolderListPopupView extends BottomPopupView {
             }
         }
 
-        adapter = new CollectionFolderListAdapter(collectionList,folderIds);
+        adapter = new CollectionFolderListAdapter(collectionFolderList,folderIds);
         adapter.bindToRecyclerView(recyclerView);
 
     }
