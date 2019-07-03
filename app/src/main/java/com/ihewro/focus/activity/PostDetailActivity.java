@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.PostDetailListAdapter;
+import com.ihewro.focus.adapter.ReadBackgroundAdapter;
+import com.ihewro.focus.bean.Background;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.PostSetting;
@@ -44,6 +48,7 @@ import org.litepal.crud.callback.SaveCallback;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -70,8 +75,9 @@ public class PostDetailActivity extends BackActivity {
 
     private List<Integer> readList = new ArrayList<>();
 
+    private static final List<Integer> colorList = Arrays.asList(R.color.white,R.color.green,R.color.yellow);
 
-
+    private List<Background> backgroundList = new ArrayList<>();
 
     private PostDetailListAdapter adapter;
 
@@ -389,6 +395,10 @@ public class PostDetailActivity extends BackActivity {
 
                 initReadSettingView();
                 initReadSettingListener();
+
+
+                initReadBackgroundView();
+
                 break;
 
             case R.id.action_star:
@@ -436,23 +446,46 @@ public class PostDetailActivity extends BackActivity {
         });
     }
 
+    private void initReadBackgroundView(){
+        if (ReadSettingDialog.isShowing()) {
+            RecyclerView recyclerView = (RecyclerView) ReadSettingDialog.findViewById(R.id.recycler_view);
+
+            backgroundList.clear();
+            for (Integer color: colorList){
+                backgroundList.add(new Background(ContextCompat.getColor(PostDetailActivity.this,color)));
+            }
+            linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            ReadBackgroundAdapter adapter1 = new ReadBackgroundAdapter(backgroundList);
+            adapter1.bindToRecyclerView(recyclerView);
+            adapter1.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter2, View view, int position) {
+                    //改变背景颜色，并写入到数据库
+                    UserPreference.updateOrSaveValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(backgroundList.get(position)));
+                    //刷新页面
+                    adapter.notifyItemChanged(mIndex);//更新UI
+                }
+            });
+        }
+    }
+
     //根据现有的设置，恢复布局
     private void initReadSettingView(){
-        if (ReadSettingDialog.isShowing()){
-            if (ReadSettingDialog.isShowing()) {
-                //设置字号
-                ((SeekBar)ReadSettingDialog.findViewById(R.id.size_setting)).setProgress(Integer.parseInt(PostSetting.getFontSize()));
-                ((TextView)ReadSettingDialog.findViewById(R.id.size_setting_info)).setText(PostSetting.getFontSize());
+        if (ReadSettingDialog.isShowing()) {
+            //设置字号
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.size_setting)).setProgress(Integer.parseInt(PostSetting.getFontSize()));
+            ((TextView)ReadSettingDialog.findViewById(R.id.size_setting_info)).setText(PostSetting.getFontSize());
 
-                //设置字间距
-                ((SeekBar)ReadSettingDialog.findViewById(R.id.font_space_setting)).setProgress(Integer.parseInt(PostSetting.getFontSpace()));
-                ((TextView)ReadSettingDialog.findViewById(R.id.font_space_setting_info)).setText(PostSetting.getFontSpace());
+            //设置字间距
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.font_space_setting)).setProgress(Integer.parseInt(PostSetting.getFontSpace()));
+            ((TextView)ReadSettingDialog.findViewById(R.id.font_space_setting_info)).setText(PostSetting.getFontSpace());
 
 
-                //设置行间距
-                ((SeekBar)ReadSettingDialog.findViewById(R.id.line_space_setting)).setProgress(Integer.parseInt(PostSetting.getLineSpace()));
-                ((TextView)ReadSettingDialog.findViewById(R.id.line_space_setting_info)).setText(PostSetting.getLineSpace());
-            }
+            //设置行间距
+            ((SeekBar)ReadSettingDialog.findViewById(R.id.line_space_setting)).setProgress(Integer.parseInt(PostSetting.getLineSpace()));
+            ((TextView)ReadSettingDialog.findViewById(R.id.line_space_setting_info)).setText(PostSetting.getLineSpace());
         }
     }
     private void initReadSettingListener() {

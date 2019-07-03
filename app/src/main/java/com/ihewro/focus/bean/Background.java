@@ -10,6 +10,7 @@ package com.ihewro.focus.bean;
  * </pre>
  */
 public class Background {
+
     private int color;//背景颜色值
 
     public int getColor() {
@@ -17,6 +18,10 @@ public class Background {
     }
 
     public void setColor(int color) {
+        this.color = color;
+    }
+
+    public Background(int color) {
         this.color = color;
     }
 }

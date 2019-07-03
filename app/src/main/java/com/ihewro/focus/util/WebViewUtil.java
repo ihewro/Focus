@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.PostDetailActivity;
+import com.ihewro.focus.activity.StarActivity;
 import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.helper.CustomTabActivityHelper;
 import com.ihewro.focus.helper.MyWebViewClient;
@@ -81,6 +83,13 @@ public class WebViewUtil {
         String fontSize = "font-size:"+ PostSetting.getFontSize() + "px;";
         String lineSpace = "line-height:" + PostSetting.getLineSpace() + ";";
         String fontSpace = "letter-spacing:" + PostSetting.getFontSpace() + "px;";
+
+
+        String backgroundCss = "";
+
+        if (!SkinPreference.getInstance().getSkinName().equals("night")) {//夜间模式的背景颜色设置无效
+            backgroundCss = "background:" + PostSetting.getBackground();
+        }
 
         String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+"}</style>\n";
 

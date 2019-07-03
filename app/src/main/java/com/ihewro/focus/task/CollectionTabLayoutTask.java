@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
-import com.ihewro.focus.activity.StarActivity;
 import com.ihewro.focus.bean.CollectionFolder;
 import com.ihewro.focus.fragemnt.CollectionListFragment;
 import com.ihewro.focus.task.listener.CollectionTabLayoutListener;

@@ -1,5 +1,9 @@
 package com.ihewro.focus.bean;
 
+import com.blankj.ALog;
+import com.ihewro.focus.R;
+import com.ihewro.focus.util.UIUtil;
+
 import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
 
@@ -50,5 +54,11 @@ public class PostSetting  {
         return UserPreference.queryValueByKey(THEME_MODE,THEME_MODE_DEFAULT);
     }
 
+
+    public static int getBackground() {
+        int color =  UIUtil.getColor(Integer.parseInt(UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(R.color.white))));
+        ALog.d("颜色！"+color);
+        return color;
+    }
 
 }

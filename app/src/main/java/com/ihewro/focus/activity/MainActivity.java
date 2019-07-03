@@ -50,6 +50,7 @@ import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
 import com.ihewro.focus.task.TimingService;
 import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
+import com.ihewro.focus.view.ExpandableBadgeDrawerItem;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -66,7 +67,6 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -142,7 +142,11 @@ public class MainActivity extends BaseActivity {
     private SearchLocalFeedListFragment searchLocalFeedListFragment;
     private SearchFeedFolderFragment searchFeedFolderFragment;
     private SearchFeedItemListFragment searchFeedItemListFragment;
+    private IDrawerItem AllDrawerItem;
 
+    private long selectIdentify;
+
+    private List<Long> expandFolderIdentify = new ArrayList<>();
 
     public static void activityStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -506,7 +510,7 @@ public class MainActivity extends BaseActivity {
                                             list.add(String.valueOf(feeds.get(i).getId()));
                                         }
                                         //切换到指定文件夹下
-                                        clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName());
+                                        clickAndUpdateMainFragmentData(list, popupView.getFeedFolders().get(position).getName(),-1);
                                         popupView.dismiss();//关闭弹窗
                                     }
                                 }
@@ -597,7 +601,6 @@ public class MainActivity extends BaseActivity {
                 .withStickyFooterShadow(false)
                 .build();
 
-//                drawer.setHeader(getLayoutInflater().inflate(R.layout.padding, null), false);
 
 
         //初始化顶部的内容包括颜色
@@ -664,6 +667,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void run() {
                         drawer.setItems(subItems);
+                        drawer.setSelection(selectIdentify);
                     }
                 });
             }
@@ -674,7 +678,7 @@ public class MainActivity extends BaseActivity {
         if (drawerItem.getTag() != null) {
             switch ((int) drawerItem.getTag()) {
                 case SHOW_ALL:
-                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");
+                    clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章",drawerItem.getIdentifier());
                     break;
                 case SHOW_STAR:
                     StarActivity.activityStart(MainActivity.this);
@@ -686,7 +690,24 @@ public class MainActivity extends BaseActivity {
                     ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                     ArrayList<String> list = new ArrayList<>();
                     list.add(String.valueOf(drawerItem.getIdentifier()));
-                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString());
+                    clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(),drawerItem.getIdentifier());
+                    break;
+
+                case DRAWER_FOLDER:
+                    //单击文件夹
+
+                    ALog.d("单击了！！");
+                    /*int feedFolderId = (int) drawerItem.getIdentifier();
+                    List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
+                    ArrayList<String> feedIdlist = new ArrayList<>();
+
+                    for (int i = 0; i < feeds.size(); i++) {
+                        feedIdlist.add(String.valueOf(feeds.get(i).getId()));
+                    }
+                    //切换到指定文件夹下
+                    clickAndUpdateMainFragmentData(feedIdlist, String.valueOf(((ExpandableBadgeDrawerItem) drawerItem).getName()),drawerItem.getIdentifier());
+                    drawer.closeDrawer();*/
+
                     break;
 
             }
@@ -704,8 +725,6 @@ public class MainActivity extends BaseActivity {
                     new XPopup.Builder(MainActivity.this)
                             .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(), ((ExpandableBadgeDrawerItem) drawerItem).getName().toString(), "", new Help(false)))
                             .show();
-
-
                     break;
                 case DRAWER_FOLDER_ITEM:
                     //获取到这个feed的数据
@@ -723,6 +742,9 @@ public class MainActivity extends BaseActivity {
      * @param feedIdList
      */
     private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
+
+        selectIdentify = AllDrawerItem.getIdentifier();
+
         if (feedPostsFragment == null) {
             feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList, toolbarTitle,subtitle);
         }
@@ -736,7 +758,8 @@ public class MainActivity extends BaseActivity {
      * @param feedIdList
      * @param title
      */
-    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title) {
+    private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title,long identify) {
+        selectIdentify = identify;
         if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
         } else {
@@ -751,8 +774,11 @@ public class MainActivity extends BaseActivity {
      * 获取用户的订阅数据，显示在左侧边栏的drawer中
      */
     public synchronized void refreshLeftDrawerFeedList(boolean isUpdate) {
+
         subItems.clear();
-        subItems.add(new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(SHOW_ALL));
+
+        AllDrawerItem = new SecondaryDrawerItem().withName("全部").withIcon(GoogleMaterial.Icon.gmd_home).withSelectable(true).withTag(SHOW_ALL);
+        subItems.add(AllDrawerItem);
         subItems.add(new SecondaryDrawerItem().withName("收藏").withIcon(GoogleMaterial.Icon.gmd_star).withSelectable(false).withTag(SHOW_STAR));
         subItems.add(new SecondaryDrawerItem().withName("发现").withIcon(GoogleMaterial.Icon.gmd_explore).withSelectable(false).withTag(SHOW_DISCOVER));
         subItems.add(new SectionDrawerItem().withName("订阅源").withDivider(false));
@@ -818,9 +844,12 @@ public class MainActivity extends BaseActivity {
 
                 notReadNum += current_notReadNum;
             }
-            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
                     feedItems
             );
+
+            //
+//            one.getViewHolder(R.)
 
             if (haveErrorFeedInCurrentFolder) {
                 one.withTextColorRes(R.color.md_red_700);
@@ -944,7 +973,7 @@ public class MainActivity extends BaseActivity {
                     ALog.d("更新左侧边栏");
                     updateDrawer();
                 }
-            }, 300); // 延迟一下，因为数据异步存储需要时间
+            }, 100); // 延迟一下，因为数据异步存储需要时间
         } else if (Objects.equals(eventBusMessage.getType(), EventMessage.FEED_PULL_DATA_ERROR)) {
 //            ALog.d("收到错误FeedId List");
 //            errorFeedIdList = eventBusMessage.getIds();
@@ -966,7 +995,7 @@ public class MainActivity extends BaseActivity {
                     public void onDismiss() {
                         //刷新当前页面的数据，因为筛选的规则变了
                         if (drawerPopupView.isNeedUpdate()) {
-                            clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(), toolbarTitle.getText().toString());
+                            clickAndUpdateMainFragmentData(feedPostsFragment.getFeedIdList(), toolbarTitle.getText().toString(),selectIdentify);
                             drawerPopupView.setNeedUpdate(false);
                         }
                     }
