@@ -274,7 +274,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
                     for (FeedItem feedItem: feedItemList){
                         list.add(feedItem.getId());
                     }
-                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),list,true,false);
+                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_MAIN);
                 }
             }
         });

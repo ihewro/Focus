@@ -91,4 +91,13 @@ public class DataUtil {
             return cursor.getInt(index);
         }
     }
+
+    public static long getColumnLong(Cursor cursor, String column,long defaultValue){
+        int index = cursor.getColumnIndex(column);
+        if (index == -1){
+            return defaultValue;
+        }else {
+            return cursor.getLong(index);
+        }
+    }
 }

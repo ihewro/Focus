@@ -42,6 +42,7 @@ public class Collection extends LitePalSupport implements MultiItemEntity, ISusp
     private Long time;//收藏时间
 
 
+
     public Collection() {
     }
 
@@ -126,6 +127,8 @@ public class Collection extends LitePalSupport implements MultiItemEntity, ISusp
         this.time = time;
     }
 
+
+
     @Override
     public int getItemType() {
         return itemType;
@@ -147,5 +150,10 @@ public class Collection extends LitePalSupport implements MultiItemEntity, ISusp
     @Override
     public String getSuspensionTag() {
         return DateUtil.getTimeStringByInt(time);//返回年/月/日格式的日期
+    }
+
+    @Override
+    public boolean save() {
+        return super.save();
     }
 }

@@ -2,8 +2,10 @@ package com.ihewro.focus;
 
 import android.os.Environment;
 
+import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class GlobalConfig {
     public static final List<Integer> refreshIntervalInt = Arrays.asList(2,15, 30, 45,60,120,180,240,360,600,720,-1);
 
 
+    public static List<FeedItem> feedItemList = new ArrayList<>();
 
 
 }

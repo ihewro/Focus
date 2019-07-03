@@ -16,6 +16,8 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 import org.litepal.exceptions.LitePalSupportException;
 
+import java.io.Serializable;
+
 /**
  * <pre>
  *     author : hewro
@@ -25,7 +27,7 @@ import org.litepal.exceptions.LitePalSupportException;
  *     version: 1.0
  * </pre>
  */
-public class FeedItem extends LitePalSupport implements ISuspensionInterface {
+public class FeedItem extends LitePalSupport implements ISuspensionInterface, Serializable {
 
     @Column(unique = true)
     private int id;

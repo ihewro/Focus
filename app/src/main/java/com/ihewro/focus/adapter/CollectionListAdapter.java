@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.Collection;
 import com.ihewro.focus.bean.CollectionFolder;
 import com.ihewro.focus.bean.FeedItem;
@@ -22,6 +23,7 @@ import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.StringUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,7 +91,7 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
         }
     }
 
-    private void initListener(final BaseViewHolder helper, Collection item){
+    private void initListener(final BaseViewHolder helper, final Collection item){
 
 
 
@@ -117,7 +119,11 @@ public class CollectionListAdapter extends BaseMultiItemQuickAdapter<Collection,
             public void onClick(View v) {
                 //跳转到文章页面
 
+                List<FeedItem> list = new ArrayList<>();
 
+                list.add(new FeedItem(item.getTitle(),item.getDate(),item.getSummary(),item.getContent(),item.getUrl(),true,true));
+
+                PostDetailActivity.activityStart(activity, helper.getAdapterPosition(), list, PostDetailActivity.ORIGIN_STAR);
             }
         });
     }
