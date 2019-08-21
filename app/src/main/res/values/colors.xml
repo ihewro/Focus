@@ -27,4 +27,7 @@
 
     <color name="divider">#eeeeee</color>
 
+    <color name="green">#a8e6cf</color>
+    <color name="yellow">#fff1c1</color>
+
 </resources>

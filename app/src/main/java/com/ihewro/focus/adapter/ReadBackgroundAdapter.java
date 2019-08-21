@@ -1,13 +1,16 @@
 package com.ihewro.focus.adapter;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.bean.Background;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
@@ -25,8 +28,10 @@ import java.util.List;
  */
 public class ReadBackgroundAdapter extends BaseQuickAdapter<Background, BaseViewHolder> {
 
-    public ReadBackgroundAdapter(@Nullable List<Background> data) {
+    private Activity activity;
+    public ReadBackgroundAdapter(Activity activity, @Nullable List<Background> data) {
         super(R.layout.item_read_background,data);
+        this.activity = activity;
     }
 
     @Override
@@ -35,10 +40,10 @@ public class ReadBackgroundAdapter extends BaseQuickAdapter<Background, BaseView
         myGrad.setColor(item.getColor());
 
         //如果当前背景颜色是用户选择的，则显示对号图标
-        if (UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(R.color.white)).equals(item.getColor()+"")){
-            helper.setGone(R.id.check,false);
-        }else {
+        if (UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND,Background.getColorString(activity,R.color.white)).equals(item.getColor() + "")){
             helper.setGone(R.id.check,true);
+        }else {
+            helper.setGone(R.id.check,false);
         }
     }
 }

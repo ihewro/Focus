@@ -1,5 +1,7 @@
 package com.ihewro.focus.bean;
 
+import android.content.Context;
+
 import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.util.UIUtil;
@@ -55,10 +57,17 @@ public class PostSetting  {
     }
 
 
-    public static int getBackground() {
-        int color =  UIUtil.getColor(Integer.parseInt(UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(R.color.white))));
-        ALog.d("颜色！"+color);
-        return color;
+    public static String getBackground(Context context) {
+        String color = UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND,Background.getColorString(context,R.color.white));
+        String colorString = "#" + Integer.toHexString(Integer.parseInt(color)).substring(2);
+        ALog.d("颜色！"+colorString);
+        return colorString;
+    }
+
+    public static int getBackgroundInt(Context context){
+        String color = UserPreference.queryValueByKey(UserPreference.READ_BACKGROUND,Background.getColorString(context,R.color.white));//10进制的int
+        ALog.d("颜色toolbar"+Integer.toHexString(Integer.parseInt(color)));
+        return Integer.parseInt(color);
     }
 
 }

@@ -37,6 +37,7 @@ import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
+import com.ihewro.focus.util.StatusBarUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.util.WebViewUtil;
 import com.ihewro.focus.view.MyRecyclerView;
@@ -133,10 +134,19 @@ public class PostDetailActivity extends BackActivity {
         origin = bundle.getInt(Constants.POST_DETAIL_ORIGIN);
 
         initData();
+
+
     }
 
 
 
+    private void initToolbarColor(){
+        //根据偏好设置背景颜色修改toolbar的背景颜色
+        if (!SkinPreference.getInstance().getSkinName().equals("night")){
+            toolbar.setBackgroundColor(PostSetting.getBackgroundInt(PostDetailActivity.this));
+            StatusBarUtil.setColor(this,PostSetting.getBackgroundInt(PostDetailActivity.this) ,0);
+        }
+    }
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -315,11 +325,14 @@ public class PostDetailActivity extends BackActivity {
             });
         }
 
+        initToolbarColor();
+
         if (UserPreference.queryValueByKey(UserPreference.notStar,"0").equals("0")){
             //第一篇文章进入的时候这个view为null，我也不知道为什么！
             new Handler().postDelayed(new Runnable() {//做一个延迟绑定
                 @Override
                 public void run() {
+
                     View content = adapter.getViewByPosition(mIndex,R.id.post_content);
                     if (content!=null){
                         content.setOnTouchListener(new View.OnTouchListener() {
@@ -457,15 +470,20 @@ public class PostDetailActivity extends BackActivity {
             linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             recyclerView.setLayoutManager(linearLayoutManager);
-            ReadBackgroundAdapter adapter1 = new ReadBackgroundAdapter(backgroundList);
+            final ReadBackgroundAdapter adapter1 = new ReadBackgroundAdapter(PostDetailActivity.this,backgroundList);
             adapter1.bindToRecyclerView(recyclerView);
             adapter1.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter2, View view, int position) {
                     //改变背景颜色，并写入到数据库
-                    UserPreference.updateOrSaveValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(backgroundList.get(position)));
+                    UserPreference.updateOrSaveValueByKey(UserPreference.READ_BACKGROUND, String.valueOf(backgroundList.get(position).getColor()));
                     //刷新页面
-                    adapter.notifyItemChanged(mIndex);//更新UI
+                    //更新UI
+                    adapter1.notifyDataSetChanged();
+                    //修改背景颜色
+                    //根据偏好设置背景颜色修改toolbar的背景颜色
+                    initToolbarColor();
+                    adapter.notifyDataSetChanged();
                 }
             });
         }

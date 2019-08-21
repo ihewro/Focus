@@ -218,9 +218,9 @@ public class CollectionFolderListPopupView extends BottomPopupView {
     }
 
 
-    protected int getMaxHeight() {
-        return (int) (XPopupUtils.getWindowHeight(getContext())*.85f);
-    }
+//    protected int getMaxHeight() {
+//        return (int) (XPopupUtils.getWindowHeight(getContext())*.85f);
+//    }
 
 
     @Override

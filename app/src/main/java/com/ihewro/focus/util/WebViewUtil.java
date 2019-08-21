@@ -88,10 +88,12 @@ public class WebViewUtil {
         String backgroundCss = "";
 
         if (!SkinPreference.getInstance().getSkinName().equals("night")) {//夜间模式的背景颜色设置无效
-            backgroundCss = "background:" + PostSetting.getBackground();
+            backgroundCss = "background:" + PostSetting.getBackground(context);
         }
 
-        String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+"}</style>\n";
+//        backgroundCss = "";
+
+        String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+backgroundCss+"}</style>\n";
 
 
         String body = "<html><header>"  + meta +css + settingCss+ "</header><body class=\"entry "+mclass+"\">" + html

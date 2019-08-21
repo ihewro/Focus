@@ -1,12 +1,15 @@
 package com.ihewro.focus.adapter;
 
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
+import com.ihewro.focus.activity.StarActivity;
 import com.ihewro.focus.bean.WebsiteCategory;
+import com.ihewro.focus.util.UIUtil;
 
 import java.util.List;
 
@@ -31,7 +34,9 @@ public class FeedCategoryLeftAdapter extends BaseQuickAdapter<WebsiteCategory, B
     protected void convert(BaseViewHolder helper, WebsiteCategory item) {
         if (currentPosition == helper.getAdapterPosition()){
             helper.getView(R.id.iv_select).setVisibility(View.VISIBLE);
+            helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.white));
         }else {
+            helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.colorPrimary));
             helper.getView(R.id.iv_select).setVisibility(View.GONE);
         }
 
