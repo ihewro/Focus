@@ -28,8 +28,8 @@ import java.util.List;
  * Created by mikepenz on 03.02.15.
  * NOTE: The arrow will just animate (and rotate) on APIs higher than 11 as the ViewCompat will skip this on API 10
  */
-public class ExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<ExpandableBadgeDrawerItem, ExpandableBadgeDrawerItem.ViewHolder>
-        implements ColorfulBadgeable<ExpandableBadgeDrawerItem> {
+public class MyExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<MyExpandableBadgeDrawerItem, MyExpandableBadgeDrawerItem.ViewHolder>
+        implements ColorfulBadgeable<MyExpandableBadgeDrawerItem> {
 
     private Drawer.OnDrawerItemClickListener mOnDrawerItemClickListener;
 
@@ -54,7 +54,7 @@ public class ExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<Expand
     }
 
     @Override
-    public void bindView(ExpandableBadgeDrawerItem.ViewHolder viewHolder, List payloads) {
+    public void bindView(MyExpandableBadgeDrawerItem.ViewHolder viewHolder, List payloads) {
         super.bindView(viewHolder, payloads);
 
         Context ctx = viewHolder.itemView.getContext();
@@ -92,7 +92,7 @@ public class ExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<Expand
     }
 
     @Override
-    public ExpandableBadgeDrawerItem withOnDrawerItemClickListener(Drawer.OnDrawerItemClickListener onDrawerItemClickListener) {
+    public MyExpandableBadgeDrawerItem withOnDrawerItemClickListener(Drawer.OnDrawerItemClickListener onDrawerItemClickListener) {
         mOnDrawerItemClickListener = onDrawerItemClickListener;
         return this;
     }
@@ -111,10 +111,10 @@ public class ExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<Expand
             if (drawerItem instanceof AbstractDrawerItem && drawerItem.isEnabled()) {
                 if (((AbstractDrawerItem) drawerItem).getSubItems() != null) {
                     if (((AbstractDrawerItem) drawerItem).isExpanded()) {
-                        ViewCompat.animate(view.findViewById(R.id.material_drawer_arrow)).rotation(ExpandableBadgeDrawerItem.this.arrowRotationAngleEnd).start();
+                        ViewCompat.animate(view.findViewById(R.id.material_drawer_arrow)).rotation(MyExpandableBadgeDrawerItem.this.arrowRotationAngleEnd).start();
                     } else {
                         ViewCompat.animate(view.findViewById(R.id.material_drawer_arrow))
-                                .rotation(ExpandableBadgeDrawerItem.this.arrowRotationAngleStart)
+                                .rotation(MyExpandableBadgeDrawerItem.this.arrowRotationAngleStart)
                                 .start();
                     }
                 }
@@ -125,27 +125,27 @@ public class ExpandableBadgeDrawerItem extends BaseDescribeableDrawerItem<Expand
     };
 
     @Override
-    public ExpandableBadgeDrawerItem withBadge(StringHolder badge) {
+    public MyExpandableBadgeDrawerItem withBadge(StringHolder badge) {
         this.mBadge = badge;
-        return (ExpandableBadgeDrawerItem) this;
+        return (MyExpandableBadgeDrawerItem) this;
     }
 
     @Override
-    public ExpandableBadgeDrawerItem withBadge(String badge) {
+    public MyExpandableBadgeDrawerItem withBadge(String badge) {
         this.mBadge = new StringHolder(badge);
-        return (ExpandableBadgeDrawerItem) this;
+        return (MyExpandableBadgeDrawerItem) this;
     }
 
     @Override
-    public ExpandableBadgeDrawerItem withBadge(@StringRes int badgeRes) {
+    public MyExpandableBadgeDrawerItem withBadge(@StringRes int badgeRes) {
         this.mBadge = new StringHolder(badgeRes);
-        return (ExpandableBadgeDrawerItem) this;
+        return (MyExpandableBadgeDrawerItem) this;
     }
 
     @Override
-    public ExpandableBadgeDrawerItem withBadgeStyle(BadgeStyle badgeStyle) {
+    public MyExpandableBadgeDrawerItem withBadgeStyle(BadgeStyle badgeStyle) {
         this.mBadgeStyle = badgeStyle;
-        return (ExpandableBadgeDrawerItem) this;
+        return (MyExpandableBadgeDrawerItem) this;
     }
 
     public StringHolder getBadge() {

@@ -76,7 +76,7 @@ public class PostDetailActivity extends BackActivity {
 
     private List<Integer> readList = new ArrayList<>();
 
-    private static final List<Integer> colorList = Arrays.asList(R.color.white,R.color.green,R.color.yellow);
+    private static final List<Integer> colorList = Arrays.asList(R.color.white,R.color.green,R.color.yellow,R.color.pink,R.color.blue,R.color.blue2,R.color.color3,R.color.color4,R.color.color5);
 
     private List<Background> backgroundList = new ArrayList<>();
 

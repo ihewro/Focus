@@ -13,6 +13,8 @@ import com.ihewro.focus.util.UIUtil;
 
 import java.util.List;
 
+import skin.support.utils.SkinPreference;
+
 /**
  * <pre>
  *     author : hewro
@@ -34,9 +36,17 @@ public class FeedCategoryLeftAdapter extends BaseQuickAdapter<WebsiteCategory, B
     protected void convert(BaseViewHolder helper, WebsiteCategory item) {
         if (currentPosition == helper.getAdapterPosition()){
             helper.getView(R.id.iv_select).setVisibility(View.VISIBLE);
-            helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.white));
+            if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.white_night));
+            }else {
+                helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.white));
+            }
         }else {
-            helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.colorPrimary));
+            if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.colorPrimary_night));
+            }else {
+                helper.setBackgroundColor(R.id.tv_item, UIUtil.getColor(R.color.colorPrimary));
+            }
             helper.getView(R.id.iv_select).setVisibility(View.GONE);
         }
 

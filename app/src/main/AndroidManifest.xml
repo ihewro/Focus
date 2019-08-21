@@ -22,6 +22,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:roundIcon">
+        <activity android:name=".activity.AuthListActivity"></activity>
         <activity android:name=".activity.CollectionFolderManageActivity" />
 
         <receiver

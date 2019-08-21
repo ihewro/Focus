@@ -105,6 +105,14 @@ public class MyWebViewClient extends com.just.agentweb.WebViewClient {
            } catch (IOException e) {
                e.printStackTrace();
            }
+       }else if (url.equals("https://focus.com/content.js")){
+           try {
+               InputStream is = context.getAssets().open("js/" + "content.js");
+               ALog.i("shouldInterceptRequest", "use offline resource for: " + url);
+               return new WebResourceResponse("application/javascript", "UTF-8", is);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
        }
 
         return super.shouldInterceptRequest(view, url);

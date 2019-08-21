@@ -1,110 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/bg_round"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp">
 
-    <RelativeLayout
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp">
+        android:orientation="vertical"
+        android:background="@drawable/bg_round"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true">
+            android:layout_marginTop="30dp">
 
-            <TextView
-                android:id="@+id/title"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="选择收藏单"
-                android:textColor="@color/text_unread" />
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="选择收藏单"
+                    android:textColor="@color/text_unread" />
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/weak_text"
+                    android:text="二级标题"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+
+                    android:id="@+id/action_add"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_black_24dp"/>
+
+                <ImageView
+                    android:id="@+id/action_close"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginLeft="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_clear_black_24dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical" />
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
 
             <TextView
-                android:id="@+id/subtitle"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/text_info"
                 android:textColor="@color/weak_text"
-                android:text="二级标题"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true">
-
-            <ImageView
-
-                android:id="@+id/action_add"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
+                android:textSize="13sp"
+                android:layout_alignParentLeft="true"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_add_black_24dp"/>
+                android:layout_centerVertical="true"/>
 
-            <ImageView
-                android:id="@+id/action_close"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_marginLeft="30dp"
+            <Button
+                android:id="@+id/btn_finish"
+                android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_clear_black_24dp"/>
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:textSize="15sp"
+                android:text="收藏"
+                android:clickable="true"
+                android:background="@drawable/button_round"
+                android:textColor="@color/white" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:orientation="vertical" />
-
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:id="@+id/text_info"
-            android:textColor="@color/weak_text"
-            android:textSize="13sp"
-            android:layout_alignParentLeft="true"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"/>
-
-        <Button
-            android:id="@+id/btn_finish"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:text="收藏"
-            android:clickable="true"
-            android:background="@drawable/button_round"
-            android:textColor="@color/white" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

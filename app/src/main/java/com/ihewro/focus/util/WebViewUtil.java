@@ -74,6 +74,7 @@ public class WebViewUtil {
         //加载HTML
         String meta = "<meta name=\"viewport\" content=\"initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width\">";
         String css = "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://focus.com/content.css\">";
+        String js = "<script src=\"https://focus.com/content.js\"></script>";
         String mclass = "";
         if(SkinPreference.getInstance().getSkinName().equals("night")){
             mclass = "entry-dark";
@@ -96,7 +97,7 @@ public class WebViewUtil {
         String settingCss = "<style>.entry{"+fontSize+lineSpace+fontSpace+backgroundCss+"}</style>\n";
 
 
-        String body = "<html><header>"  + meta +css + settingCss+ "</header><body class=\"entry "+mclass+"\">" + html
+        String body = "<html><header>"  + meta +css + js + settingCss+ "</header><body class=\"entry "+mclass+"\">" + html
                 + "</body></html>";
 
         webView.setBackgroundColor(Color.parseColor("#00000000"));

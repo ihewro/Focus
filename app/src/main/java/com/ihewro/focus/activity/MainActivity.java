@@ -50,7 +50,6 @@ import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
 import com.ihewro.focus.task.TimingService;
 import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
-import com.ihewro.focus.view.ExpandableBadgeDrawerItem;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
 import com.ihewro.focus.view.FeedOperationPopupView;
@@ -67,6 +66,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -116,6 +116,7 @@ public class MainActivity extends BaseActivity {
     private static final int SHOW_ALL = 14;
     private static final int SHOW_STAR = 876;
     private static final int SHOW_DISCOVER = 509;
+    private static final int ADD_AUTH = 24;
     private static final int FEED_MANAGE = 460;
     private static final int SETTING = 911;
     private static final int PAY_SUPPORT = 71;
@@ -566,9 +567,23 @@ public class MainActivity extends BaseActivity {
                 .withTextColorRes(color)
                 .addProfiles(
                         profile,
-                        //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
-                        new ProfileSettingDrawerItem().withName("添加第三方服务").withDescription("添加内容源").withIcon(GoogleMaterial.Icon.gmd_add).withIdentifier(1)
+                        new ProfileSettingDrawerItem().withName("添加第三方服务").withDescription("添加内容源").withIcon(GoogleMaterial.Icon.gmd_add).withIdentifier(ADD_AUTH)
                 )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+
+                        if (!currentProfile){
+                            switch ((int) profile.getIdentifier()){
+                                case ADD_AUTH:
+                                    AuthListActivity.activityStart(MainActivity.this);
+                                    break;
+                            }
+                        }
+
+                        return false;
+                    }
+                })
                 .build();
 
         headerResult.getView().findViewById(R.id.material_drawer_account_header_current).setVisibility(View.GONE);

@@ -69,7 +69,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 15
-        versionName "2.0"
+        versionName "2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -208,7 +208,7 @@ dependencies {
     implementation 'com.github.ChenTianSaber:SlideBack:v0.8.2'
 
     //pup弹窗
-    implementation 'com.lxj:xpopup:1.8.8'
+    implementation 'com.lxj:xpopup:1.8.4'
 
     //多主题
     implementation 'skin.support:skin-support:3.1.1'                   // skin-support 基础控件支持

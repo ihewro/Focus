@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -57,6 +58,7 @@ import retrofit2.Retrofit;
 import skin.support.utils.SkinPreference;
 
 import static com.ihewro.focus.GlobalConfig.serverUrl;
+import static com.ihewro.focus.util.UIUtil.getContext;
 
 public class FeedCategoryActivity extends BackActivity {
 
@@ -185,7 +187,10 @@ public class FeedCategoryActivity extends BackActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerLeft.setLayoutManager(linearLayoutManager);
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
+//        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
+
+        GridLayoutManager linearLayoutManager2 = new GridLayoutManager(getContext(), 1);
+
         recyclerRight.setLayoutManager(linearLayoutManager2);
 
 

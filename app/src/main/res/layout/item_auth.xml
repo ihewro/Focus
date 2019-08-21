@@ -7,14 +7,15 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="10dp"
     android:layout_width="match_parent"
-    android:clickable="true"
-    android:background="?attr/selectableItemBackground"
     android:layout_height="56dp">
     <LinearLayout
+        android:id="@+id/ll_item"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
         android:layout_height="56dp">
         <ImageView
             android:id="@+id/icon"
@@ -49,7 +50,7 @@
 
         <TextView
             android:id="@+id/account_unread_count"
-            android:text="点击详情"
+            android:text="点击绑定"
             android:textSize="16sp"
             android:visibility="gone"
             android:layout_width="wrap_content"

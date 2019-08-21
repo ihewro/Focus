@@ -29,5 +29,11 @@
 
     <color name="green">#a8e6cf</color>
     <color name="yellow">#fff1c1</color>
+    <color name="pink">#ffd5d5</color>
+    <color name="blue">#a4d7e1</color>
+    <color name="blue2">#eaf6f6</color>
+    <color name="color3">#d7aef3</color>
+    <color name="color4">#f6e5e4</color>
+    <color name="color5">#fecb92</color>
 
 </resources>

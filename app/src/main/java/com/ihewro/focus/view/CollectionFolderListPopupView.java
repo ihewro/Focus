@@ -222,12 +222,14 @@ public class CollectionFolderListPopupView extends BottomPopupView {
 //        return (int) (XPopupUtils.getWindowHeight(getContext())*.85f);
 //    }
 
+/*
 
     @Override
     public int getMinimumHeight() {
         return (int) (XPopupUtils.getWindowHeight(getContext())*.65f);
     }
 
+*/
 
 
 }
