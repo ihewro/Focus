@@ -153,16 +153,22 @@ public class RequestFeedListDataService extends Service {
                     RequestFeedListDataService.this.feedItemNum = num;
                     RequestFeedListDataService.this.feedItemNumTemp = num;
                     for (int i = 0;i < feedList.size();i++){
-                        //改为线程池调用
-                        RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
-                            @Override
-                            public void onSuccess(List<FeedItem> feedItemList) {
-                                //主线程
-                                updateUI();
-                            }
 
-                        });
-                        task.executeOnExecutor(mExecutor,feedList.get(i));
+                        if (!feedList.get(i).isOffline()){
+                            //改为线程池调用
+                            RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
+                                @Override
+                                public void onSuccess(List<FeedItem> feedItemList) {
+                                    //主线程
+                                    updateUI();
+                                }
+                            });
+                            task.executeOnExecutor(mExecutor,feedList.get(i));
+                        }else {
+                            updateUI();
+
+                        }
+
                     }
                 }
             }else {//也必须返回一个空数组
@@ -321,6 +327,11 @@ public class RequestFeedListDataService extends Service {
 //                ALog.d(temp);
                 List<FeedItem> tempFeedItemList = LitePal.where("feedid = ?", String.valueOf(temp.getId())).find(FeedItem.class);
 //                ALog.d("本地数据库信息url" + url + "订阅名称为"+ temp.getName() + "文章数目" + tempFeedItemList.size());
+
+                //设置badguy
+                for (int i = 0;i<tempFeedItemList.size();i++){
+                    tempFeedItemList.get(i).setBadGuy(temp.isBadGuy());
+                }
                 eList.addAll(tempFeedItemList);
             }
         }

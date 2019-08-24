@@ -75,7 +75,7 @@ public class HttpUtil {
 
         if (type.equals("String")){
 //            ALog.d("添加了编码了");
-            builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
+//            builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
         }
 
         SSLContext sslContext = null;

@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -212,7 +213,7 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
                         .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                if (which>=0 && which<3){
+                                if (which>=0 && which<4){
                                     item.setRsshub(GlobalConfig.feedRssHub.get(which));
                                     item.save();
                                     return true;
@@ -225,7 +226,6 @@ public class FeedFolderOperationPopupView extends OperationBottomPopupView {
 
             }
         }));
-
 
         return  operations;
     }

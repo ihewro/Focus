@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -251,7 +252,7 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                if (which>=0 && which<3){
+                                if (which>=0 && which<4){
                                     item.setRsshub(GlobalConfig.feedRssHub.get(which));
                                     item.save();
                                     return true;
@@ -265,6 +266,65 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
         }));
 
 
+        operations.add(new Operation("图片反盗链开关", "", getResources().getDrawable(R.drawable.ic_image_black_24dp), feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                //弹框
+
+                final List<Boolean> isOrNot = Arrays.asList(true, false);
+                String[] isOrNotString = {"开启","关闭"};
+                final Feed item = (Feed)o;
+                int select = isOrNot.indexOf(item.isBadGuy());
+
+                new MaterialDialog.Builder(getContext())
+                        .title("是否开启图片反盗链")
+                        .content("某些源（比如微信公众号）图片进行严格的反盗链机制，开启该开关可以使图片更大几率的加载")
+                        .items(isOrNotString)
+                        .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if (which>=0){
+                                    item.setBadGuy(isOrNot.get(which));
+                                    item.save();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        })
+                        .positiveText("选择")
+                        .show();
+            }
+        }));
+        operations.add(new Operation("离线模式开关","",getResources().getDrawable(R.drawable.ic_cloud_download_black_24dp), feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                //弹框
+
+
+                final List<Boolean> isOrNot = Arrays.asList(true, false);
+                String[] isOrNotString = {"离线","在线"};
+                final Feed item = (Feed)o;
+                int select = isOrNot.indexOf(item.isOffline());
+
+                new MaterialDialog.Builder(getContext())
+                        .title("请求数据时候是否同步该订阅")
+                        .content("选择「离线」，则不会使用网络请求该订阅数据")
+                        .items(isOrNotString)
+                        .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if (which>=0){
+                                    item.setOffline(isOrNot.get(which));
+                                    item.save();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        })
+                        .positiveText("选择")
+                        .show();
+            }
+        }));
 
         return  operations;
     }

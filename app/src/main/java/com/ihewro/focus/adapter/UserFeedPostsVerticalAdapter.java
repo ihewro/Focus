@@ -22,6 +22,7 @@ import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
+import com.ihewro.focus.util.RSSUtil;
 import com.ihewro.focus.util.StringUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
@@ -135,43 +136,13 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         if (UserPreference.queryValueByKey(UserPreference.not_show_image_in_list,"0").equals("0")){
             String imageUrl = DataUtil.getFeedItemImageUrl(item);
             if (!StringUtil.trim(imageUrl).equals("")){
-                if (!imageUrl.startsWith("http://")&& !imageUrl.startsWith("https://")){
-                    //说明是相对地址
-                    if (!imageUrl.substring(0,1).equals("/")){
-                        imageUrl = "/" + imageUrl;//前面如果没有/，补足一个
-                    }
-                    imageUrl =  StringUtil.getUrlPrefix(item.getUrl()) + imageUrl;
-                }
-//                ALog.d("图片地址是" + imageUrl);
+
+                imageUrl = RSSUtil.handleImageUrl(imageUrl,item.getUrl(),item.isBadGuy());
+
                 helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
 
                 ImageLoader.getInstance().displayImage(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic),ImageLoaderManager.getSubsciptionIconOptions(activity));
 
-
-                /*ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(imageUrl), (ImageView) helper.getView(R.id.post_pic), new ImageLoaderCallback() {
-                    @Override
-                    public void onFailed(ImageView imageView, FailReason failReason) {
-                        imageView.setVisibility(View.GONE);
-                        ALog.d("图片加载失败！！");
-
-                    }
-
-                    @Override
-                    public void onSuccess(ImageView imageView, Bitmap bitmap) {
-                        imageView.setVisibility(View.VISIBLE);
-                        imageView.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onStart(ImageView imageView) {
-                        if (SkinPreference.getInstance().getSkinName().equals("night")) {
-                            imageView.setImageResource(R.drawable.ic_night_loading);
-                        } else {
-                            imageView.setImageResource(R.drawable.ic_day_loading);
-                        }
-
-                    }
-                });*/
             }else {
                 helper.getView(R.id.post_pic).setVisibility(View.GONE);
             }
@@ -183,7 +154,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
 
     private void updateUI(final BaseViewHolder helper,FeedItem item){
         if (item.isRead()){
-            ALog.d("是否已读" + item.isRead());
+//            ALog.d("是否已读" + item.isRead());
             helper.setTextColor(R.id.post_title,activity.getResources().getColor(read_color));
             helper.setTextColor(R.id.rss_name,activity.getResources().getColor(read_content_color));
             helper.setTextColor(R.id.post_summay,activity.getResources().getColor(read_content_color));

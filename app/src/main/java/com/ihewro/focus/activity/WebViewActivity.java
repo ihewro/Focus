@@ -69,10 +69,9 @@ public class WebViewActivity extends BackActivity {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
-            ALog.d("接收到网站的标题");
+//            ALog.d("接收到网站的标题");
             if (toolbar != null) {
                 toolbar.setTitle(title);
-                ((TextView)webLayout.getLayout().findViewById(R.id.header)).setText("网页由 " + webView.getUrl() + " 提供");
             }
         }
 
@@ -90,28 +89,13 @@ public class WebViewActivity extends BackActivity {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
 
-            if (url.equals("https://focus.com/nolimit.js")){
-                try {
-                    InputStream is = WebViewActivity.this.getAssets().open("js/" + "nolimit.js");
-                    ALog.i("shouldInterceptRequest", "use offline resource for: " + url);
-                    return new WebResourceResponse("text/javascript", "UTF-8", is);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
             return super.shouldInterceptRequest(view, url);
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-
-            view.loadUrl("javascript:(function(){" +
-                    "navigator.__defineGetter__(\"userAgent\",function(){return\"Dalvik/2.1.0 (Linux; U; Android 6.0; NEM-AL10 Build/HONORNEM-AL10) iPhone/8.0\"});window.onload=function(){for(var b=document.getElementsByClassName(\"MobileAppHeader-downloadLink\"),a=0;a<b.length;a++)b[a].style.display=\"none\";b=document.getElementsByTagName(\"img\");for(a=0;a<b.length;a++)\"\\u5e7f\\u544a\"==b[a].alt&&(b[a].style.display=\"none\")};" +
-                    "})()");
-            //        mAgentWeb.getUrlLoader().loadDataWithBaseURL(url,"<script src=\"https://focus.com/nolimit.js\"></script>",null,"utf-8",null);
+            ((TextView)webLayout.getLayout().findViewById(R.id.header)).setText("网页由 " + url + " 提供");
 
         }
     };
@@ -153,6 +137,9 @@ public class WebViewActivity extends BackActivity {
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕        ☆☆
         webSettings.setDisplayZoomControls(true);
         webSettings.setUseWideViewPort(true);
+
+
+        webSettings.setUserAgentString("Mozilla/5.0 (Windows Phone 10.0; Android 9.1; Microsoft; Lumia 950 XL Dual SIM; KaiOS; Java) Gecko/68 Firefox/68 SearchCraft/2.8.2 baiduboxapp/4.3.0.10");
 
 //        mAgentWeb.getUrlLoader().loadUrl(url);
 

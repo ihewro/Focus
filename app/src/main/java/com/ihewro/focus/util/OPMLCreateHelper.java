@@ -82,7 +82,7 @@ public class OPMLCreateHelper {
 
 
             String name = DateUtil.getNowDateStr();//日期
-            String outPutPath = GlobalConfig.appXMLPath+"export"+name+".opml";
+            String outPutPath = GlobalConfig.appXMLPath+"export"+name+".xml";
             File outFile = new File(outPutPath);
             if (outFile.exists()){
                 outFile.delete();

@@ -67,72 +67,75 @@ public class TimingService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        boolean isNewAlarm = intent.getBooleanExtra("isNewAlarm",false);//是否需要重新设置定时器
 
-        this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
-        int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
+        if (intent!=null){
+            boolean isNewAlarm = intent.getBooleanExtra("isNewAlarm",false);//是否需要重新设置定时器
 
-        startForeground(2,createNotice("后台更新守护服务","当看到该通知说明服务正常周期运行，否则表示服务运行失败"));
+            this.interval = UserPreference.queryValueByKey(UserPreference.tim_interval,"-1");
+            int is_open = Integer.parseInt(UserPreference.queryValueByKey(UserPreference.tim_is_open,"0"));
 
-        if (this.interval.equals("-1")){
-            stopForeground(true);
-            stopSelf();
-        }else {
-            //TODO: 如果已经启动了定时器，当打开应用的时候，不应该再次重新设置定时器
-            //初始化参数
-            int temp = Integer.parseInt(this.interval);//分钟
-            AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
-//            long triggerAtTime = SystemClock.elapsedRealtime() + 30*1000;//每隔30s执行一次
-            Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
-            //如果存在这个pendingIntent 则复用
+            startForeground(2,createNotice("后台更新守护服务","当看到该通知说明服务正常周期运行，否则表示服务运行失败"));
 
-            PendingIntent pi = null;
-
-            if (isNewAlarm){
-                PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);//重新创建定时器
+            if (this.interval.equals("-1")){
+                stopForeground(true);
+                stopSelf();
             }else {
-                PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT);//复用之前的定时器
-            }
-
-            // pendingIntent 为发送广播
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                //android 6.0以上
-                manager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pi);
-            } else{
-                manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
-            }
-
-            //执行任务
-            if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
-                UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
-
-                ALog.d("执行定时任务" + DateUtil.getNowDateStr());
-                List<Feed> feedList = LitePal.findAll(Feed.class);
-
+                //TODO: 如果已经启动了定时器，当打开应用的时候，不应该再次重新设置定时器
                 //初始化参数
-                this.okNum = 0;
-                this.num =feedList.size();
-                this.feedItemNum = LitePal.count(FeedItem.class);
+                int temp = Integer.parseInt(this.interval);//分钟
+                AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                long triggerAtTime = SystemClock.elapsedRealtime() + temp*60*1000;//每隔temp分钟执行一次
+//            long triggerAtTime = SystemClock.elapsedRealtime() + 30*1000;//每隔30s执行一次
+                Intent intent2 = new Intent(this, AutoUpdateReceiver.class);
+                //如果存在这个pendingIntent 则复用
 
-                for (int i = 0;i < feedList.size();i++){
-                    //改为线程池调用
-                    RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
-                        @Override
-                        public void onSuccess(List<FeedItem> feedItemList) {
-                            //主线程
-                            updateUI();
-                        }
-                    });
+                PendingIntent pi = null;
 
-                    mNotificationManager.notify(1,createNotice("后台更新：开始获取数据中……",0));
-                    ExecutorService mExecutor = Executors.newCachedThreadPool();
-                    task.executeOnExecutor(mExecutor,feedList.get(i));
+                if (isNewAlarm){
+                    PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_CANCEL_CURRENT);//重新创建定时器
+                }else {
+                    PendingIntent.getBroadcast(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT);//复用之前的定时器
                 }
 
-            }
-        }
+                // pendingIntent 为发送广播
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    //android 6.0以上
+                    manager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pi);
+                } else{
+                    manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+                }
 
+                //执行任务
+                if (is_open == 1){//说明是定时器启动的，只有定时器启动这个service才会执行请求数据的任务
+                    UserPreference.updateOrSaveValueByKey(UserPreference.tim_is_open,"0");
+
+                    ALog.d("执行定时任务" + DateUtil.getNowDateStr());
+                    List<Feed> feedList = LitePal.findAll(Feed.class);
+
+                    //初始化参数
+                    this.okNum = 0;
+                    this.num =feedList.size();
+                    this.feedItemNum = LitePal.count(FeedItem.class);
+
+                    for (int i = 0;i < feedList.size();i++){
+                        //改为线程池调用
+                        RequestFeedListDataTask task = new RequestFeedListDataTask(new RequestDataCallback() {
+                            @Override
+                            public void onSuccess(List<FeedItem> feedItemList) {
+                                //主线程
+                                updateUI();
+                            }
+                        });
+
+                        mNotificationManager.notify(1,createNotice("后台更新：开始获取数据中……",0));
+                        ExecutorService mExecutor = Executors.newCachedThreadPool();
+                        task.executeOnExecutor(mExecutor,feedList.get(i));
+                    }
+
+                }
+            }
+
+        }
          return super.onStartCommand(intent, flags, startId);
     }
 

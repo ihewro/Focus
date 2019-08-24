@@ -14,7 +14,6 @@ import com.ihewro.focus.activity.FeedManageActivity;
 import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedFolder;
-import com.ihewro.focus.bean.UserPreference;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -44,17 +43,17 @@ import static com.ihewro.focus.util.FeedParser.skip;
  *     version: 1.0
  * </pre>
  */
-public class OPMLReadHelper {
+public class OPMLReadHelper_backup {
 
     public static final int RQUEST_STORAGE_READ = 8;
     private static final String OPML = "opml";
     private static final String BODY = "body";
     private static final String OUTLINE = "outline";
-    private static OPMLReadHelper sInstance;
+    private static OPMLReadHelper_backup sInstance;
 
     private Activity activity;
 
-    public OPMLReadHelper(Activity activity) {
+    public OPMLReadHelper_backup(Activity activity) {
         this.activity = activity;
     }
 
@@ -132,6 +131,7 @@ public class OPMLReadHelper {
         List<FeedFolder> feedFolders = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, BODY);
 
+        FeedFolder notFolder = new FeedFolder("");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -140,6 +140,12 @@ public class OPMLReadHelper {
             // Starts by looking for the entry tag
             if (name.equals(OUTLINE)) {
                 String text = parser.getAttributeValue(null, "text");
+                String type = parser.getAttributeValue(null, "type");
+                if (type!=null){//没有文件夹
+
+                }else {
+
+                }
                 feedFolders.add(readOutline(parser,text));
             } else {
                 skip(parser);
@@ -156,7 +162,6 @@ public class OPMLReadHelper {
         if (Objects.equals(type, "rss")) {//只有一个订阅源，且没有分组
             feedFolder.getFeedList().add(parseFeed(parser,feedFolderName));
             parser.nextTag();
-
         } else {//是一个文件夹
             //我们只处理二级目录
             feedFolder.getFeedList().addAll(readFeedFolderOutLine(parser,feedFolderName));

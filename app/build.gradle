@@ -68,8 +68,8 @@ android {
         applicationId "com.ihewro.focus"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 15
-        versionName "2.1"
+        versionCode 18
+        versionName "2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -145,7 +145,7 @@ dependencies {
 
     //网络请求
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'//打印请求信息
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.0.0'
@@ -216,15 +216,12 @@ dependencies {
     // skin-support-design material design 控件支持[可选]
     implementation 'skin.support:skin-support-cardview:3.1.1'
     // skin-support-cardview CardView 控件支持[可选]
-    implementation 'skin.support:skin-support-constraint-layout:3.1.1'
+//    implementation 'skin.support:skin-support-constraint-layout:3.1.1'
     // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
 
     //简化运行时申请权限的代码
     implementation 'pub.devrel:easypermissions:2.0.1'
 
-    //关于页面
-    implementation 'me.drakeet.support:about:2.1.1'
-    implementation 'me.drakeet.multitype:multitype:3.4.4'
 
     //webview
     api 'com.just.agentweb:agentweb:4.0.3-beta' // (必选)

@@ -39,5 +39,7 @@ public class GlobalConfig {
 
     public static List<FeedItem> feedItemList = new ArrayList<>();
 
+    public static final String BAD_GUY= "https://www.ihewro.com/badguy.php";
+
 
 }

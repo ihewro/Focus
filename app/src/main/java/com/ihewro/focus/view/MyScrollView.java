@@ -80,30 +80,30 @@ public class MyScrollView extends NestedScrollView {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                ALog.d("ACTION_DOWN");
+//                ALog.d("ACTION_DOWN");
                 // 让父容器不拦截ACTION_DOWN事件
                 getParent().getParent().requestDisallowInterceptTouchEvent(true);
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
-                ALog.d("ACTION_MOVE");
+//                ALog.d("ACTION_MOVE");
                 int deltaX = x - mLastX;
                 int deltaY = y - mLastY;
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {//水平滑动
-                    ALog.d("水平滑动");
+//                    ALog.d("水平滑动");
                     if (!is_current_scroll){
                         // 如果水平方向滑动的距离多一点，那就表示让父容器水平滑动，子控件不滑动，让父容器拦截、消费事件
                         getParent().getParent().requestDisallowInterceptTouchEvent(false);
                     }
                 }else {//上下滑动
                     is_current_scroll = true;
-                    ALog.d("上下滑动");
+//                    ALog.d("上下滑动");
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
                 //水平滑动的时候，没有这个事件，因为被上级recyclerview消费掉了
-                ALog.d("ACTION_UP");
+//                ALog.d("ACTION_UP");
                 is_current_scroll = false;
 
                 handler.sendMessageDelayed(handler.obtainMessage(touchEventId,MyScrollView.this), 5);
@@ -131,14 +131,14 @@ public class MyScrollView extends NestedScrollView {
         }else {
             is_current_scroll = false;
         }*/
-        ALog.d("上下滑动距离"+(t-oldt));
+//        ALog.d("上下滑动距离"+(t-oldt));
 
     }
 
 
     //这里写真正的事件
     private void handleStop(Object view) {
-        ALog.d("停止滑动了");
+//        ALog.d("停止滑动了");
         is_current_scroll = false;
         /*ScrollView scroller = (ScrollView) view;
         System.out.println(scroller.getScrollY());

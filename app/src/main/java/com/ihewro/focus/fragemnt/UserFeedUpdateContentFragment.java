@@ -309,7 +309,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     @Override
                     public void onFinish(final List<FeedItem> feedList, final int newNum) {
 
-                         ALog.d("请求结束了！");
+//                         ALog.d("请求结束了！");
                         //主线程
                         new Thread(new Runnable() {
                             @Override

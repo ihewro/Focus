@@ -64,6 +64,9 @@ public class Feed extends LitePalSupport {
 
     private boolean errorGet;//获取信息失败
 
+    private boolean isBadGuy;//是否需要反盗链图片
+    private boolean isOffline;//同步的时候是否请求数据
+
     @Override
     public String toString() {
         return "feedId" + id + "\n"
@@ -275,5 +278,21 @@ public class Feed extends LitePalSupport {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isBadGuy() {
+        return isBadGuy;
+    }
+
+    public void setBadGuy(boolean badGuy) {
+        isBadGuy = badGuy;
+    }
+
+    public boolean isOffline() {
+        return isOffline;
+    }
+
+    public void setOffline(boolean offline) {
+        isOffline = offline;
     }
 }

@@ -49,6 +49,9 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface, Se
     @Column(ignore = true)
     private boolean notHaveExtractTime;//feedItem 获取的时候，没有时间这个字段
 
+    @Column(ignore = true)
+    private boolean isBadGuy;//是否需要反盗链图片
+
 
     @NonNull
     @Override
@@ -222,10 +225,20 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface, Se
     }
 
 
-    public static void clickWhenNotFavorite(Activity activity,FeedItem feedItem,UICallback uiCallback){
+    public boolean isBadGuy() {
+        return isBadGuy;
+    }
+
+    public void setBadGuy(boolean badGuy) {
+        isBadGuy = badGuy;
+    }
+
+    public static void clickWhenNotFavorite(Activity activity, FeedItem feedItem, UICallback uiCallback){
         //点击进行收藏
         Collection collection = new Collection(feedItem.getTitle(),feedItem.getFeedName(),feedItem.getDate(),feedItem.getSummary(),feedItem.getContent(),feedItem.getUrl(),Collection.FEED_ITEM, DateUtil.getNowDateRFCInt());
 
         clickWhenNotFavorite(activity,collection,uiCallback);
+
+
     }
 }

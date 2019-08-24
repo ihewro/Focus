@@ -27,6 +27,8 @@ public class FeedFolder extends LitePalSupport {
     private int timeout;//拉取的超时时间
     private String rsshub;//源内容
     private String password;//密码
+    private boolean isBadGuy;//是否需要反盗链图片
+    private boolean isOnline;//同步的时候是否请求数据
 
 
     @Column(ignore = true)
@@ -108,5 +110,21 @@ public class FeedFolder extends LitePalSupport {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isBadGuy() {
+        return isBadGuy;
+    }
+
+    public void setBadGuy(boolean badGuy) {
+        isBadGuy = badGuy;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 }

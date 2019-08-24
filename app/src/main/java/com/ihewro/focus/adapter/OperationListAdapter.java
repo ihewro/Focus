@@ -2,6 +2,7 @@ package com.ihewro.focus.adapter;
 
 import android.support.annotation.Nullable;
 
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ihewro.focus.R;
@@ -24,7 +25,7 @@ public class OperationListAdapter extends BaseQuickAdapter<Operation, BaseViewHo
 
 
     public OperationListAdapter(@Nullable List<Operation> data) {
-        super(R.layout.item_operation, data);
+        super(R.layout.item_operation,data);
     }
 
     @Override
@@ -36,5 +37,6 @@ public class OperationListAdapter extends BaseQuickAdapter<Operation, BaseViewHo
             helper.setGone(R.id.text_info,true);
         }
         helper.setImageDrawable(R.id.icon, item.getDrawable());
+
     }
 }

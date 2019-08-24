@@ -13,6 +13,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * <pre>
@@ -25,11 +26,16 @@ import retrofit2.http.Query;
  */
 public interface HttpInterface {
 
-    @GET("?")
+    @GET("")
     Call<String> getRSSData();
 
-    @GET("{with}")
-    Call<String> getRSSDataWith(@Path("with") String with);
+ /*   @GET("{with}")
+    Call<String> getRSSDataWith(@Path(value = "with", encoded = true) String with);
+*/
+
+    @GET
+    Call<String> getRSSDataWith(@Url String with);
+
 
     @GET("?action=webcategory")
     Call<List<WebsiteCategory>> getCategoryList();

@@ -58,36 +58,6 @@ public class MyWebViewClient extends com.just.agentweb.WebViewClient {
 
     private void addClickListener(WebView webView) {
 
-        //修改图片的相对地址
-
-        //设置图片的点击事件
-        webView.loadUrl("javascript:(function(){" +
-                "var objs = document.getElementsByTagName(\"img\"); " +
-                "for(var i=0;i<objs.length;i++)  " +
-                "{" +
-                "var url = objs[i].getAttribute('src');\n" +
-                "        var temp = url.substring(0,8);if(temp.indexOf('http')===-1){if (url.substring(0,1)!=='/'){url = '/' + url;}objs[i].setAttribute('src','"+this.url+"'+url);}"+
-                "    objs[i].onclick=function()  " +
-                "    {  "
-                + "        window.imagelistener.openImage(this.src);  " +//通过js代码找到标签为img的代码块，设置点击的监听方法与本地的openImage方法进行连接
-                "    }  " +
-                "}" +
-                "})()");
-
-        //设置URL的点击事件
-
-        webView.loadUrl("javascript:(function(){" +
-                "var objs = document.getElementsByTagName(\"a\"); " +
-                "for(var i=0;i<objs.length;i++)  " +
-                "{"
-                + "    objs[i].onclick=function()  " +
-                "    {  "
-                + "        window.imagelistener.openUrl(this.href); return false; " +//通过js代码找到标签为img的代码块，设置点击的监听方法与本地的openImage方法进行连接
-                "    }  " +
-                "}" +
-                "})()");
-
-
     }
 
 

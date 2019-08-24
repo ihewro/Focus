@@ -83,7 +83,7 @@ public class FeedParser {
 //            ALog.d(encode);
         }
         //如果是utf-8不需要转码
-        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
+//        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
         return beginParseStr2Feed(xmlStr,url);
     }
 

@@ -702,7 +702,7 @@ public class MainActivity extends BaseActivity {
                     FeedCategoryActivity.activityStart(MainActivity.this);
                     break;
                 case DRAWER_FOLDER_ITEM:
-                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
+//                    ALog.d("名称为" + ((SecondaryDrawerItem) drawerItem).getName() + "id为" + drawerItem.getIdentifier());
                     ArrayList<String> list = new ArrayList<>();
                     list.add(String.valueOf(drawerItem.getIdentifier()));
                     clickAndUpdateMainFragmentData(list, ((SecondaryDrawerItem) drawerItem).getName().toString(),drawerItem.getIdentifier());
@@ -711,7 +711,7 @@ public class MainActivity extends BaseActivity {
                 case DRAWER_FOLDER:
                     //单击文件夹
 
-                    ALog.d("单击了！！");
+//                    ALog.d("单击了！！");
                     /*int feedFolderId = (int) drawerItem.getIdentifier();
                     List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
                     ArrayList<String> feedIdlist = new ArrayList<>();
@@ -815,7 +815,9 @@ public class MainActivity extends BaseActivity {
                 int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
 
                 final SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem().withName(temp.getName()).withSelectable(true).withTag(DRAWER_FOLDER_ITEM).withIdentifier(feedList.get(j).getId());
-                if (feedList.get(j).isErrorGet()) {
+                if (feedList.get(j).isOffline()){
+                    secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_cloud_off);
+                }else if (feedList.get(j).isErrorGet()) {
                     haveErrorFeedInCurrentFolder = true;
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_sync_problem);
                 } else {
