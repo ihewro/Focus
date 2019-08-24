@@ -82,9 +82,9 @@
             margin-left: 0;
             margin-right: auto;
             max-width: 640px;
-            padding: 0 16px;
-            line-height: 2;
-            color: #424b50;
+            padding: 0 0px;
+            line-height: 1;
+            color: #777;
             word-wrap: break-word;
             font-size: 16px;
             font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei", "Wenquanyi Micro Hei", sans-serif;

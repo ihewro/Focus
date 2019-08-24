@@ -116,7 +116,7 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
             int pos0 = url.indexOf(".");
 
 
-            int pos1 = url.indexOf("/",7);
+            int pos1 = url.indexOf("/",8);
             if (pos1 == -1){//说明这/是协议头的,比如https://www.ihewro.com
                 url = url + "/";
                 Retrofit retrofit = HttpUtil.getRetrofit("String", url, timeout, timeout, timeout);

@@ -28,3 +28,6 @@
     *;
 }
 -dontwarn com.just.agentweb.**
+-keepclassmembers class * extends com.stephentuso.welcome.WelcomeActivity {
+    public static java.lang.String welcomeKey();
+}

@@ -63,7 +63,7 @@ public class PostDetailListAdapter extends BaseQuickAdapter<FeedItem, BaseViewHo
 
         //根据偏好设置的背景颜色，设置标题栏位置的背景颜色
         if (!SkinPreference.getInstance().getSkinName().equals("night")){
-            helper.setBackgroundColor(R.id.container, PostSetting.getBackgroundInt(context));
+//            helper.setBackgroundColor(R.id.container, PostSetting.getBackgroundInt(context));
             helper.setBackgroundColor(R.id.post_title, PostSetting.getBackgroundInt(context));
             helper.setBackgroundColor(R.id.post_turn, PostSetting.getBackgroundInt(context));
         }

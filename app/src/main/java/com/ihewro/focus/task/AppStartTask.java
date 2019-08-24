@@ -29,7 +29,7 @@ public class AppStartTask extends AsyncTask<Void,Integer,String> {
     @Override
     protected String doInBackground(Void... voids) {
         try {
-            sleep(800);
+            sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

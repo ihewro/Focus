@@ -68,8 +68,8 @@ android {
         applicationId "com.ihewro.focus"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 18
-        versionName "2.3"
+        versionCode 20
+        versionName "2.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -225,5 +225,12 @@ dependencies {
 
     //webview
     api 'com.just.agentweb:agentweb:4.0.3-beta' // (必选)
+
+    //svg动画
+    implementation 'com.eftimoff:android-pathview:1.0.8@aar'
+
+    //新手启动页面
+    implementation 'com.stephentuso:welcome:1.4.1'
+
 
 }

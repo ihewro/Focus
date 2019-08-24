@@ -13,11 +13,11 @@
         android:layout_centerInParent="true" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/imageView"
         android:layout_width="69dp"
         android:layout_height="100dp"
         android:layout_above ="@id/flag"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        app:srcCompat="@drawable/ic_logo" />
+        app:srcCompat="@drawable/logo_anim"/>
 </RelativeLayout>
