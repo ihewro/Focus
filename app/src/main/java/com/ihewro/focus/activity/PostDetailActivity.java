@@ -124,7 +124,7 @@ public class PostDetailActivity extends BackActivity {
         setContentView(R.layout.activity_post_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
+        toolbar.setTitle("");
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

@@ -540,6 +540,8 @@ public class MainActivity extends BaseActivity {
 
     public void createDrawer() {
 
+        buildDrawer();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -548,7 +550,7 @@ public class MainActivity extends BaseActivity {
                 UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
                     @Override
                     public void run() {
-                        buildDrawer();
+                        drawer.setItems(subItems);
                     }
                 });
             }
@@ -700,6 +702,7 @@ public class MainActivity extends BaseActivity {
                         //恢复折叠
 
                         int[] temp = expandPositions.clone();
+
                         for(int i = 0;i<temp.length;i++){
                             drawer.getExpandableExtension().expand(temp[i]);
                         }

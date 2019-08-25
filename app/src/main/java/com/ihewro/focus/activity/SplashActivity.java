@@ -10,10 +10,15 @@ import android.widget.ImageView;
 
 import com.blankj.ALog;
 import com.ihewro.focus.R;
+import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.task.AppStartTask;
 import com.ihewro.focus.task.listener.TaskListener;
 import com.stephentuso.welcome.WelcomeActivity;
 import com.stephentuso.welcome.WelcomeHelper;
+
+import org.litepal.crud.callback.FindMultiCallback;
+
+import java.util.List;
 
 import skin.support.utils.SkinPreference;
 
@@ -33,40 +38,39 @@ public class SplashActivity extends AppCompatActivity {
         }
 
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
+
         setContentView(R.layout.activity_welcome);
 
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
-
-
-        if (false){
-
-            // The welcome screen for this app (only one that automatically shows)
+        if (UserPreference.queryValueByKey(UserPreference.FIST_USE_NEW_COMER, "0").equals("0")){
             sampleWelcomeScreen = new WelcomeHelper(this, NewComerActivity.class);
             sampleWelcomeScreen.forceShow();
-        }
 
-        Intent intent = getIntent();
+        }else {
+            Intent intent = getIntent();
 
-        if (!isTaskRoot()) {
-            finish();
-            return;
-        }
-
-        ImageView imageview= findViewById(R.id.imageView);
-        AnimatedVectorDrawable animatedVectorDrawable =  ((AnimatedVectorDrawable) imageview.getDrawable());
-        animatedVectorDrawable.start();
-
-        //跳转到 {@link MainActivity}
-        new AppStartTask(new TaskListener() {
-            @Override
-            public void onFinish(String jsonString) {
-
+            if (!isTaskRoot()) {
                 finish();
-                MainActivity.activityStart(SplashActivity.this);
-
+                return;
             }
-        }).execute();
+
+            ImageView imageview= findViewById(R.id.imageView);
+            AnimatedVectorDrawable animatedVectorDrawable =  ((AnimatedVectorDrawable) imageview.getDrawable());
+            animatedVectorDrawable.start();
+
+            //跳转到 {@link MainActivity}
+            new AppStartTask(new TaskListener() {
+                @Override
+                public void onFinish(String jsonString) {
+
+                    finish();
+                    MainActivity.activityStart(SplashActivity.this);
+
+                }
+            }).execute();
+        }
+
 
 
     }
@@ -92,17 +96,20 @@ public class SplashActivity extends AppCompatActivity {
 
         ALog.d("什么鬼" + resultCode + "|" + requestCode);
         if (requestCode == WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST) {
-            // The key of the welcome screen is in the Intent
             String welcomeKey = data.getStringExtra(WelcomeActivity.WELCOME_SCREEN_KEY);
             if (resultCode == RESULT_OK) {
-                // Code here will run if the welcome screen was completed
+                //结束
             } else {
-                // Code here will run if the welcome screen was canceled
-                // In most cases you'll want to call finish() here
+                //取消
             }
 
-            finish();
-            MainActivity.activityStart(SplashActivity.this);
+            UserPreference.updateOrSaveValueByKeyAsync(UserPreference.FIST_USE_NEW_COMER, String.valueOf(1), new FindMultiCallback<UserPreference>() {
+                @Override
+                public void onFinish(List<UserPreference> list) {
+                    finish();
+                    MainActivity.activityStart(SplashActivity.this);
+                }
+            });
 
         }
 

@@ -46,6 +46,7 @@ public class UserPreference extends LitePalSupport {
     public static final String  RSS_HUB =  "rsshub";
     public static final String FIRST_USE_LOCAL_SEARCH_AND_FILTER = "FIRST_USE_LOCAL_SEARCH_AND_FILTER";//是否首次打开APP
     public static final String FIRST_INTRO_MAIN_FEED_ITEM = "FIRST_INTRO_MAIN_FEED_ITEM";//首次介绍首页的feedItem功能，包括侧滑，等等
+    public static final String FIST_USE_NEW_COMER = "FIST_USE_NEW_COMER";//首次介绍首页的feedItem功能，包括侧滑，等等
     public static final String FIRST_INTRO_DISCOVER = "FIRST_INTRO_DISCOVER";//首次介绍发现市场的功能，包括手动订阅，添加订阅
     public static final String DEFAULT_RSSHUB = "跟随上一级设置";
 

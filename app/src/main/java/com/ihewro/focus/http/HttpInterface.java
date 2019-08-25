@@ -26,8 +26,8 @@ import retrofit2.http.Url;
  */
 public interface HttpInterface {
 
-    @GET("")
-    Call<String> getRSSData();
+    @GET
+    Call<String> getRSSData(@Url String with);
 
  /*   @GET("{with}")
     Call<String> getRSSDataWith(@Path(value = "with", encoded = true) String with);

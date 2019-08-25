@@ -121,7 +121,7 @@ public class RequestFeedListDataTask extends AsyncTask<Feed, Integer, Message> {
                 url = url + "/";
                 Retrofit retrofit = HttpUtil.getRetrofit("String", url, timeout, timeout, timeout);
                 HttpInterface request = retrofit.create(HttpInterface.class);
-                call = request.getRSSData();
+                call = request.getRSSData("");
             }else {
                 String with = url.substring(pos1+1);
                 url = url.substring(0,pos1) + "/";
