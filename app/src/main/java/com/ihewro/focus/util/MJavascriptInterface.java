@@ -9,9 +9,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.blankj.ALog;
+import com.ihewro.focus.R;
+import com.ihewro.focus.activity.MainActivity;
+import com.ihewro.focus.bean.Help;
+import com.ihewro.focus.view.FeedOperationPopupView;
+import com.ihewro.focus.view.ImageManagePopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.ImageViewerPopupView;
 import com.lxj.xpopup.interfaces.XPopupImageLoader;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
@@ -33,7 +39,7 @@ public class MJavascriptInterface {
     private String[] imageUrls;
     private WebView webView;
 
-    MJavascriptInterface(Activity context, String[] imageUrls, WebView webView) {
+    public MJavascriptInterface(Activity context, String[] imageUrls, WebView webView) {
         this.activity = context;
         this.imageUrls = imageUrls;
         this.webView = webView;
@@ -43,38 +49,25 @@ public class MJavascriptInterface {
     public void openImage(String img) {
 
         ALog.d("点击了图片" +img);
-        // 单张图片场景
-        ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(activity)
-                .asImageViewer(null, img, new MyImageLoader());
-        imageViewerPopupView.show();
+       ImageLoaderManager.showSingleImageDialog(activity,img);
     }
 
+
+
+
+
+    @android.webkit.JavascriptInterface
+    public void longClickImage(String img) {
+        ALog.d("长按图片" +img);
+        //显示下拉底部弹窗
+        new XPopup.Builder(activity)
+                .asCustom(new ImageManagePopupView(activity,img))
+                .show();
+    }
 
     @android.webkit.JavascriptInterface
     public void openUrl(String url) {
         WebViewUtil.openLink(url, activity);
-    }
-
-
-    class MyImageLoader implements XPopupImageLoader {
-        @Override
-        public void loadImage(int position, @NonNull Object url, @NonNull ImageView imageView) {
-            //必须指定Target.SIZE_ORIGINAL，否则无法拿到原图，就无法享用天衣无缝的动画
-            ImageLoader.getInstance().displayImage(String.valueOf(url), imageView);
-//            Glide.with(imageView).load(url).apply(new RequestOptions().placeholder(R.mipmap.ic_launcher_round).override(Target.SIZE_ORIGINAL)).into(imageView);
-        }
-
-        @Override
-        public File getImageFile(@NonNull Context context, @NonNull Object uri) {
-            try {
-                return ImageLoader.getInstance().getDiskCache().get(String.valueOf(uri));
-//                return              com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(String.valueOf(url), imageView);
-//                return Glide.with(context).downloadOnly().load(uri).submit().get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
     }
 
 }

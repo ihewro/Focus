@@ -22,7 +22,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:roundIcon">
-        <activity android:name=".activity.AuthListActivity"></activity>
+        <activity
+            android:name=".activity.NewComerActivity"
+            android:theme="@style/WelcomeScreenTheme" />
+        <activity android:name=".activity.AuthListActivity" />
         <activity android:name=".activity.CollectionFolderManageActivity" />
 
         <receiver
@@ -64,7 +67,7 @@
         <activity
             android:name=".activity.PostDetailActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".activity.WelcomeActivity">
+        <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

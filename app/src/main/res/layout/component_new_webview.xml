@@ -17,7 +17,7 @@
         android:gravity="center_horizontal"
         android:textColor="#aaa"
         android:textSize="16sp"
-        android:text="测试文字"
+        android:text="网页由AgentWeb引擎驱动"
         app:layout_srlBackgroundColor="#555"
         app:layout_srlSpinnerStyle="FixedBehind"/>
     <WebView

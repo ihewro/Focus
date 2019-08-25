@@ -5,8 +5,8 @@
         android:id="@+id/action_link"
         android:icon="@drawable/ic_public_black_24dp"
         android:orderInCategory="100"
-        android:title="访问链接"
-        app:showAsAction="always" />
+        android:title="访问原文"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_star"
         android:icon="@drawable/star_off"
@@ -18,11 +18,11 @@
         android:icon="@drawable/ic_share_black_24dp"
         android:orderInCategory="100"
         android:title="分享"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/text_setting"
         android:icon="@drawable/ic_text_fields_black_24dp"
         android:orderInCategory="100"
         android:title="分享"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 </menu>

@@ -36,7 +36,13 @@ public class OperationListAdapter extends BaseQuickAdapter<Operation, BaseViewHo
         }else {
             helper.setGone(R.id.text_info,true);
         }
-        helper.setImageDrawable(R.id.icon, item.getDrawable());
+
+        if (item.getDrawable()!=null){
+            helper.setGone(R.id.icon,true);
+            helper.setImageDrawable(R.id.icon, item.getDrawable());
+        }else {
+            helper.setGone(R.id.icon,false);
+        }
 
     }
 }

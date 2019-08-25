@@ -222,12 +222,8 @@ dependencies {
     //简化运行时申请权限的代码
     implementation 'pub.devrel:easypermissions:2.0.1'
 
-
     //webview
     api 'com.just.agentweb:agentweb:4.0.3-beta' // (必选)
-
-    //svg动画
-    implementation 'com.eftimoff:android-pathview:1.0.8@aar'
 
     //新手启动页面
     implementation 'com.stephentuso:welcome:1.4.1'

@@ -76,6 +76,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.stephentuso.welcome.WelcomeActivity;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -147,6 +149,7 @@ public class MainActivity extends BaseActivity {
 
     private long selectIdentify;
 
+    private WelcomeHelper sampleWelcomeScreen;
     private List<Long> expandFolderIdentify = new ArrayList<>();
 
     public static void activityStart(Activity activity) {
@@ -160,6 +163,12 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+
+        // The welcome screen for this app (only one that automatically shows)
+        sampleWelcomeScreen = new WelcomeHelper(this, NewComerActivity.class);
+        sampleWelcomeScreen.forceShow();
+
+
         if (SkinPreference.getInstance().getSkinName().equals("night")) {
             toolbar.inflateMenu(R.menu.main_night);
         } else {
@@ -172,6 +181,7 @@ public class MainActivity extends BaseActivity {
                 //更新数据
                 /*updateDrawer();
                 clickAndUpdateMainFragmentData(new ArrayList<String>(), "全部文章");*/
+
             }
         }
         setSupportActionBar(toolbar);
@@ -535,7 +545,7 @@ public class MainActivity extends BaseActivity {
     //初始化侧边栏
     public void initDrawer() {
 
-        //构造侧边栏项目
+        //TODO:构造侧边栏项目 使用线程！
         createDrawer();
 
         //构造右侧栏目
@@ -545,7 +555,7 @@ public class MainActivity extends BaseActivity {
 
 
     public void createDrawer() {
-        //初始化侧边栏
+        //初始化侧边栏 TODO: 子线程刷新 不要阻塞
         refreshLeftDrawerFeedList(false);
 
 
@@ -1031,7 +1041,13 @@ public class MainActivity extends BaseActivity {
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+        // This is needed to prevent welcome screens from being
+        // automatically shown multiple times
+
+        // This is the only one needed because it is the only one that
+        // is shown automatically. The others are only force shown.
+        sampleWelcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override
@@ -1041,5 +1057,25 @@ public class MainActivity extends BaseActivity {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        ALog.d("什么鬼" + resultCode + "|" + requestCode);
+        if (requestCode == WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST) {
+            // The key of the welcome screen is in the Intent
+            String welcomeKey = data.getStringExtra(WelcomeActivity.WELCOME_SCREEN_KEY);
+            if (resultCode == RESULT_OK) {
+                // Code here will run if the welcome screen was completed
+            } else {
+                // Code here will run if the welcome screen was canceled
+                // In most cases you'll want to call finish() here
+            }
+
+        }
+
     }
 }

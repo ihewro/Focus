@@ -4,11 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.ihewro.focus.R;
 import com.ihewro.focus.callback.ImageLoaderCallback;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.ImageViewerPopupView;
+import com.lxj.xpopup.interfaces.XPopupImageLoader;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -16,6 +20,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import java.io.File;
 
 import skin.support.utils.SkinPreference;
 
@@ -54,23 +60,30 @@ public class ImageLoaderManager {
     public static DisplayImageOptions getSubsciptionIconOptions(Context context) {
 
         Drawable defaultDrawable;
-        if (SkinPreference.getInstance().getSkinName().equals("night")) {
+
+        Drawable errorDrawable = context.getResources().getDrawable(R.drawable.loading_error);
+        defaultDrawable = context.getResources().getDrawable(R.drawable.ic_loading);
+
+/*        if (SkinPreference.getInstance().getSkinName().equals("night")) {
             defaultDrawable = context.getResources().getDrawable(R.drawable.ic_night_loading);
         } else {
             defaultDrawable = context.getResources().getDrawable(R.drawable.ic_day_loading);
 
-        }
+        }*/
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(defaultDrawable)
                 .showImageForEmptyUri(defaultDrawable)
-                .showImageOnFail(defaultDrawable)
+                .showImageOnFail(errorDrawable)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .build();
 
         return options;
     }
+
+
+
 
 
 
@@ -105,6 +118,39 @@ public class ImageLoaderManager {
 
             }
         });
+    }
+
+
+
+    public static void showSingleImageDialog(Context context, String imageUrl){
+        // 单张图片场景
+        ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(context)
+                .asImageViewer(null, imageUrl, new MyImageLoader(context));
+        imageViewerPopupView.show();
+    }
+
+
+    static class MyImageLoader implements XPopupImageLoader {
+
+        private Context context;
+        MyImageLoader(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void loadImage(int position, @NonNull Object url, @NonNull ImageView imageView) {
+            ImageLoader.getInstance().displayImage(StringUtil.trim(String.valueOf(url)), imageView,ImageLoaderManager.getSubsciptionIconOptions(context));
+        }
+
+        @Override
+        public File getImageFile(@NonNull Context context, @NonNull Object uri) {
+            try {
+                return ImageLoader.getInstance().getDiskCache().get(String.valueOf(uri));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
 

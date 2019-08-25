@@ -5,17 +5,21 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -25,7 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.ALog;
+import com.google.common.io.ByteStreams;
 import com.ihewro.focus.R;
+import com.ihewro.focus.util.MJavascriptInterface;
 import com.ihewro.focus.view.MyScrollView;
 import com.ihewro.focus.view.WebLayout;
 import com.just.agentweb.AgentWeb;
@@ -33,8 +39,14 @@ import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.WebChromeClient;
 import com.just.agentweb.WebViewClient;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,6 +87,12 @@ public class WebViewActivity extends BackActivity {
             }
         }
 
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            ALog.d("webview:|"+consoleMessage.message() + "line:"+consoleMessage.lineNumber() +"sourceId"+ consoleMessage.sourceId());
+            return super.onConsoleMessage(consoleMessage);
+        }
+
 
     };
 
@@ -88,7 +106,6 @@ public class WebViewActivity extends BackActivity {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-
             return super.shouldInterceptRequest(view, url);
         }
 
@@ -97,9 +114,37 @@ public class WebViewActivity extends BackActivity {
             super.onPageStarted(view, url, favicon);
             ((TextView)webLayout.getLayout().findViewById(R.id.header)).setText("网页由 " + url + " 提供");
 
+            injectScriptFile(view, "js/webview.js"); // see below ...
+
+        }
+
+
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+
+            // test if the script was loaded
+//            view.loadUrl("javascript:setTimeout(clickImage(), 500)");
+
         }
     };
 
+
+    private void injectScriptFile(WebView view, String scriptFile) {
+        InputStream in;
+        try {
+            in = getAssets().open(scriptFile);
+
+            String js = new String(ByteStreams.toByteArray(in));
+            ALog.d("什么鬼",js,"end");
+
+            view.loadUrl("javascript:"+js);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +157,12 @@ public class WebViewActivity extends BackActivity {
         }
 
 
+
         String url = getIntent().getStringExtra(EXTRA_URL);
         this.url = url;
+        toolbar.setTitle(url);
         webLayout = new WebLayout(this);
+        String[] imageUrls = {};
 
 
         mAgentWeb = AgentWeb.with(this)
@@ -123,6 +171,7 @@ public class WebViewActivity extends BackActivity {
                 .setWebChromeClient(mWebChromeClient)
                 .setWebViewClient(mWebViewClient)
                 .setWebLayout(webLayout)
+                .addJavascriptInterface("imagelistener",new MJavascriptInterface(WebViewActivity.this,imageUrls,webView))
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用

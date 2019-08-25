@@ -145,7 +145,7 @@ public class MyApplication extends LitePalApplication {
                 .trackActivities(true) //default: false
                 .minTimeBetweenCrashesMs(3000) //default: 3000
                 //.errorDrawable(R.drawable.ic_custom_drawable) //default: bug image
-                .restartActivity(WelcomeActivity.class) //default: null (your app's launch activity)
+                .restartActivity(SplashActivity.class) //default: null (your app's launch activity)
                 .errorActivity(ErrorActivity.class) //default: null (default error activity)
                 .eventListener(null) //default: null
                 .apply();*/
