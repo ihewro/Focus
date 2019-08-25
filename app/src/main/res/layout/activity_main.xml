@@ -56,7 +56,6 @@
                                 android:textColor="@color/text_unread"
                                 android:textSize="16sp"
                                 android:layout_width="wrap_content"
-                                android:maxLines="1"
                                 android:layout_height="wrap_content"/>
 
                             <ImageView
@@ -71,7 +70,6 @@
                         <TextView
                             android:id="@+id/subtitle"
                             android:text="无未读文章"
-                            android:maxLines="1"
                             android:textColor="@color/text_read"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"

@@ -58,8 +58,6 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.holder.ImageHolder;
-import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -67,8 +65,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.stephentuso.welcome.WelcomeActivity;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,10 +72,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -157,7 +150,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
 
 
 
@@ -692,7 +684,6 @@ public class MainActivity extends BaseActivity {
 
 
 
-    private boolean isSetExpandItems = false;
     private void updateDrawer() {
         //初始化侧边栏
         new Thread(new Runnable() {
@@ -709,9 +700,7 @@ public class MainActivity extends BaseActivity {
                         //恢复折叠
 
                         int[] temp = expandPositions.clone();
-
                         for(int i = 0;i<temp.length;i++){
-                            isSetExpandItems = true;
                             drawer.getExpandableExtension().expand(temp[i]);
                         }
 
@@ -754,9 +743,6 @@ public class MainActivity extends BaseActivity {
                     break;
 
                 case DRAWER_FOLDER:
-
-                    ALog.d(drawerItem.getIdentifier() + "单击了！！" );
-
                     break;
 
             }
@@ -1061,49 +1047,16 @@ public class MainActivity extends BaseActivity {
 
 
 
-    public void refreshBadge(){
-        List<FeedFolder> feedFolderList = LitePal.order("ordervalue").find(FeedFolder.class);
-        for (int i = 0; i < feedFolderList.size(); i++) {
+    @SuppressLint("MissingSuperCall")
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+        // This is needed to prevent welcome screens from being
+        // automatically shown multiple times
 
-            int notReadNum = 0;
-
-            List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).order("ordervalue").find(Feed.class);
-
-            boolean haveErrorFeedInCurrentFolder = false;
-            for (int j = 0; j < feedList.size(); j++) {
-                final Feed temp = feedList.get(j);
-                int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
-
-                if (feedList.get(j).isOffline()){
-                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_cloud_off));
-                }else if (feedList.get(j).isErrorGet()) {
-                    haveErrorFeedInCurrentFolder = true;
-                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_sync_problem));
-
-                } else {
-                    //TODO: 加载订阅的图标
-                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_rss_feed));
-                }
-
-                if (current_notReadNum != 0) {
-                    drawer.updateBadge(temp.getId(),new StringHolder(current_notReadNum + ""));
-                }
-                //不需要这样了，因为都是直接setitems来更新的
-                /*if (isUpdate) {
-                    drawer.updateItem(secondaryDrawerItem);
-                }*/
-
-                notReadNum += current_notReadNum;
-            }
-
-            /*if (haveErrorFeedInCurrentFolder) {
-                //TODO： 更新文件夹名称的颜色
-//                one.withTextColorRes(R.color.md_red_700);
-            }*/
-            if (notReadNum != 0) {
-                drawer.updateBadge(feedFolderList.get(i).getId()+FEED_FOLDER_IDENTIFY_PLUS,new StringHolder(notReadNum + ""));
-            }
-
-        }
+        // This is the only one needed because it is the only one that
+        // is shown automatically. The others are only force shown.
     }
+
 }

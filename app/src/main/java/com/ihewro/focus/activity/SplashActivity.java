@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
 
 
-        if (true){
+        if (false){
 
             // The welcome screen for this app (only one that automatically shows)
             sampleWelcomeScreen = new WelcomeHelper(this, NewComerActivity.class);
@@ -53,7 +53,6 @@ public class SplashActivity extends AppCompatActivity {
             return;
         }
 
-
         ImageView imageview= findViewById(R.id.imageView);
         AnimatedVectorDrawable animatedVectorDrawable =  ((AnimatedVectorDrawable) imageview.getDrawable());
         animatedVectorDrawable.start();
@@ -62,12 +61,6 @@ public class SplashActivity extends AppCompatActivity {
         new AppStartTask(new TaskListener() {
             @Override
             public void onFinish(String jsonString) {
-                //判断是否是第一次打开引导页面
-                /*if (true){
-                    NewComerActivity.activityStart(SplashActivity.this);
-                }else {
-                    MainActivity.activityStart(SplashActivity.this);
-                }*/
 
                 finish();
                 MainActivity.activityStart(SplashActivity.this);
@@ -78,7 +71,7 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-
+/*
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -89,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
         // This is the only one needed because it is the only one that
         // is shown automatically. The others are only force shown.
         sampleWelcomeScreen.onSaveInstanceState(outState);
-    }
+    }*/
 
 
     @Override
