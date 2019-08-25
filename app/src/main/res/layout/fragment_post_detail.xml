@@ -6,7 +6,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     app:srlDragRate="1"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.ihewro.focus.view.MyScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/post_turn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -75,7 +75,7 @@
                 android:text="@string/test_content"/>
         </LinearLayout>
 
-    </com.ihewro.focus.view.MyScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

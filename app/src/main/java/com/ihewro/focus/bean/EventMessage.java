@@ -69,7 +69,9 @@ public class EventMessage {
     public static final List<String> feedItemReadStatusOperation = Arrays.asList(MAIN_READ_NUM_EDIT,MARK_FEED_READ,MARK_FEED_FOLDER_READ);
 
     //首页的左侧边栏遇到这些通知都会更新
-    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,EDIT_ITEM_READ,MARK_FEED_READ,MARK_FEED_FOLDER_READ,MAIN_READ_NUM_EDIT,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED,ORDER_FOLDER);
+    public static final List<String> feedAndFeedFolderAndItemOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER,FEED_PULL_DATA_ERROR,DATABASE_RECOVER,IMPORT_OPML_FEED,ORDER_FOLDER);
+
+    public static final List<String> updateBadge = Arrays.asList(MARK_FEED_READ,MARK_FEED_FOLDER_READ,MAIN_READ_NUM_EDIT,EDIT_ITEM_READ,MAKE_READ_STATUS_BY_INDEX_LIST);
 
     //这个暂时不需要使用
     public static final List<String> feedAndFeedFolderOperation = Arrays.asList(ADD_FEED, MOVE_FEED, EDIT_FEED_NAME, DELETE_FEED, ADD_FEED_FOLDER, EDIT_FEED_FOLDER_NAME, DELETE_FEED_FOLDER);

@@ -477,6 +477,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             updateNotReadNum();
         }
         if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_INDEX_LIST)) {//已读状态修改
+            ALog.d("MAKE_READ_STATUS_BY_INDEX_LIST");
             //更新已读标志
             List<Integer> list = eventBusMessage.getIntIds();
             for (Integer indexInList: list){
@@ -489,6 +490,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
         }
         else if (Objects.equals(eventBusMessage.getType(), EventMessage.MAKE_READ_STATUS_BY_ID_LIST)){//已读状态修改
             //寻找到id的位置
+            ALog.d("MAKE_READ_STATUS_BY_ID_LIST");
             List<Integer> list = eventBusMessage.getIntIds();
 
             for (Integer idInList: list){

@@ -74,7 +74,11 @@ public class PostDetailListPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public View getViewByPosition(int i,int id){
-        return mCurrentFragment.findViewById(id);
+        if (mCurrentFragment!=null){
+            return mCurrentFragment.findViewById(id);
+        }else {
+            return null;
+        }
     }
 
 

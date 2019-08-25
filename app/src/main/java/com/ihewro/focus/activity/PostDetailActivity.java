@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -284,7 +285,10 @@ public class PostDetailActivity extends BackActivity {
         final GestureDetector gestureDetector1 = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                ((MyScrollView) adapter.getViewByPosition(mIndex, R.id.post_turn)).fullScroll(View.FOCUS_UP);
+                ScrollView scrollView =  ((ScrollView) adapter.getViewByPosition(mIndex, R.id.post_turn));
+                if (scrollView!=null){
+                    scrollView.fullScroll(View.FOCUS_UP);
+                }
                 return super.onDoubleTap(e);
             }
         });
@@ -319,7 +323,7 @@ public class PostDetailActivity extends BackActivity {
                         });
                     }
                 }
-            }, 1000);
+            }, 500);
 
 
         }

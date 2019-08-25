@@ -1,5 +1,6 @@
 package com.ihewro.focus.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,9 @@ import skin.support.utils.SkinPreference;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private WelcomeHelper sampleWelcomeScreen;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +35,16 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_welcome);
 
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
+
+
+        if (true){
+
+            // The welcome screen for this app (only one that automatically shows)
+            sampleWelcomeScreen = new WelcomeHelper(this, NewComerActivity.class);
+            sampleWelcomeScreen.forceShow();
+        }
 
         Intent intent = getIntent();
 
@@ -65,6 +78,42 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // This is needed to prevent welcome screens from being
+        // automatically shown multiple times
+
+        // This is the only one needed because it is the only one that
+        // is shown automatically. The others are only force shown.
+        sampleWelcomeScreen.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        ALog.d("什么鬼" + resultCode + "|" + requestCode);
+        if (requestCode == WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST) {
+            // The key of the welcome screen is in the Intent
+            String welcomeKey = data.getStringExtra(WelcomeActivity.WELCOME_SCREEN_KEY);
+            if (resultCode == RESULT_OK) {
+                // Code here will run if the welcome screen was completed
+            } else {
+                // Code here will run if the welcome screen was canceled
+                // In most cases you'll want to call finish() here
+            }
+
+            finish();
+            MainActivity.activityStart(SplashActivity.this);
+
+        }
+
+    }
 
 
 }

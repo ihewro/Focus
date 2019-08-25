@@ -4,13 +4,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -48,7 +43,6 @@ import com.ihewro.focus.fragemnt.search.SearchFeedFolderFragment;
 import com.ihewro.focus.fragemnt.search.SearchFeedItemListFragment;
 import com.ihewro.focus.fragemnt.search.SearchLocalFeedListFragment;
 import com.ihewro.focus.task.TimingService;
-import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FeedFolderOperationPopupView;
 import com.ihewro.focus.view.FeedListShadowPopupView;
@@ -57,15 +51,15 @@ import com.ihewro.focus.view.FilterPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.enums.PopupPosition;
 import com.lxj.xpopup.interfaces.SimpleCallback;
-import com.lxj.xpopup.interfaces.XPopupCallback;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.holder.ImageHolder;
+import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -73,9 +67,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.stephentuso.welcome.WelcomeActivity;
 import com.stephentuso.welcome.WelcomeHelper;
 
@@ -83,15 +74,16 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
-import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import es.dmoral.toasty.Toasty;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 import skin.support.SkinCompatManager;
@@ -122,6 +114,7 @@ public class MainActivity extends BaseActivity {
     private static final int FEED_MANAGE = 460;
     private static final int SETTING = 911;
     private static final int PAY_SUPPORT = 71;
+    private static final int FEED_FOLDER_IDENTIFY_PLUS = 9999;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
@@ -131,6 +124,9 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.subtitle)
     TextView subtitle;
     public static final int RQUEST_STORAGE_READ = 8;
+
+    private int[] expandPositions;
+
 
 
     private UserFeedUpdateContentFragment feedPostsFragment;
@@ -149,7 +145,6 @@ public class MainActivity extends BaseActivity {
 
     private long selectIdentify;
 
-    private WelcomeHelper sampleWelcomeScreen;
     private List<Long> expandFolderIdentify = new ArrayList<>();
 
     public static void activityStart(Activity activity) {
@@ -164,9 +159,6 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
 
-        // The welcome screen for this app (only one that automatically shows)
-        sampleWelcomeScreen = new WelcomeHelper(this, NewComerActivity.class);
-        sampleWelcomeScreen.forceShow();
 
 
         if (SkinPreference.getInstance().getSkinName().equals("night")) {
@@ -555,10 +547,28 @@ public class MainActivity extends BaseActivity {
 
 
     public void createDrawer() {
-        //初始化侧边栏 TODO: 子线程刷新 不要阻塞
-        refreshLeftDrawerFeedList(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //初始化侧边栏  子线程刷新 不要阻塞
+                refreshLeftDrawerFeedList(false);
+                UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        buildDrawer();
+                    }
+                });
+            }
+        }).start();
 
 
+
+
+    }
+
+
+    private void buildDrawer(){
         //顶部
         // Create a few sample profile
         final IProfile profile = new ProfileDrawerItem().withName("本地RSS").withEmail("数据备份在本地");
@@ -678,22 +688,46 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-
     }
 
 
+
+    private boolean isSetExpandItems = false;
     private void updateDrawer() {
         //初始化侧边栏
         new Thread(new Runnable() {
             @Override
             public void run() {
+                selectIdentify = drawer.getCurrentSelection();
+                ALog.d("选择项" + selectIdentify);
+                expandPositions = drawer.getExpandableExtension().getExpandedItems();
                 refreshLeftDrawerFeedList(true);
                 UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
                     @Override
                     public void run() {
                         drawer.setItems(subItems);
-                        //TODO: 有bug在新添加的feed后刷新数据崩溃
-//                        drawer.setSelection(selectIdentify);
+                        //恢复折叠
+
+                        int[] temp = expandPositions.clone();
+
+                        for(int i = 0;i<temp.length;i++){
+                            isSetExpandItems = true;
+                            drawer.getExpandableExtension().expand(temp[i]);
+                        }
+
+
+
+
+
+
+                        //TODO: 当一开始选中文件夹的时候总是报错！
+                        /*new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawer.setSelection(selectIdentify);
+                            }
+                        }, 800);*/
+
                     }
                 });
             }
@@ -720,19 +754,8 @@ public class MainActivity extends BaseActivity {
                     break;
 
                 case DRAWER_FOLDER:
-                    //单击文件夹
 
-//                    ALog.d("单击了！！");
-                    /*int feedFolderId = (int) drawerItem.getIdentifier();
-                    List<Feed> feeds = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderId)).find(Feed.class);
-                    ArrayList<String> feedIdlist = new ArrayList<>();
-
-                    for (int i = 0; i < feeds.size(); i++) {
-                        feedIdlist.add(String.valueOf(feeds.get(i).getId()));
-                    }
-                    //切换到指定文件夹下
-                    clickAndUpdateMainFragmentData(feedIdlist, String.valueOf(((ExpandableBadgeDrawerItem) drawerItem).getName()),drawerItem.getIdentifier());
-                    drawer.closeDrawer();*/
+                    ALog.d(drawerItem.getIdentifier() + "单击了！！" );
 
                     break;
 
@@ -768,9 +791,6 @@ public class MainActivity extends BaseActivity {
      * @param feedIdList
      */
     private void clickFeedPostsFragment(ArrayList<String> feedIdList) {
-
-        selectIdentify = AllDrawerItem.getIdentifier();
-
         if (feedPostsFragment == null) {
             feedPostsFragment = UserFeedUpdateContentFragment.newInstance(feedIdList, toolbarTitle,subtitle);
         }
@@ -785,7 +805,6 @@ public class MainActivity extends BaseActivity {
      * @param title
      */
     private void clickAndUpdateMainFragmentData(ArrayList<String> feedIdList, String title,long identify) {
-        selectIdentify = identify;
         if (feedPostsFragment == null) {
             ALog.d("出现未知错误");
         } else {
@@ -835,29 +854,7 @@ public class MainActivity extends BaseActivity {
                     //TODO: 加载订阅的图标
                     secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
 
-                    /*ImageLoader.getInstance().loadImage(StringUtil.getUrlPrefix(temp.getLink()) + "/favicon.ico", new ImageLoadingListener() {
-                        @Override
-                        public void onLoadingStarted(String imageUri, View view) {
-//                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
-                        }
 
-                        @Override
-                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                            secondaryDrawerItem.withIcon(GoogleMaterial.Icon.gmd_rss_feed);
-                        }
-
-                        @Override
-                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-                            Drawable ico = new BitmapDrawable(getResources(),loadedImage);
-                            secondaryDrawerItem.withIcon(ico);
-                        }
-
-                        @Override
-                        public void onLoadingCancelled(String imageUri, View view) {
-
-                        }
-                    });*/
 
                 }
 
@@ -872,9 +869,12 @@ public class MainActivity extends BaseActivity {
 
                 notReadNum += current_notReadNum;
             }
-            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withIdentifier(feedFolderList.get(i).getId()).withTag(DRAWER_FOLDER).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
+            ExpandableBadgeDrawerItem one = new ExpandableBadgeDrawerItem().withName(feedFolderList.get(i).getName()).withSelectable(true).withIdentifier(feedFolderList.get(i).getId()+FEED_FOLDER_IDENTIFY_PLUS).withTag(DRAWER_FOLDER).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withSubItems(
                     feedItems
             );
+
+            ALog.d("文件夹的identity" + (feedFolderList.get(i).getId()+FEED_FOLDER_IDENTIFY_PLUS));
+            //恢复折叠状态
 
             //
 //            one.getViewHolder(R.)
@@ -993,15 +993,25 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void refreshUI(EventMessage eventBusMessage) {
-        if (EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())) {
+        if (EventMessage.feedAndFeedFolderAndItemOperation.contains(eventBusMessage.getType())) {//更新整个左侧边栏
 //            ALog.d("收到新的订阅添加，更新！" + eventBusMessage);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    ALog.d("重构");
+                    updateDrawer();
+                }
+            }, 100); // 延迟一下，因为数据异步存储需要时间
+        }else if (EventMessage.updateBadge.contains(eventBusMessage.getType())){//只需要修改侧边栏阅读书目
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //打印map
                     ALog.d("更新左侧边栏");
                     updateDrawer();
                 }
             }, 100); // 延迟一下，因为数据异步存储需要时间
+
         } else if (Objects.equals(eventBusMessage.getType(), EventMessage.FEED_PULL_DATA_ERROR)) {
 //            ALog.d("收到错误FeedId List");
 //            errorFeedIdList = eventBusMessage.getIds();
@@ -1039,17 +1049,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    @SuppressLint("MissingSuperCall")
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // This is needed to prevent welcome screens from being
-        // automatically shown multiple times
-
-        // This is the only one needed because it is the only one that
-        // is shown automatically. The others are only force shown.
-        sampleWelcomeScreen.onSaveInstanceState(outState);
-    }
 
     @Override
     protected void onDestroy() {
@@ -1060,23 +1059,51 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
 
-        ALog.d("什么鬼" + resultCode + "|" + requestCode);
-        if (requestCode == WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST) {
-            // The key of the welcome screen is in the Intent
-            String welcomeKey = data.getStringExtra(WelcomeActivity.WELCOME_SCREEN_KEY);
-            if (resultCode == RESULT_OK) {
-                // Code here will run if the welcome screen was completed
-            } else {
-                // Code here will run if the welcome screen was canceled
-                // In most cases you'll want to call finish() here
+    public void refreshBadge(){
+        List<FeedFolder> feedFolderList = LitePal.order("ordervalue").find(FeedFolder.class);
+        for (int i = 0; i < feedFolderList.size(); i++) {
+
+            int notReadNum = 0;
+
+            List<Feed> feedList = LitePal.where("feedfolderid = ?", String.valueOf(feedFolderList.get(i).getId())).order("ordervalue").find(Feed.class);
+
+            boolean haveErrorFeedInCurrentFolder = false;
+            for (int j = 0; j < feedList.size(); j++) {
+                final Feed temp = feedList.get(j);
+                int current_notReadNum = LitePal.where("read = ? and feedid = ?", "0", String.valueOf(temp.getId())).count(FeedItem.class);
+
+                if (feedList.get(j).isOffline()){
+                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_cloud_off));
+                }else if (feedList.get(j).isErrorGet()) {
+                    haveErrorFeedInCurrentFolder = true;
+                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_sync_problem));
+
+                } else {
+                    //TODO: 加载订阅的图标
+                    drawer.updateIcon(temp.getId(),new ImageHolder(GoogleMaterial.Icon.gmd_rss_feed));
+                }
+
+                if (current_notReadNum != 0) {
+                    drawer.updateBadge(temp.getId(),new StringHolder(current_notReadNum + ""));
+                }
+                //不需要这样了，因为都是直接setitems来更新的
+                /*if (isUpdate) {
+                    drawer.updateItem(secondaryDrawerItem);
+                }*/
+
+                notReadNum += current_notReadNum;
+            }
+
+            /*if (haveErrorFeedInCurrentFolder) {
+                //TODO： 更新文件夹名称的颜色
+//                one.withTextColorRes(R.color.md_red_700);
+            }*/
+            if (notReadNum != 0) {
+                drawer.updateBadge(feedFolderList.get(i).getId()+FEED_FOLDER_IDENTIFY_PLUS,new StringHolder(notReadNum + ""));
             }
 
         }
-
     }
 }
