@@ -27,13 +27,21 @@ function touchImage(btn) {
     function SinglePress() {
         //如果是加载失败的情况下，点击则重新加载
         var status = btn.getAttribute("load");
+        var imageUrl;
         if (status === "fail") {
             //点击重新加载
             singleImageLoad(btn, btn.id);
+            imageUrl = btn.getAttribute("data");
+        }else if (status == "loading"){
+            imageUrl = btn.getAttribute("data");
+        }else{
+            imageUrl = btn.src;
+
         }
 
+
         //打开图片弹窗
-        window.imagelistener.longClickImage(btn.src);
+        window.imagelistener.longClickImage(imageUrl);
 
     }
 }

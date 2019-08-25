@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_public_black_24dp"
         android:orderInCategory="100"
         android:title="访问原文"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_star"
         android:icon="@drawable/star_off"
@@ -23,6 +23,6 @@
         android:id="@+id/text_setting"
         android:icon="@drawable/ic_text_fields_black_24dp"
         android:orderInCategory="100"
-        android:title="分享"
+        android:title="阅读设置"
         app:showAsAction="never" />
 </menu>

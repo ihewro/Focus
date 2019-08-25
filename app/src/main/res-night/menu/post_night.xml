@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_public_black_24dp_night"
         android:orderInCategory="100"
         android:title="访问原文"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_star"
         android:icon="@drawable/star_off_night"
