@@ -60,7 +60,7 @@ public class WebViewUtil {
      * @param url 用于修改相对地址的
      */
     @SuppressLint("SetJavaScriptEnabled")
-    public static void LoadHtmlIntoWebView(WebView webView, String html, Activity context, String url, ViewGroup parent,boolean isBadGuy){
+    public static void LoadHtmlIntoWebView(WebView webView, String html, Context context, String url, ViewGroup parent,boolean isBadGuy){
 
         //对文章中的图片进一步处理
         //使用loading一开始进行占位

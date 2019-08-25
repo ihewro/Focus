@@ -7,6 +7,7 @@ import org.litepal.LitePal;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 import org.litepal.crud.callback.FindMultiCallback;
+import org.litepal.crud.callback.SaveCallback;
 
 import java.util.HashMap;
 import java.util.List;
@@ -134,10 +135,14 @@ public class UserPreference extends LitePalSupport {
 
 
 
-    private static void setValueByKey(String key,String value){
+    private static void setValueByKey(final String key, final String value){
         UserPreference userPreference = new UserPreference(key,value);
-        userPreference.save();
-        map.put(key,value);
+        userPreference.saveAsync().listen(new SaveCallback() {
+            @Override
+            public void onFinish(boolean success) {
+                map.put(key,value);
+            }
+        });
     }
 
 
@@ -161,7 +166,7 @@ public class UserPreference extends LitePalSupport {
         LitePal.where("key = ?", key).limit(0).findAsync(UserPreference.class).listen(new FindMultiCallback<UserPreference>() {
             @Override
             public void onFinish(List<UserPreference> list) {
-                if (list.size() > 0) {
+                if (list.size() > 0) {//缓存中有该值
                     UserPreference temp = list.get(0);
                     temp.setValue(value);
                     temp.save();

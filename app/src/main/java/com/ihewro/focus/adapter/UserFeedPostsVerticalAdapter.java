@@ -51,6 +51,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     private Activity activity;
     private String feedName;
     private List<FeedItem> feedItemList;
+    private boolean isRequesting = false;
 
     private AsyncListDiffer<FeedItem> mDiffer;
 
@@ -245,7 +246,12 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
                     for (FeedItem feedItem: feedItemList){
                         list.add(feedItem.getId());
                     }
-                    PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_MAIN);
+                    //如果当前正在请求数据，则来源变成ORIGIN_SEARCH，否则使用ORIGIN_MAIN，用于更新首页已读样式不同
+                    if (isRequesting){
+                        PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_SEARCH);
+                    }else {
+                        PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_MAIN);
+                    }
                 }
             }
         });
@@ -328,4 +334,8 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
 
     }
 
+
+    public void setRequesting(boolean requesting) {
+        isRequesting = requesting;
+    }
 }

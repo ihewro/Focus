@@ -229,4 +229,7 @@ dependencies {
     implementation 'com.stephentuso:welcome:1.4.1'
 
 
+    implementation 'com.github.prolificinteractive:parallaxpager:3.0.0'
+
+
 }

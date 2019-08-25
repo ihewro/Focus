@@ -20,7 +20,7 @@ import com.ihewro.focus.bean.FeedItem;
  */
 public class PostUtil {
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
-    public static void setContent(Activity context, FeedItem article, WebView textView, ViewGroup viewGroup) {
+    public static void setContent(Context context, FeedItem article, WebView textView, ViewGroup viewGroup) {
         if (article == null || textView == null) {
             return;
         }

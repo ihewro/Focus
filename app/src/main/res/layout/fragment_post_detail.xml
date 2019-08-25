@@ -1,0 +1,81 @@
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+    android:id="@+id/refreshLayout"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:srlDragRate="1"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.ihewro.focus.view.MyScrollView
+        android:id="@+id/post_turn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="25dp">
+
+                <TextView
+                    android:id="@+id/post_time"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@color/weak_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3月13日星期三 下午7：48"/>
+
+
+
+                <TextView
+                    android:id="@+id/post_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="狗十三》——我们都是不合格的父母而已"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/feed_name"
+                    android:text="订阅名称"
+                    android:textSize="12sp"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/weak_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+
+            <WebView
+                android:id="@+id/post_content"
+                android:paddingTop="10dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:textIsSelectable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="false"
+                android:text="@string/test_content"/>
+        </LinearLayout>
+
+    </com.ihewro.focus.view.MyScrollView>
+
+
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

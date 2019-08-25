@@ -35,11 +35,11 @@ import static com.ihewro.focus.util.UIUtil.getResources;
  */
 
 public class MJavascriptInterface {
-    private Activity activity;
+    private Context activity;
     private String[] imageUrls;
     private WebView webView;
 
-    public MJavascriptInterface(Activity context, String[] imageUrls, WebView webView) {
+    public MJavascriptInterface(Context context, String[] imageUrls, WebView webView) {
         this.activity = context;
         this.imageUrls = imageUrls;
         this.webView = webView;
@@ -67,7 +67,7 @@ public class MJavascriptInterface {
 
     @android.webkit.JavascriptInterface
     public void openUrl(String url) {
-        WebViewUtil.openLink(url, activity);
+        WebViewUtil.openLink(url, (Activity) activity);
     }
 
 }

@@ -357,6 +357,10 @@ public class UserFeedUpdateContentFragment extends Fragment {
                                         //取消刷新
                                         refreshLayout.finishRefresh(true);
 
+                                        //请求结束
+                                        adapter.setRequesting(false);
+
+
                                         updateNotReadNum();
                                         if (newNum>0){
                                             //TODO: 如果不是网络请求，不用发消息
@@ -386,6 +390,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 requestAllData();
+                adapter.setRequesting(true);
             }
         });
 
