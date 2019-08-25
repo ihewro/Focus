@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.view.View;
 
 import com.ihewro.focus.bean.Help;
 import com.ihewro.focus.bean.Operation;
@@ -26,11 +27,11 @@ import es.dmoral.toasty.Toasty;
  */
 public class ImageManagePopupView extends OperationBottomPopupView {
 
+    private View srcView;
 
-
-    public ImageManagePopupView(@NonNull Context context,String imageurl) {
+    public ImageManagePopupView(@NonNull Context context,String imageurl, View srcView) {
         super(context, null, "图片操作", "", new Help(false));
-
+        this.srcView = srcView;
         //操作列表
         this.setOperationList(getFeedFolderOperationList(imageurl));
 
@@ -49,7 +50,7 @@ public class ImageManagePopupView extends OperationBottomPopupView {
             @Override
             public void run(Object o) {
                 //打开图片弹窗
-                ImageLoaderManager.showSingleImageDialog(getContext(), String.valueOf(o));
+                ImageLoaderManager.showSingleImageDialog(getContext(), String.valueOf(o),null);
             }
         }));
 

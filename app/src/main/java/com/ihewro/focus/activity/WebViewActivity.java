@@ -138,10 +138,8 @@ public class WebViewActivity extends BackActivity {
 
             String js = new String(ByteStreams.toByteArray(in));
             ALog.d("什么鬼",js,"end");
-
             view.loadUrl("javascript:"+js);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

@@ -30,10 +30,10 @@ function touchImage(btn) {
         if (status === "fail") {
             //点击重新加载
             singleImageLoad(btn, btn.id);
-        } else if (status === "success") {
-            //打开图片弹窗
-            window.imagelistener.openImage(btn.src);
         }
+
+        //打开图片弹窗
+        window.imagelistener.longClickImage(btn.src);
 
     }
 }

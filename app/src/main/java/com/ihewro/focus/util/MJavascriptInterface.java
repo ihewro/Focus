@@ -49,7 +49,7 @@ public class MJavascriptInterface {
     public void openImage(String img) {
 
         ALog.d("点击了图片" +img);
-       ImageLoaderManager.showSingleImageDialog(activity,img);
+       ImageLoaderManager.showSingleImageDialog(activity,img,null);
     }
 
 
@@ -61,7 +61,7 @@ public class MJavascriptInterface {
         ALog.d("长按图片" +img);
         //显示下拉底部弹窗
         new XPopup.Builder(activity)
-                .asCustom(new ImageManagePopupView(activity,img))
+                .asCustom(new ImageManagePopupView(activity,img,null))
                 .show();
     }
 

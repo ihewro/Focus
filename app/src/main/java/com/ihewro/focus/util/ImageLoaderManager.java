@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.ihewro.focus.R;
 import com.ihewro.focus.callback.ImageLoaderCallback;
+import com.ihewro.focus.view.ImageManagePopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.ImageViewerPopupView;
 import com.lxj.xpopup.interfaces.XPopupImageLoader;
@@ -122,10 +123,10 @@ public class ImageLoaderManager {
 
 
 
-    public static void showSingleImageDialog(Context context, String imageUrl){
+    public static void showSingleImageDialog(final Context context, final String imageUrl, View srcView){
         // 单张图片场景
         ImageViewerPopupView imageViewerPopupView = new XPopup.Builder(context)
-                .asImageViewer(null, imageUrl, new MyImageLoader(context));
+                .asImageViewer((ImageView) srcView, imageUrl, new MyImageLoader(context));
         imageViewerPopupView.show();
     }
 
