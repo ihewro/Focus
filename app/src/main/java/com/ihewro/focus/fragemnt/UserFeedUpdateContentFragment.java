@@ -433,11 +433,14 @@ public class UserFeedUpdateContentFragment extends Fragment {
                 UIUtil.runOnUiThread(getActivity(), new Runnable() {
                     @Override
                     public void run() {
-                        if (notReadNum == 0){
-                            ((TextView)subView).setText("无未读文章");
-                        }else {
-                            ((TextView)subView).setText("共有"+notReadNum+"篇未读");
+                        if (subView!=null){
+                            if (notReadNum == 0){
+                                ((TextView)subView).setText("无未读文章");
+                            }else {
+                                ((TextView)subView).setText("共有"+notReadNum+"篇未读");
+                            }
                         }
+
                     }
                 });
             }

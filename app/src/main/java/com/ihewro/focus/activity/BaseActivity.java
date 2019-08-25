@@ -1,5 +1,7 @@
 package com.ihewro.focus.activity;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -30,5 +32,21 @@ public class BaseActivity extends AppCompatActivity {
 
         }
         super.setContentView(layoutResID);
+    }
+
+    /**
+     * 设置 app 字体不随系统字体设置改变
+     */
+    @Override
+    public Resources getResources() {
+        Resources res = super.getResources();
+        if (res != null) {
+            Configuration config = res.getConfiguration();
+            if (config != null && config.fontScale != 1.0f) {
+                config.fontScale = 1.0f;
+                res.updateConfiguration(config, res.getDisplayMetrics());
+            }
+        }
+        return res;
     }
 }

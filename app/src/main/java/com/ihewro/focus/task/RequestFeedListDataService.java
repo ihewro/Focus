@@ -358,7 +358,9 @@ public class RequestFeedListDataService extends Service {
         builderProgress.setContentTitle(title);
         builderProgress.setSmallIcon(R.mipmap.ic_focus_launcher_round);
 //        builderProgress.setTicker("进度条通知");
-        subTitle.setText(title);
+        if (subTitle!=null){
+            subTitle.setText(title);
+        }
 
         if (progress > 0){//全部获取完的时候不需要显示进度条了
             builderProgress.setContentText(progress + "%");

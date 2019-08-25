@@ -632,9 +632,9 @@ public class MainActivity extends BaseActivity {
         boolean flag = false;
         if (SkinPreference.getInstance().getSkinName().equals("night")) {
             flag = true;
-            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("日间模式");
+            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("日间");
         }else {
-            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("夜间模式");
+            ((TextView)(drawer.getStickyFooter().findViewById(R.id.mode_text))).setText("夜间");
         }
 
         final boolean finalFlag = flag;
@@ -692,7 +692,8 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void run() {
                         drawer.setItems(subItems);
-                        drawer.setSelection(selectIdentify);
+                        //TODO: 有bug在新添加的feed后刷新数据崩溃
+//                        drawer.setSelection(selectIdentify);
                     }
                 });
             }

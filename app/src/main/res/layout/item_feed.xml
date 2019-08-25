@@ -23,7 +23,8 @@
             android:layout_width="wrap_content"
             android:id="@+id/name"
             android:text="Default"
-            android:textSize="16sp"
+            android:textSize="16dp"
+            android:maxLines="1"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_height="wrap_content"/>
@@ -31,7 +32,8 @@
             android:id="@+id/desc"
             android:layout_width="wrap_content"
             android:text="Default"
-            android:textSize="14sp"
+            android:textSize="14dp"
+            android:maxLines="1"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_height="wrap_content"/>
@@ -41,7 +43,7 @@
     <TextView
         android:id="@+id/click"
         android:text="点击订阅"
-        android:textSize="16sp"
+        android:textSize="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>
