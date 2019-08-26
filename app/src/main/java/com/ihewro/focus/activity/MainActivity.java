@@ -698,19 +698,14 @@ public class MainActivity extends BaseActivity {
                 UIUtil.runOnUiThread(MainActivity.this, new Runnable() {
                     @Override
                     public void run() {
-                        drawer.setItems(subItems);
+                        List<IDrawerItem> templist = new ArrayList<>(subItems);
+                        drawer.setItems(templist);
                         //恢复折叠
-
                         int[] temp = expandPositions.clone();
 
                         for(int i = 0;i<temp.length;i++){
                             drawer.getExpandableExtension().expand(temp[i]);
                         }
-
-
-
-
-
 
                         //TODO: 当一开始选中文件夹的时候总是报错！
                         /*new Handler().postDelayed(new Runnable() {
@@ -761,7 +756,7 @@ public class MainActivity extends BaseActivity {
                 case DRAWER_FOLDER:
                     //获取到这个文件夹的数据
                     new XPopup.Builder(MainActivity.this)
-                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier(), ((ExpandableBadgeDrawerItem) drawerItem).getName().toString(), "", new Help(false)))
+                            .asCustom(new FeedFolderOperationPopupView(MainActivity.this, drawerItem.getIdentifier() - FEED_FOLDER_IDENTIFY_PLUS, ((ExpandableBadgeDrawerItem) drawerItem).getName().toString(), "", new Help(false)))
                             .show();
                     break;
                 case DRAWER_FOLDER_ITEM:

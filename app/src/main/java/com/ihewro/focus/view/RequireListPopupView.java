@@ -71,7 +71,7 @@ public class RequireListPopupView extends BottomPopupView {
         this.title = title;
         this.info = info;
         this.help = help;
-        this.feed = feed;
+        this.feed = new Feed(feed.getName(),feed.getUrl(),feed.getDesc(),Feed.DEFAULT_TIMEOUT);
         this.fragmentManager =fragmentManager;
     }
 

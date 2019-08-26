@@ -136,7 +136,6 @@ public class WebViewUtil {
                 + "</body></html>";
 
         webView.setBackgroundColor(Color.parseColor("#00000000"));
-//        webView.loadData( body, "text/html; charset=UTF-8", null);
         webView.loadDataWithBaseURL(null, body, "text/html", "utf-8", null);
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -146,22 +145,6 @@ public class WebViewUtil {
             }
         });
 
-       /* WebContentLayout webContentLayout = new WebContentLayout(context);
-        AgentWeb mAgentWeb = AgentWeb.with(context)
-                .setAgentWebParent(parent, new LinearLayout.LayoutParams(-1, -1))
-                .useDefaultIndicator()
-//                .setWebChromeClient(mWebChromeClient)
-                .setWebViewClient(new MyWebViewClient(context,url))
-                .setWebLayout(webContentLayout)
-                .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
-                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
-                .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
-                .interceptUnkownUrl() //拦截找不到相关页面的Scheme
-                .createAgentWeb()
-                .ready()
-                .get();
-
-        mAgentWeb.getUrlLoader().loadData( body, "text/html; charset=UTF-8", null);*/
 
     }
 

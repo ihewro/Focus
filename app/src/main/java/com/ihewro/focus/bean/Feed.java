@@ -67,6 +67,9 @@ public class Feed extends LitePalSupport {
     private boolean isBadGuy;//是否需要反盗链图片
     private boolean isOffline;//同步的时候是否请求数据
 
+    @Column(ignore = true)
+    private String icon;//图标
+
     @Override
     public String toString() {
         return "feedId" + id + "\n"
@@ -294,5 +297,13 @@ public class Feed extends LitePalSupport {
 
     public void setOffline(boolean offline) {
         isOffline = offline;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

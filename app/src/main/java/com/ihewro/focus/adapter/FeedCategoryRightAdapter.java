@@ -21,6 +21,7 @@ import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.view.FeedListPopView;
 import com.ihewro.focus.view.RequireListPopupView;
 import com.lxj.xpopup.XPopup;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
@@ -61,26 +62,10 @@ public class FeedCategoryRightAdapter extends BaseQuickAdapter<Website, BaseView
             helper.setImageResource(R.id.icon,R.drawable.ic_rss_feed_grey_24dp);
         }else {
             ALog.d("ico图片地址"+item.getIcon());
-            ImageLoaderManager.loadImageUrlToImageView(StringUtil.trim(item.getIcon()), (ImageView) helper.getView(R.id.icon), new ImageLoaderCallback() {
-                @Override
-                public void onFailed(ImageView imageView, FailReason failReason) {
-                    imageView.setImageResource(R.drawable.ic_rss_feed_grey_24dp);
-                }
 
-                @Override
-                public void onSuccess(ImageView imageView, Bitmap bitmap) {
-                    imageView.setImageBitmap(bitmap);
-                }
+            ImageLoader.getInstance().displayImage(StringUtil.trim(String.valueOf(item.getIcon())), (ImageView) helper.getView(R.id.icon),ImageLoaderManager.getSubsciptionIconOptions(activity));
 
-                @Override
-                public void onStart(ImageView imageView) {
-                    if (SkinPreference.getInstance().getSkinName().equals("night")) {
-                        imageView.setImageResource(R.drawable.ic_night_loading);
-                    } else {
-                        imageView.setImageResource(R.drawable.ic_day_loading);
-                    }
-                }
-            });
+
         }
 
 
