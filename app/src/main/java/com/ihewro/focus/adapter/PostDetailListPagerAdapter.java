@@ -33,32 +33,27 @@ public class PostDetailListPagerAdapter extends FragmentStatePagerAdapter {
     private PostDetailFragment mCurrentFragment;
 
     private List<Fragment> list = new ArrayList<>();
-    private List<FeedItem> data;
+    private List<FeedItem> data = new ArrayList<>();
     private Activity activity;
+    private int count;
 
-    public PostDetailListPagerAdapter(FragmentManager fm,Activity activity, @Nullable List<FeedItem> data) {
+    public PostDetailListPagerAdapter(FragmentManager fm, Activity activity) {
         super(fm);
         this.activity = activity;
-        this.data = data;
     }
 
 
 
     @Override
     public int getCount() {
-        return data.size();
+        return count;
     }
 
 
     public void setData(@Nullable List<FeedItem> data){
         list.clear();
-        this.data = data;
-        /*if (data!=null){
-            for (FeedItem item:data) {
-                ALog.d("运行中……");
-                list.add(PostDetailFragment.newInstance(item));
-            }
-        }*/
+        this.data.addAll(data);
+        count = this.data.size();
     }
 
     @Override

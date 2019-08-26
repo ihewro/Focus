@@ -9,8 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,7 +28,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.PostDetailListPagerAdapter;
-import com.ihewro.focus.adapter.PostDetailListAdapter;
 import com.ihewro.focus.adapter.ReadBackgroundAdapter;
 import com.ihewro.focus.bean.Background;
 import com.ihewro.focus.bean.EventMessage;
@@ -38,13 +36,11 @@ import com.ihewro.focus.bean.PostSetting;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.helper.ParallaxTransformer;
-import com.ihewro.focus.helper.RecyclerViewPageChangeListenerHelper;
 import com.ihewro.focus.util.Constants;
 import com.ihewro.focus.util.ShareUtil;
 import com.ihewro.focus.util.StatusBarUtil;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.util.WebViewUtil;
-import com.ihewro.focus.view.MyScrollView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.callback.SaveCallback;
@@ -124,7 +120,6 @@ public class PostDetailActivity extends BackActivity {
         setContentView(R.layout.activity_post_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("");
 
 
         if (getSupportActionBar() != null) {
@@ -160,7 +155,10 @@ public class PostDetailActivity extends BackActivity {
 
     private void initRecyclerView() {
 
-        adapter = new PostDetailListPagerAdapter(getSupportFragmentManager(),PostDetailActivity.this,null);
+        adapter = new PostDetailListPagerAdapter(getSupportFragmentManager(),PostDetailActivity.this);
+
+        //初始化当前文章的对象
+        initData();
 
         //显示未读数目
         new Thread(new Runnable() {
@@ -175,9 +173,54 @@ public class PostDetailActivity extends BackActivity {
                     }
                 }
 
+                adapter.setData(feedItemList);
+
+
                 UIUtil.runOnUiThread(PostDetailActivity.this, new Runnable() {
                     @Override
                     public void run() {
+                        viewPager.setAdapter(adapter);
+
+                        final float PARALLAX_COEFFICIENT = 0.6f;
+                        final float DISTANCE_COEFFICIENT = 0.2f;
+
+                        viewPager.setPageTransformer(true, new ParallaxTransformer(adapter,null,PARALLAX_COEFFICIENT, DISTANCE_COEFFICIENT));
+
+                        //移动到当前文章的位置
+                        viewPager.setCurrentItem(mIndex);
+
+
+                        ALog.d("首次加载");
+                        setLikeButton();
+                        setCurrentItemStatus();
+                        initPostClickListener();
+
+                        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int i, float v, int i1) {
+
+                            }
+
+                            @Override
+                            public void onPageSelected(int i) {
+                                ALog.d("onPageSelected");
+                                mIndex = i;
+                                //UI修改
+                                initData();
+                                setLikeButton();
+                                //修改顶部导航栏的收藏状态
+                                setCurrentItemStatus();
+                                initPostClickListener();
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int i) {
+
+                            }
+                        });
+
+
+
                         if (notReadNum <= 0) {
                             toolbar.setTitle("");
                         } else {
@@ -188,58 +231,6 @@ public class PostDetailActivity extends BackActivity {
                 });
             }
         }).start();
-
-        //初始化当前文章的对象
-        initData();
-
-
-        adapter.setData(feedItemList);
-        viewPager.setAdapter(adapter);
-
-        final float PARALLAX_COEFFICIENT = 1.2f;
-        final float DISTANCE_COEFFICIENT = 0.5f;
-
-        viewPager.setPageTransformer(true, new ParallaxTransformer(viewPager,null,PARALLAX_COEFFICIENT, DISTANCE_COEFFICIENT));
-
-        //移动到当前文章的位置
-        viewPager.setCurrentItem(mIndex);
-
-
-        ALog.d("首次加载");
-        setLikeButton();
-        setCurrentItemStatus();
-        initPostClickListener();
-
-
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                ALog.d("onPageSelected");
-                mIndex = i;
-                //UI修改
-                initData();
-                setLikeButton();
-                //修改顶部导航栏的收藏状态
-                setCurrentItemStatus();
-                initPostClickListener();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-
-
-
-
-
     }
 
 
@@ -287,7 +278,7 @@ public class PostDetailActivity extends BackActivity {
         final GestureDetector gestureDetector1 = new GestureDetector(PostDetailActivity.this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                ScrollView scrollView =  ((ScrollView) adapter.getViewByPosition(mIndex, R.id.post_turn));
+                NestedScrollView scrollView = (NestedScrollView) adapter.getViewByPosition(mIndex, R.id.post_turn);
                 if (scrollView!=null){
                     scrollView.fullScroll(View.FOCUS_UP);
                 }
@@ -334,6 +325,7 @@ public class PostDetailActivity extends BackActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        toolbar.setTitle("");
         if (SkinPreference.getInstance().getSkinName().equals("night")) {
             getMenuInflater().inflate(R.menu.post_night, menu);
         } else {

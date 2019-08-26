@@ -6,6 +6,9 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.ALog;
+import com.ihewro.focus.adapter.PostDetailListPagerAdapter;
+
 import java.util.HashMap;
 
 /**
@@ -21,10 +24,10 @@ public class ParallaxTransformer implements ViewPager.PageTransformer {
 
     float parallaxCoefficient;
     float distanceCoefficient;
-    private ViewPager viewPager;
+    private PostDetailListPagerAdapter adapter;
     private HashMap<Integer,int[]> mLayoutViewIdsMap;
-    public ParallaxTransformer(ViewPager viewPager,HashMap<Integer,int[]>map, float parallaxCoefficient, float distanceCoefficient) {
-        this.viewPager = viewPager;
+    public ParallaxTransformer(PostDetailListPagerAdapter adapter, HashMap<Integer,int[]>map, float parallaxCoefficient, float distanceCoefficient) {
+        this.adapter = adapter;
         this.parallaxCoefficient = parallaxCoefficient;
         this.distanceCoefficient = distanceCoefficient;
         this.mLayoutViewIdsMap = map;
@@ -36,14 +39,17 @@ public class ParallaxTransformer implements ViewPager.PageTransformer {
         float scrollXOffset = page.getWidth() * parallaxCoefficient;
 
         ViewGroup pageViewWrapper = (ViewGroup) page;
-        /*@SuppressWarnings("SuspiciousMethodCalls")
-        int[] layer = mLayoutViewIdsMap.get(viewPager.getCurrentItem());
+        @SuppressWarnings("SuspiciousMethodCalls")
+        int[] layer = adapter.getCurrentFragment().getLayers();
         for (int id : layer) {
             View view = page.findViewById(id);
             if (view != null) {
+                ALog.d("not null");
                 view.setTranslationX(scrollXOffset * position);
+            }else {
+                ALog.d("null ???");
             }
             scrollXOffset *= distanceCoefficient;
-        }*/
+        }
     }
 }

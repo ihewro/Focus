@@ -59,6 +59,8 @@ public class PostDetailFragment extends Fragment {
     Unbinder unbinder;
     private View view;
 
+    private int[] layers;
+
     public PostDetailFragment() {
         // Required empty public constructor
     }
@@ -94,14 +96,16 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         initView();
-
-
     }
 
 
     private void initView(){
+
+        layers = new int[]{
+                R.id.header_container,
+                R.id.post_content,
+        };
 
         //根据偏好设置的背景颜色，设置标题栏位置的背景颜色
         if (!SkinPreference.getInstance().getSkinName().equals("night")){
@@ -191,5 +195,10 @@ public class PostDetailFragment extends Fragment {
 
         ALog.d("更新UI");
         initView();
+    }
+
+
+    public int[] getLayers() {
+        return layers;
     }
 }
