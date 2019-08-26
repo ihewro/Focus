@@ -461,7 +461,7 @@ public class PostDetailActivity extends BackActivity {
                     //修改背景颜色
                     //根据偏好设置背景颜色修改toolbar的背景颜色
                     initToolbarColor();
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemChanged(mIndex);
                 }
             });
         }

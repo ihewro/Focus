@@ -18,6 +18,7 @@ import com.ihewro.focus.task.FixDataTask;
 import com.ihewro.focus.task.RecoverDataTask;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
+import com.ihewro.focus.util.UIUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
@@ -131,23 +132,57 @@ public class DataFragment extends SettingFragment{
             public boolean onPreferenceClick(Preference preference) {
                 //显示输入弹窗
                 new MaterialDialog.Builder(getContext())
-                        .title("输入需要清理的数目")
-                        .content("该数目的文章会被删除，有且仅有在存在备份的情况下才可以恢复。优先清理历史悠久的文章")
+                        .title("输入每个订阅要保留的数目")
+                        .content("每个订阅将只保留该数目的文章，如果订阅的文章数目小于该数字，则不会清理")
                         .inputType(InputType.TYPE_CLASS_TEXT)
                         .input("", "", new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                String num = dialog.getInputEditText().getText().toString().trim();
+                                final String num = dialog.getInputEditText().getText().toString().trim();
                                 Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
                                 if (pattern.matcher(num).matches()) {
                                     //清理数据库
-                                    List<FeedItem> feedItems = LitePal.where("favorite = ?","0").limit(Integer.parseInt(num)).order("date").find(FeedItem.class);
-                                    for (FeedItem feedItem:feedItems){
-                                        feedItem.delete();
-                                    }
+                                    //加载对话框
+                                    final MaterialDialog dialog1 = new MaterialDialog.Builder(getContext())
+                                            .content("马上就好……")
+                                            .progress(true, 0)
+                                            .show();
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            List<Feed> feedList = LitePal.findAll(Feed.class);
+                                            for (Feed feed: feedList){
 
-                                    Toasty.info(getActivity(),"清理成功！").show();
-                                    EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+                                                //每个订阅只保留指定数目的文章，从旧文章开始删除
+                                                List<FeedItem> feedItems = LitePal.where("feedid = ?", String.valueOf(feed.getId())).order("date").find(FeedItem.class);
+                                                int size =feedItems.size();
+                                                int temp = size - Integer.parseInt(num);
+                                                if (temp < 0){
+                                                    //不要删除
+                                                    continue;
+                                                }else {
+                                                    for(int i =0;i<temp;i++){
+                                                        feedItems.get(i).delete();
+                                                    }
+                                                }
+
+                                            }
+
+                                            UIUtil.runOnUiThread(getActivity(), new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toasty.info(getActivity(),"清理成功！").show();
+                                                    EventBus.getDefault().post(new EventMessage(EventMessage.DATABASE_RECOVER));
+                                                    if (dialog1.isShowing()){
+                                                        dialog1.dismiss();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }).start();
+
+
+
 
                                 }else {
                                     //输入错误

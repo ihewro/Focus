@@ -70,7 +70,9 @@ public class PostDetailListPagerAdapter extends FragmentStatePagerAdapter {
 
     public void notifyItemChanged(int i){
         //刷新fragment的布局
-        PostDetailFragment.newInstance(data.get(i)).refreshUI();
+        if (mCurrentFragment!=null){
+            mCurrentFragment.refreshUI();
+        }
     }
 
     public View getViewByPosition(int i,int id){

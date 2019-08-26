@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.bean.Feed;
 import com.ihewro.focus.bean.FeedItem;
@@ -187,6 +188,8 @@ public class PostDetailFragment extends Fragment {
     }
 
     public void refreshUI() {
+
+        ALog.d("更新UI");
         initView();
     }
 }

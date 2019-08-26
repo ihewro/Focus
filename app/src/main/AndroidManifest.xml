@@ -22,7 +22,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:roundIcon">
-        <activity android:name=".activity.testActivity"></activity>
         <activity
             android:name=".activity.NewComerActivity"
             android:theme="@style/WelcomeScreenTheme" />
