@@ -181,8 +181,8 @@ public class PostDetailActivity extends BackActivity {
                     public void run() {
                         viewPager.setAdapter(adapter);
 
-                        final float PARALLAX_COEFFICIENT = 0.6f;
-                        final float DISTANCE_COEFFICIENT = 0.2f;
+                        final float PARALLAX_COEFFICIENT = 0.5f;
+                        final float DISTANCE_COEFFICIENT = 0.1f;
 
                         viewPager.setPageTransformer(true, new ParallaxTransformer(adapter,null,PARALLAX_COEFFICIENT, DISTANCE_COEFFICIENT));
 

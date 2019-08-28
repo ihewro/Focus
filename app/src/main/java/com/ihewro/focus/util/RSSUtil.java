@@ -59,7 +59,7 @@ public class RSSUtil {
      * @param isBadGuy 是否需要反盗链
      * @return
      */
-    public static String handleImageUrl(String imgUrl,String url,boolean isBadGuy){
+    public static String handleImageUrl(String imgUrl,String url,boolean isBadGuy,boolean isChina){
         //相对地址判断 没有根域名/upload/5798_1.jpg upload/1.jpg  没有写协议头//www.ihewro.com/1.jpg  http://www.ihewro.com/1.jpg https://www.ihewro.com/1.jpg
         //判断imageurl 是不是相对地址
 
@@ -88,9 +88,15 @@ public class RSSUtil {
                 }
             }
 
+
+            if (isChina){
+                imgUrl = GlobalConfig.CHINA_NORMAL +"?url=" + imgUrl;
+            }
             if (isBadGuy){
                 imgUrl = GlobalConfig.BAD_GUY+"?url="+imgUrl+"&refer="+url;
             }
+
+
 
             return imgUrl;
         }

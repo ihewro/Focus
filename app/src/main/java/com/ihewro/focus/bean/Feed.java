@@ -65,6 +65,7 @@ public class Feed extends LitePalSupport {
     private boolean errorGet;//获取信息失败
 
     private boolean isBadGuy;//是否需要反盗链图片
+    private boolean isChina;//是否需要反盗链图片
     private boolean isOffline;//同步的时候是否请求数据
 
     @Column(ignore = true)
@@ -305,5 +306,13 @@ public class Feed extends LitePalSupport {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public boolean isChina() {
+        return isChina;
+    }
+
+    public void setChina(boolean china) {
+        isChina = china;
     }
 }

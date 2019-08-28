@@ -138,7 +138,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
             String imageUrl = DataUtil.getFeedItemImageUrl(item);
             if (!StringUtil.trim(imageUrl).equals("")){
 
-                imageUrl = RSSUtil.handleImageUrl(imageUrl,item.getUrl(),item.isBadGuy());
+                imageUrl = RSSUtil.handleImageUrl(imageUrl,item.getUrl(),item.isBadGuy(),item.isChina());
 
                 helper.getView(R.id.post_pic).setVisibility(View.VISIBLE);
 

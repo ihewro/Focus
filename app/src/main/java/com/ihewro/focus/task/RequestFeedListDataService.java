@@ -331,6 +331,7 @@ public class RequestFeedListDataService extends Service {
                 //设置badguy
                 for (int i = 0;i<tempFeedItemList.size();i++){
                     tempFeedItemList.get(i).setBadGuy(temp.isBadGuy());
+                    tempFeedItemList.get(i).setChina(temp.isChina());
                 }
                 eList.addAll(tempFeedItemList);
             }

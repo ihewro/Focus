@@ -52,6 +52,8 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface, Se
     @Column(ignore = true)
     private boolean isBadGuy;//是否需要反盗链图片
 
+    private boolean isChina;//是否使用中国模式
+
 
     @NonNull
     @Override
@@ -231,6 +233,15 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface, Se
 
     public void setBadGuy(boolean badGuy) {
         isBadGuy = badGuy;
+    }
+
+
+    public boolean isChina() {
+        return isChina;
+    }
+
+    public void setChina(boolean china) {
+        isChina = china;
     }
 
     public static void clickWhenNotFavorite(Activity activity, FeedItem feedItem, UICallback uiCallback){

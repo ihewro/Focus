@@ -40,6 +40,8 @@ public class GlobalConfig {
     public static List<FeedItem> feedItemList = new ArrayList<>();
 
     public static final String BAD_GUY= "https://www.ihewro.com/badguy.php";
+    public static final String CHINA_NORMAL= "https://images.weserv.nl/";
+    public static final String CHINA_GIF= "https://www.ihewro.com/badguy.php";
 
 
 }

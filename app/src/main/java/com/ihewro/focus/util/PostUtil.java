@@ -24,7 +24,7 @@ public class PostUtil {
         if (article == null || textView == null) {
             return;
         }
-        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context,article.getUrl(),viewGroup,article.isBadGuy());
+        WebViewUtil.LoadHtmlIntoWebView(textView,getContent(article),context,article.getUrl(),viewGroup,article.isBadGuy(),article.isChina());
     }
 
     public static String getContent(FeedItem article) {

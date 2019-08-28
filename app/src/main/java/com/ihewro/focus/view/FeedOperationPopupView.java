@@ -296,6 +296,38 @@ public class FeedOperationPopupView extends OperationBottomPopupView{
                         .show();
             }
         }));
+
+        operations.add(new Operation("中国模式", "", getResources().getDrawable(R.drawable.ic_vpn_lock_black_24dp), feed, new OperationCallback() {
+            @Override
+            public void run(Object o) {
+                //弹框
+
+                final List<Boolean> isOrNot = Arrays.asList(true, false);
+                String[] isOrNotString = {"开启","关闭"};
+                final Feed item = (Feed)o;
+                int select = isOrNot.indexOf(item.isChina());
+
+                new MaterialDialog.Builder(getContext())
+                        .title("是否中国模式")
+                        .content("某些国外源中包含的图片无法打开，开启该开关可以大概率解决该问题（无法解决源本身无法打开的问题）")
+                        .items(isOrNotString)
+                        .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if (which>=0){
+                                    item.setChina(isOrNot.get(which));
+                                    item.save();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        })
+                        .positiveText("选择")
+                        .show();
+            }
+        }));
+
+
         operations.add(new Operation("离线模式开关","",getResources().getDrawable(R.drawable.ic_cloud_download_black_24dp), feed, new OperationCallback() {
             @Override
             public void run(Object o) {
