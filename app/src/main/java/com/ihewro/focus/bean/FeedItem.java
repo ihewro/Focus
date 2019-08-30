@@ -7,6 +7,7 @@ import com.blankj.ALog;
 import com.ihewro.focus.activity.PostDetailActivity;
 import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.decoration.ISuspensionInterface;
+import com.ihewro.focus.helper.SwipeInterface;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.view.CollectionFolderListPopupView;
 import com.lxj.xpopup.XPopup;
@@ -27,7 +28,7 @@ import java.io.Serializable;
  *     version: 1.0
  * </pre>
  */
-public class FeedItem extends LitePalSupport implements ISuspensionInterface, Serializable {
+public class FeedItem extends LitePalSupport implements ISuspensionInterface, Serializable, SwipeInterface {
 
     @Column(unique = true)
     private int id;

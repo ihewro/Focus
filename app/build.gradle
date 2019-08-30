@@ -68,8 +68,8 @@ android {
         applicationId "com.ihewro.focus"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 25
-        versionName "2.10"
+        versionCode 26
+        versionName "2.11"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -144,7 +144,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
     //网络请求
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'//打印请求信息
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
@@ -227,7 +227,6 @@ dependencies {
 
     //新手启动页面
     implementation 'com.stephentuso:welcome:1.4.1'
-
 
 
 }

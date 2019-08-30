@@ -128,10 +128,25 @@ public class PostDetailActivity extends BackActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mIndex = bundle.getInt(Constants.KEY_INT_INDEX, 0);
-        feedItemList = GlobalConfig.feedItemList;
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                feedItemList.addAll(GlobalConfig.feedItemList);
+
+                UIUtil.runOnUiThread(PostDetailActivity.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        //加载完menu才去加载后面的内容
+                        initRecyclerView();
+                    }
+                });
+            }
+        }).start();
+
         origin = bundle.getInt(Constants.POST_DETAIL_ORIGIN);
 
-        initData();
 
 
     }
@@ -296,7 +311,6 @@ public class PostDetailActivity extends BackActivity {
             });
         }
 
-        initToolbarColor();
 
         if (UserPreference.queryValueByKey(UserPreference.notStar, "0").equals("0")) {
             //第一篇文章进入的时候这个view为null，我也不知道为什么！
@@ -335,8 +349,7 @@ public class PostDetailActivity extends BackActivity {
         starItem = menu.findItem(R.id.action_star);
         showStarActionView(starItem);
 
-        //加载完menu才去加载后面的内容
-        initRecyclerView();
+        initToolbarColor();
 
 
         return true;
@@ -557,7 +570,6 @@ public class PostDetailActivity extends BackActivity {
      */
     private void showStarActionView(MenuItem item) {
         starItem = item;
-        setLikeButton();
     }
 
     private void setLikeButton() {

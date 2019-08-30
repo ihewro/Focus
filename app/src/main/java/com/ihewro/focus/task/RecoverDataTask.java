@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -301,62 +302,72 @@ public class RecoverDataTask extends AsyncTask<Void,Void,Boolean> {
             HashMap<Integer,Integer> collectionIdMap = new HashMap<>();
 
             //恢复用户收藏表
-            Cursor collectionCur = database.rawQuery("select * from collection",null);
-            if (collectionCur!=null && collectionCur.moveToFirst()){
-                do{
-                    int id = DataUtil.getColumnInt(collectionCur,"id",0);
-                    String title = collectionCur.getString(collectionCur.getColumnIndex("title"));
-                    Long date = collectionCur.getLong(collectionCur.getColumnIndex("date"));
-                    String summary = collectionCur.getString(collectionCur.getColumnIndex("summary"));
-                    String content = collectionCur.getString(collectionCur.getColumnIndex("content"));
-                    String feedName = collectionCur.getString(collectionCur.getColumnIndex("feedname"));
-                    String url2 = collectionCur.getString(collectionCur.getColumnIndex("url"));
-                    long time = DataUtil.getColumnLong(collectionCur,"time",DateUtil.getNowDateRFCInt());
-                    int itemType = DataUtil.getColumnInt(collectionCur,"itemtype",Collection.FEED_ITEM);
-                    Collection collection = new Collection(title,feedName,date,summary,content,url2,itemType,time);
-                    collection.save();
-                    collectionIdMap.put(id,collection.getId());
-                }while (collectionCur.moveToNext());
-                collectionCur.close();
-            }
+            Cursor collectionCur;
+            try {
+                collectionCur = database.rawQuery("select * from collection",null);
+
+                if (collectionCur!=null && collectionCur.moveToFirst()){
+                    do{
+                        int id = DataUtil.getColumnInt(collectionCur,"id",0);
+                        String title = collectionCur.getString(collectionCur.getColumnIndex("title"));
+                        Long date = collectionCur.getLong(collectionCur.getColumnIndex("date"));
+                        String summary = collectionCur.getString(collectionCur.getColumnIndex("summary"));
+                        String content = collectionCur.getString(collectionCur.getColumnIndex("content"));
+                        String feedName = collectionCur.getString(collectionCur.getColumnIndex("feedname"));
+                        String url2 = collectionCur.getString(collectionCur.getColumnIndex("url"));
+                        long time = DataUtil.getColumnLong(collectionCur,"time",DateUtil.getNowDateRFCInt());
+                        int itemType = DataUtil.getColumnInt(collectionCur,"itemtype",Collection.FEED_ITEM);
+                        Collection collection = new Collection(title,feedName,date,summary,content,url2,itemType,time);
+                        collection.save();
+                        collectionIdMap.put(id,collection.getId());
+                    }while (collectionCur.moveToNext());
+                    collectionCur.close();
+                }
 
 
-            HashMap<Integer,Integer> collectionFolderIdMap = new HashMap<>();
+                HashMap<Integer,Integer> collectionFolderIdMap = new HashMap<>();
 
 
-            //恢复用户收藏分类表
-            Cursor collectionFolderCur = database.rawQuery("select * from collectionfolder",null);
-            if (collectionFolderCur!=null && collectionFolderCur.moveToFirst()){
-                do{
+                //恢复用户收藏分类表
+                Cursor collectionFolderCur = database.rawQuery("select * from collectionfolder",null);
+                if (collectionFolderCur!=null && collectionFolderCur.moveToFirst()){
+                    do{
 
-                    int id = DataUtil.getColumnInt(collectionFolderCur,"id",0);
+                        int id = DataUtil.getColumnInt(collectionFolderCur,"id",0);
 
-                    String name = DataUtil.getColumnString(collectionFolderCur,"name","");
-                    CollectionFolder collectionFolder = new CollectionFolder(name);
-                    collectionFolder.save();
+                        String name = DataUtil.getColumnString(collectionFolderCur,"name","");
+                        CollectionFolder collectionFolder = new CollectionFolder(name);
+                        collectionFolder.save();
 
-                    collectionFolderIdMap.put(id,collectionFolder.getId());
+                        collectionFolderIdMap.put(id,collectionFolder.getId());
 
-                }while (collectionFolderCur.moveToNext());
-                collectionFolderCur.close();
-            }
+                    }while (collectionFolderCur.moveToNext());
+                    collectionFolderCur.close();
+                }
 
-            //恢复用户收藏分类关系表
-            Cursor collectionAndFolderRelationshipCur = database.rawQuery("select * from collectionandfolderrelation",null);
-            if (collectionAndFolderRelationshipCur!=null && collectionAndFolderRelationshipCur.moveToFirst()){
-                do{
-                    int collectionId = DataUtil.getColumnInt(collectionAndFolderRelationshipCur,"collectionid",1);
-                    int collectionFolderId = DataUtil.getColumnInt(collectionAndFolderRelationshipCur,"collectionfolderid",1);
+                //恢复用户收藏分类关系表
+                Cursor collectionAndFolderRelationshipCur = database.rawQuery("select * from collectionandfolderrelation",null);
+                if (collectionAndFolderRelationshipCur!=null && collectionAndFolderRelationshipCur.moveToFirst()){
+                    do{
+                        int collectionId = DataUtil.getColumnInt(collectionAndFolderRelationshipCur,"collectionid",1);
+                        int collectionFolderId = DataUtil.getColumnInt(collectionAndFolderRelationshipCur,"collectionfolderid",1);
 
-                    if (collectionIdMap.get(collectionId)!=null && collectionFolderIdMap.get(collectionFolderId)!=null){
-                        //映射还原
-                        collectionId = collectionIdMap.get(collectionId);
-                        collectionFolderId = collectionFolderIdMap.get(collectionFolderId);
-                        CollectionAndFolderRelation collectionAndFolderRelation = new CollectionAndFolderRelation(collectionId,collectionFolderId);
-                        collectionAndFolderRelation.save();
-                    }
-                }while (collectionAndFolderRelationshipCur.moveToNext());
-                collectionAndFolderRelationshipCur.close();
+                        if (collectionIdMap.get(collectionId)!=null && collectionFolderIdMap.get(collectionFolderId)!=null){
+                            //映射还原
+                            collectionId = collectionIdMap.get(collectionId);
+                            collectionFolderId = collectionFolderIdMap.get(collectionFolderId);
+                            CollectionAndFolderRelation collectionAndFolderRelation = new CollectionAndFolderRelation(collectionId,collectionFolderId);
+                            collectionAndFolderRelation.save();
+                        }
+                    }while (collectionAndFolderRelationshipCur.moveToNext());
+                    collectionAndFolderRelationshipCur.close();
+                }
+
+
+            }catch (SQLiteException exception){
+                //旧版本数据没有这个表
+
+
             }
 
             database.close();

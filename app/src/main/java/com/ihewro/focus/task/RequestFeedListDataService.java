@@ -190,7 +190,7 @@ public class RequestFeedListDataService extends Service {
                             public void run() {
                                 //计算出当前的process
                                 int process = (int) (okNum.get() *1.0 / num.get() * 100);
-                                mNotificationManager.notify(1, createNotice("获取中，您可以切换别的应用稍作等待一会……",process));
+                                mNotificationManager.notify(1, createNotice("获取中，稍作等待一会……",process));
                             }
                         });
 

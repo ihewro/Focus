@@ -80,10 +80,11 @@ public class FeedParser {
             int begin = m.start()+10;
             int end = m.end();
             encode = temp.substring(begin,end-1);
-//            ALog.d(encode);
-        }
-        //如果是utf-8不需要转码
-//        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
+            ALog.d("编码："+encode);
+        }//否则就是文件没有标明编码格式，按照utf-8进行解码
+
+
+        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
         return beginParseStr2Feed(xmlStr,url);
     }
 

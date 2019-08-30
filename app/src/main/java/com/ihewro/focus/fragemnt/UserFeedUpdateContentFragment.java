@@ -45,10 +45,12 @@ import com.ihewro.focus.callback.RequestFeedItemListCallback;
 import com.ihewro.focus.decoration.DividerItemDecoration;
 import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.helper.MyLinearLayoutManager;
+import com.ihewro.focus.helper.SimpleItemTouchHelperCallback;
 import com.ihewro.focus.task.RequestFeedListDataService;
 import com.ihewro.focus.task.RequestFeedListDataTask;
 import com.ihewro.focus.util.UIUtil;
 import com.ihewro.focus.view.FilterPopupView;
+import com.mikepenz.fastadapter.adapters.ItemAdapter;
 import com.mikepenz.materialize.util.UIUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -86,6 +88,9 @@ public class UserFeedUpdateContentFragment extends Fragment {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     Unbinder unbinder;
+
+    private ItemTouchHelper mItemTouchHelper;
+
 
     private View view;//toolbar的view,用来显示列表依存的view
     private View subView;//toolbar下面的文字view,用来显示当前未读数目
@@ -169,10 +174,13 @@ public class UserFeedUpdateContentFragment extends Fragment {
         adapter.bindToRecyclerView(recyclerView);
         recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
 
+        recyclerView.setAdapter(adapter);
 
-        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter,getContext(),eList);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
+
 
     }
 

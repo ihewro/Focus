@@ -1,6 +1,7 @@
 package com.ihewro.focus.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
@@ -19,6 +20,9 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.UICallback;
+import com.ihewro.focus.helper.ItemTouchHelperAdapter;
+import com.ihewro.focus.helper.ItemTouchHelperViewHolder;
+import com.ihewro.focus.helper.MyViewHolder;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
@@ -46,7 +50,7 @@ import skin.support.utils.SkinPreference;
  *     version: 1.0
  * </pre>
  */
-public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedItem, BaseViewHolder> {
+public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedItem, MyViewHolder> implements ItemTouchHelperAdapter {
 
     private Activity activity;
     private String feedName;
@@ -118,13 +122,14 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     }
 
     @Override
-    protected void convert(final BaseViewHolder helper, FeedItem item) {
+    protected void convert(final MyViewHolder helper, FeedItem item) {
         //绑定事件
         bindListener(helper,item);
 
         if (helper.getAdapterPosition() == 0){
 //            ALog.d("第一个项目" + item.getTitle());
         }
+
 
 //        ALog.d(item.getTitle() + "日期：" + item.getDate());
         helper.setText(R.id.post_title,item.getTitle());
@@ -338,4 +343,27 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     public void setRequesting(boolean requesting) {
         isRequesting = requesting;
     }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+
+    }
+
+    @Override
+    public void onItemDismiss(final int position) {
+        ALog.d("滑动完毕！！");
+        //标记已读未读
+        FeedItem item = feedItemList.get(position);
+        ALog.d(item.getTitle());
+        item.setRead(!item.isRead());
+
+        item.saveAsync().listen(new SaveCallback() {
+            @Override
+            public void onFinish(boolean success) {
+                notifyItemChanged(position);
+            }
+        });
+    }
+
+
 }

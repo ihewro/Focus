@@ -10,6 +10,7 @@ import com.ihewro.focus.util.HttpsUtil;
 import com.ihewro.focus.util.Tls12SocketFactory;
 import com.ihewro.focus.util.UIUtil;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 
 import okhttp3.Dispatcher;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -62,6 +66,19 @@ public class HttpUtil {
         dispatcher.setMaxRequests(100);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(new Interceptor() {
+                                    @Override
+                                    public Response intercept(Chain chain) throws IOException {
+                                        Request request = chain.request()
+                                                .newBuilder()
+                                                .addHeader("Content-Type", "text/html; charset=gb2312")
+                                                .addHeader("Content-Type", "text/html; charset=gbk")
+                                                .addHeader("Content-Type", "text/html; charset=UTF-8")
+                                                .addHeader("Content-Type", "text/html; charset=ISO-8859-1")
+                                                .build();
+                                        return chain.proceed(request);
+                                    }
+                                })
                 .dispatcher(dispatcher)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间
@@ -74,8 +91,8 @@ public class HttpUtil {
                 });//设置连接超时时间
 
         if (type.equals("String")){
-//            ALog.d("添加了编码了");
-//            builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
+            ALog.d("添加了编码了");
+            builder.addInterceptor(new EncodingInterceptor("ISO-8859-1"));//全部转换成这个编码
         }
 
         SSLContext sslContext = null;
