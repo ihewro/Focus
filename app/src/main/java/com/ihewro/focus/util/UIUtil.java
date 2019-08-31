@@ -16,10 +16,18 @@ import android.view.WindowManager;
 
 import com.blankj.ALog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.common.base.Strings;
 import com.ihewro.focus.GlobalConfig;
 import com.ihewro.focus.MyApplication;
 import com.ihewro.focus.callback.FileOperationCallback;
 import com.mikepenz.materialize.util.UIUtils;
+
+import static java.lang.Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS;
+import static java.lang.Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS;
+import static java.lang.Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT;
+import static java.lang.Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS;
+import static java.lang.Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A;
+import static java.lang.Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B;
 
 /**
  * <pre>
@@ -143,6 +151,29 @@ public class UIUtil {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
+
+
+    public static boolean checkStringContainChinese(String checkStr){
+        if(!Strings.isNullOrEmpty(checkStr)){
+            char[] checkChars = checkStr.toCharArray();
+            for(int i = 0; i < checkChars.length; i++){
+                char checkChar = checkChars[i];
+                if(checkCharContainChinese(checkChar)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkCharContainChinese(char checkChar){
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
+        if(CJK_UNIFIED_IDEOGRAPHS == ub || CJK_COMPATIBILITY_IDEOGRAPHS == ub || CJK_COMPATIBILITY_FORMS == ub ||
+                CJK_RADICALS_SUPPLEMENT == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub){
+            return true;
+        }
+        return false;
+    }
 
 
 

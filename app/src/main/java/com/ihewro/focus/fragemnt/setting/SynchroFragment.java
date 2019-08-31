@@ -176,7 +176,7 @@ public class SynchroFragment extends SettingFragment {
                 ALog.d(UserPreference.getRssHubUrl());
                 List<String> list = GlobalConfig.rssHub;
                 new MaterialDialog.Builder(getActivity())
-                        .title("源管理")
+                        .title("rsshub源选择")
                         .items(list)
                         .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override

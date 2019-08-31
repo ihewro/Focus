@@ -66,19 +66,6 @@ public class HttpUtil {
         dispatcher.setMaxRequests(100);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(new Interceptor() {
-                                    @Override
-                                    public Response intercept(Chain chain) throws IOException {
-                                        Request request = chain.request()
-                                                .newBuilder()
-                                                .addHeader("Content-Type", "text/html; charset=gb2312")
-                                                .addHeader("Content-Type", "text/html; charset=gbk")
-                                                .addHeader("Content-Type", "text/html; charset=UTF-8")
-                                                .addHeader("Content-Type", "text/html; charset=ISO-8859-1")
-                                                .build();
-                                        return chain.proceed(request);
-                                    }
-                                })
                 .dispatcher(dispatcher)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间

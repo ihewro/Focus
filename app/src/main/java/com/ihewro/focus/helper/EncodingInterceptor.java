@@ -50,8 +50,38 @@ public class EncodingInterceptor implements Interceptor {
      * @throws IOException
      */
     private void settingClientCustomEncoding(Response response) throws IOException {
+//        setHeaderContentType(response);
         setBodyContentType(response);
+
     }
+
+    /**
+     * set contentType in headers
+     * @param response
+     * @throws IOException
+     */
+    private void setHeaderContentType(Response response) throws IOException {
+        String contentType = response.header("Content-Type");
+
+        // build new headers
+        Headers headers = response.headers();
+        Headers.Builder builder = headers.newBuilder();
+        builder.removeAll("Content-Type");
+        builder.add("Content-Type", "charset=" + encoding);
+        headers = builder.build();
+        // setting headers using reflect
+        Class  _response = Response.class;
+        try {
+            Field field = _response.getDeclaredField("headers");
+            field.setAccessible(true);
+            field.set(response, headers);
+        } catch (NoSuchFieldException e) {
+            throw new IOException("use reflect to setting header occurred an error", e);
+        } catch (IllegalAccessException e) {
+            throw new IOException("use reflect to setting header occurred an error", e);
+        }
+    }
+
 
     /**
      * set body contentType
@@ -66,9 +96,8 @@ public class EncodingInterceptor implements Interceptor {
             Field field = aClass.getDeclaredField("contentTypeString");
             field.setAccessible(true);
             String contentTypeString = String.valueOf(field.get(body));
-//            ALog.d(contentTypeString);
-//            field.set(body, (!StringUtil.trim(contentTypeString).equals("") ? contentTypeString + "; ":"" ) + "charset=" + encoding);
-            field.set(body, "text/xml;charset=" + encoding);
+            field.set(body, "application/rss+xml;charset=" + encoding);
+            ALog.d("修改前"+contentTypeString + "修改后" + "application/rss+xml;charset=" + encoding);
 
         } catch (NoSuchFieldException e) {
             throw new IOException("use reflect to setting header occurred an error", e);
@@ -76,4 +105,5 @@ public class EncodingInterceptor implements Interceptor {
             throw new IOException("use reflect to setting header occurred an error", e);
         }
     }
+
 }

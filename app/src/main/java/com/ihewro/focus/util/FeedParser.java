@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.internal.Util;
 import retrofit2.Response;
 
 import static com.ihewro.focus.util.AtomParser.FEED;
@@ -72,6 +73,7 @@ public class FeedParser {
 
         //获取xml文件的编码
         String encode = "UTF-8";//默认编码
+        String originCode = "ISO-8859-1";
         String temp = xmlStr.substring(0,100);
         Pattern p = Pattern.compile("encoding=\"(.*?)\"");
         Matcher m = p.matcher(temp);
@@ -84,7 +86,14 @@ public class FeedParser {
         }//否则就是文件没有标明编码格式，按照utf-8进行解码
 
 
-        xmlStr = new String(xmlStr.getBytes("ISO-8859-1"),encode);
+        //如果文件没有乱码，则不需要转换
+        if (!java.nio.charset.Charset.forName("GBK").newEncoder().canEncode(xmlStr.substring(0,3000))){
+            ALog.d("有乱码");
+            xmlStr = new String(xmlStr.getBytes(originCode),encode);
+        }else {
+            ALog.d("没有乱码");
+        }
+
         return beginParseStr2Feed(xmlStr,url);
     }
 

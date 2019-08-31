@@ -938,7 +938,7 @@ public class MainActivity extends BaseActivity {
                 ALog.d(UserPreference.getRssHubUrl());
                 List<String> list = GlobalConfig.rssHub;
                 new MaterialDialog.Builder(this)
-                        .title("源管理")
+                        .title("rsshub源选择")
                         .items(list)
                         .itemsCallbackSingleChoice(select, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
