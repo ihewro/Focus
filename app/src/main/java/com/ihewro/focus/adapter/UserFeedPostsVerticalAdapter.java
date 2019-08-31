@@ -346,6 +346,7 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
+        ALog.d("fromPosition" + fromPosition + "toPosition" + toPosition);
 
     }
 

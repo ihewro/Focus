@@ -74,10 +74,14 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.onChildDrawOver(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }
 
+    private float origin_dx = 0;
+
+
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int i) {
-        // Notify the adapter of the dismissal
-          mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        origin_dx = 0;
+        ALog.d("宽度" + viewHolder.itemView.getWidth());
+        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
 
@@ -86,6 +90,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         return super.getBoundingBoxMargin();
     }
 
+
     @Override
     public void onChildDraw(final Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -93,10 +98,12 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             // Fade out the view as it is swiped out of the parent's bounds
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             View itemView = viewHolder.itemView;
-
+            ALog.d("dx" + dX + "originDx" + origin_dx);
+            int width = itemView.getWidth();
            Bitmap icon;
 
             if (dX > 0) {
+                origin_dx = dX;
 
                 int position = viewHolder.getAdapterPosition();
                 if (mDatas.get(position).isRead()){
@@ -117,6 +124,14 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
                 icon.recycle();
 
+            }
+
+
+
+            if (dX == 0 && origin_dx >0 && origin_dx < width){
+                //说明滑动了一部分又关闭了，这个时候也要标记已读
+                origin_dx = 0;
+                mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
             }
         }
     }
