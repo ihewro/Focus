@@ -87,7 +87,7 @@ public class FeedParser {
 
 
         //如果文件没有乱码，则不需要转换
-        if (!java.nio.charset.Charset.forName("GBK").newEncoder().canEncode(xmlStr.substring(0,3000))){
+        if (!java.nio.charset.Charset.forName("GBK").newEncoder().canEncode(xmlStr.substring(0,Math.min(xmlStr.length(),3000)))){
             ALog.d("有乱码");
             xmlStr = new String(xmlStr.getBytes(originCode),encode);
         }else {

@@ -131,7 +131,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             if (dX == 0 && origin_dx >0 && origin_dx < width){
                 //说明滑动了一部分又关闭了，这个时候也要标记已读
                 origin_dx = 0;
-                mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+//                mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
             }
         }
     }
