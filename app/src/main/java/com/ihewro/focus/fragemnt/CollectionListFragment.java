@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.adapter.CollectionListAdapter;
 import com.ihewro.focus.adapter.FeedListAdapter;
@@ -125,16 +126,19 @@ public class CollectionListFragment extends Fragment {
                     collectionList.add(LitePal.find(Collection.class, collectionAndFolderRelation.getCollectionId()));
                 }
 
-                Collections.sort(collectionList, new Comparator<Collection>() {
-                    @Override
-                    public int compare(Collection o1, Collection o2) {
-                        if (o1.getTime() > o2.getTime()){
-                            return -1;
-                        }else {
-                            return 1;
+                if (collectionList.size() > 1){
+                    Collections.sort(collectionList, new Comparator<Collection>() {
+                        @Override
+                        public int compare(Collection o1, Collection o2) {
+                            if (o1.getTime() > o2.getTime()){
+                                return -1;
+                            }else {
+                                return 1;
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
                 //切换到主线程更新界面
                 UIUtil.runOnUiThread(activity, new Runnable() {
                     @Override

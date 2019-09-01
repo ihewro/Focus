@@ -20,9 +20,11 @@ import com.ihewro.focus.bean.EventMessage;
 import com.ihewro.focus.bean.FeedItem;
 import com.ihewro.focus.bean.UserPreference;
 import com.ihewro.focus.callback.UICallback;
+import com.ihewro.focus.decoration.SuspensionDecoration;
 import com.ihewro.focus.helper.ItemTouchHelperAdapter;
 import com.ihewro.focus.helper.ItemTouchHelperViewHolder;
 import com.ihewro.focus.helper.MyViewHolder;
+import com.ihewro.focus.helper.SimpleItemTouchHelperCallback;
 import com.ihewro.focus.util.DataUtil;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
@@ -77,12 +79,16 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
     private int not_read_content_color;
     private int read_content_color;
 
+    private SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
+    private SuspensionDecoration suspensionDecoration;
 
 
-    public UserFeedPostsVerticalAdapter(@Nullable List<FeedItem> data, Activity activity) {
+    public UserFeedPostsVerticalAdapter(@Nullable List<FeedItem> data, Activity activity, SuspensionDecoration suspensionDecoration, SimpleItemTouchHelperCallback simpleItemTouchHelperCallback) {
         super(R.layout.item_post, data);
         this.activity = activity;
         this.feedItemList = data;
+        this.suspensionDecoration = suspensionDecoration;
+        this.simpleItemTouchHelperCallback = simpleItemTouchHelperCallback;
 
 
         //初始化
@@ -112,13 +118,29 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         if (notReadNum==0){
             this.setNewData(data);
         }else {
+            updateDecoration(data);
             mDiffer.submitList(data);
         }
     }
 
     @Override
     public void setNewData(@Nullable List<FeedItem> data) {
+        updateDecoration(data);
         super.setNewData(data);
+    }
+
+
+    private void updateDecoration(List<FeedItem> data){
+        if (data==null){
+            data = new ArrayList<>();
+        }
+        if (simpleItemTouchHelperCallback != null){
+            simpleItemTouchHelperCallback.setmDatas(data);
+        }
+
+        if (suspensionDecoration != null){
+            suspensionDecoration.setmDatas(data);
+        }
     }
 
     @Override
@@ -362,8 +384,14 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
             @Override
             public void onFinish(boolean success) {
                 notifyItemChanged(position);
+                EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_READ_NUM_EDIT));
             }
         });
+    }
+
+    public void setDecoration(SuspensionDecoration suspensionDecoration, SimpleItemTouchHelperCallback simpleItemTouchHelperCallback){
+        this.suspensionDecoration = suspensionDecoration;
+        this.simpleItemTouchHelperCallback = simpleItemTouchHelperCallback;
     }
 
 

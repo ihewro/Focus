@@ -20,6 +20,7 @@ import com.ihewro.focus.bean.CollectionFolder;
 import com.ihewro.focus.callback.OperationCallback;
 import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.util.UIUtil;
+import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.core.BottomPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
 
@@ -43,13 +44,14 @@ import es.dmoral.toasty.Toasty;
 public class CollectionFolderListPopupView extends BottomPopupView {
 
 
-
     private CollectionFolderListAdapter adapter;
     private List<CollectionFolder> collectionFolderList = new ArrayList<>();
+    private List<Integer> folderIds = new ArrayList<>();
     private String info;
     private Collection collection;
     private UICallback uiCallback;
 
+    BasePopupView basePopupView;
 
     TextView listTitle;
     ImageView actionAdd;
@@ -59,15 +61,19 @@ public class CollectionFolderListPopupView extends BottomPopupView {
     Button collect;
 
 
+    private Activity activity;
 
 
 
 
 
-    public CollectionFolderListPopupView(Activity context, Collection collection, UICallback callback) {
+    public CollectionFolderListPopupView(Activity context, Collection collection, UICallback callback, List<CollectionFolder> collectionFolderList, List<Integer> folderIds) {
         super(context);
+        this.activity = context;
         this.collection = collection;
         this.uiCallback = callback;
+        this.collectionFolderList = collectionFolderList;
+        this.folderIds = folderIds;
     }
 
 
@@ -89,8 +95,6 @@ public class CollectionFolderListPopupView extends BottomPopupView {
         initListener();
 
     }
-
-
 
     private void initListener() {
         actionClose.setOnClickListener(new OnClickListener() {
@@ -174,28 +178,17 @@ public class CollectionFolderListPopupView extends BottomPopupView {
 
     }
 
+
+
+
     private void initRecycler() {
         //初始化列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //查询数据库
-        collectionFolderList = LitePal.findAll(CollectionFolder.class);
-        //TODO: 给文件夹的isSelect变量赋值
-        List<Integer> folderIds = new ArrayList<>();
-        List<Collection> tempCollections = LitePal.where("url = ?",collection.getUrl()).find(Collection.class);
-
-        if (tempCollections.size() > 0){
-            Collection tempCollection = tempCollections.get(0);//如果数据库已经存在该收藏，直接使用数据库的
-            collection.setId(tempCollection.getId());
-            List<CollectionAndFolderRelation> collectionAndFolderRelations = LitePal.where("collectionid = ?", String.valueOf(collection.getId())).find(CollectionAndFolderRelation.class);
-            for (CollectionAndFolderRelation collectionAndFolderRelation:collectionAndFolderRelations){
-                folderIds.add(collectionAndFolderRelation.getCollectionFolderId());
-            }
-        }
-
         adapter = new CollectionFolderListAdapter(collectionFolderList,folderIds);
         adapter.bindToRecyclerView(recyclerView);
+
 
     }
 
@@ -229,5 +222,7 @@ public class CollectionFolderListPopupView extends BottomPopupView {
     }
 
 
-
+    public void setBasePopupView(BasePopupView basePopupView) {
+        this.basePopupView = basePopupView;
+    }
 }

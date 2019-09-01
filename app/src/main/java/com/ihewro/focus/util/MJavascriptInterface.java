@@ -8,6 +8,8 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.ALog;
 import com.ihewro.focus.R;
 import com.ihewro.focus.activity.MainActivity;
@@ -66,8 +68,20 @@ public class MJavascriptInterface {
     }
 
     @android.webkit.JavascriptInterface
-    public void openUrl(String url) {
-        WebViewUtil.openLink(url, (Activity) activity);
+    public void openUrl(final String url) {
+        new MaterialDialog.Builder(activity)
+                .title("即将前往")
+                .content("点击「确定」将会访问该链接地址")
+                .positiveText("确定")
+                .negativeText("取消")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        WebViewUtil.openLink(url, (Activity) activity);
+
+                    }
+                })
+        .show();
     }
 
 }

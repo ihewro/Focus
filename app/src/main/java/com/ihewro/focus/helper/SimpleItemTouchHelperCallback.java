@@ -79,9 +79,12 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int i) {
-        origin_dx = 0;
-        ALog.d("宽度" + viewHolder.itemView.getWidth());
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        if (mDatas.size() > 0){
+            origin_dx = 0;
+            ALog.d("宽度" + viewHolder.itemView.getWidth());
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
+
     }
 
 
@@ -94,35 +97,38 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onChildDraw(final Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-
-            // Fade out the view as it is swiped out of the parent's bounds
+        // Fade out the view as it is swiped out of the parent's bounds
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             View itemView = viewHolder.itemView;
             ALog.d("dx" + dX + "originDx" + origin_dx);
             int width = itemView.getWidth();
-           Bitmap icon;
+            Bitmap icon;
 
             if (dX > 0) {
                 origin_dx = dX;
 
                 int position = viewHolder.getAdapterPosition();
-                if (mDatas.get(position).isRead()){
-                    icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_operation_uncheck);
-                }else {
-                    icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_operation_check);
+
+                if (position > -1 && mDatas != null && position < mDatas.size()){//处理越界错误
+                    if (mDatas.get(position).isRead()){
+                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_operation_uncheck);
+                    }else {
+                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_operation_check);
+                    }
+                    // Set color for right swipe
+                    p.setColor(ContextCompat.getColor(context,   R.color.blue));
+
+                    // Draw Rect with varying right side, equal to displacement dX
+                    c.drawRect((float) itemView.getLeft() + UIUtil.dpToPx(0), (float) itemView.getTop(), dX + UIUtil.dpToPx(0),
+                            (float) itemView.getBottom(), p);
+
+                    // Set the image icon for right swipe
+                    c.drawBitmap(icon, (float) itemView.getLeft() + UIUtil.dpToPx(16), (float) itemView.getTop() +
+                            ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight()) / 2, p);
+
+                    icon.recycle();
+
                 }
-               // Set color for right swipe
-                p.setColor(ContextCompat.getColor(context,   R.color.blue));
-
-                // Draw Rect with varying right side, equal to displacement dX
-                c.drawRect((float) itemView.getLeft() + UIUtil.dpToPx(0), (float) itemView.getTop(), dX + UIUtil.dpToPx(0),
-                        (float) itemView.getBottom(), p);
-
-                // Set the image icon for right swipe
-                c.drawBitmap(icon, (float) itemView.getLeft() + UIUtil.dpToPx(16), (float) itemView.getTop() +
-                        ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight()) / 2, p);
-
-                icon.recycle();
 
             }
 
@@ -172,5 +178,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         //if (viewHolder instanceof RecyclerView.ViewHolder) return 1f;
         //return super.getSwipeThreshold(viewHolder);
         return 0.9f;
+    }
+
+    public List<? extends SwipeInterface> getmDatas() {
+        return mDatas;
+    }
+
+    public void setmDatas(List<? extends SwipeInterface> mDatas) {
+        this.mDatas = mDatas;
     }
 }

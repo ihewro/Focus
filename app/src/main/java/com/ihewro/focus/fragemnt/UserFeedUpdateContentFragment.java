@@ -170,16 +170,22 @@ public class UserFeedUpdateContentFragment extends Fragment {
         //初始化列表
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new UserFeedPostsVerticalAdapter(eList, getActivity());
+
+        adapter = new UserFeedPostsVerticalAdapter(eList, getActivity(),null,null);
         adapter.bindToRecyclerView(recyclerView);
-        recyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), eList));
+        mDecoration = new SuspensionDecoration(getActivity(), eList);
+        recyclerView.addItemDecoration(mDecoration);
 
         recyclerView.setAdapter(adapter);
 
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter,getContext(),eList);
+
+        SimpleItemTouchHelperCallback callback = new SimpleItemTouchHelperCallback(adapter,getContext(),eList);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
+
+        //
+        adapter.setDecoration(mDecoration,callback);
 
 
     }

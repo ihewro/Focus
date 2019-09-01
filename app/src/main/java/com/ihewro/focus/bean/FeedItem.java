@@ -9,8 +9,10 @@ import com.ihewro.focus.callback.UICallback;
 import com.ihewro.focus.decoration.ISuspensionInterface;
 import com.ihewro.focus.helper.SwipeInterface;
 import com.ihewro.focus.util.DateUtil;
+import com.ihewro.focus.view.CollectionFolderListLoadingPopupView;
 import com.ihewro.focus.view.CollectionFolderListPopupView;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
 
 import org.litepal.LitePal;
 import org.litepal.annotation.Column;
@@ -222,9 +224,11 @@ public class FeedItem extends LitePalSupport implements ISuspensionInterface, Se
 
     public static void clickWhenNotFavorite(Activity activity,Collection collection,UICallback uiCallback){
         //点击进行收藏
+
         new XPopup.Builder(activity)
-                .asCustom(new CollectionFolderListPopupView(activity,collection,uiCallback))
+                .asCustom(new CollectionFolderListLoadingPopupView(activity,collection,uiCallback))
                 .show();
+
     }
 
 

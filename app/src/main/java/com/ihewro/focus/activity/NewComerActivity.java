@@ -25,7 +25,7 @@ public class NewComerActivity extends WelcomeActivity {
         return new WelcomeConfiguration.Builder(this)
                 .defaultBackgroundColor(R.color.colorAccent)
                 .page(new BasicPage(R.drawable.ic_history_white_24dp,
-                        "过去","“从不缺少信息”。其实也并不是特别需要查看那些刷新也刷不完的“推荐内容”")
+                        "过去","“从不缺少信息”。那些刷新也刷不完的“推荐内容”真的需要阅读吗")
                         .background(R.color.color6)
                 )
                 .page(new BasicPage(R.drawable.ic_center_focus_weak_white_24dp,
@@ -35,7 +35,7 @@ public class NewComerActivity extends WelcomeActivity {
                 )
                 .page(new BasicPage(R.drawable.ic_thumb_up_white_24dp,
                         "开始使用",
-                        "使用OPML轻松导入过去数据，或者尝试手动添加订阅吧，发现市场发现更多")
+                        "使用OPML轻松导入，或者尝试手动添加订阅吧，发现市场轻松寻找优质内容")
                         .background(R.color.color8)
                 )
                 .swipeToDismiss(true)

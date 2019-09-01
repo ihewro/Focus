@@ -5,6 +5,8 @@ function showPage() {
 
 };
 
+
+
 function clickImage() {
 
 

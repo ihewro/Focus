@@ -18,6 +18,7 @@ import com.ihewro.focus.task.FixDataTask;
 import com.ihewro.focus.task.RecoverDataTask;
 import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.FileUtil;
+import com.ihewro.focus.util.StringUtil;
 import com.ihewro.focus.util.UIUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -140,7 +141,7 @@ public class DataFragment extends SettingFragment{
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                                 final String num = dialog.getInputEditText().getText().toString().trim();
                                 Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-                                if (pattern.matcher(num).matches()) {
+                                if (pattern.matcher(num).matches() && !StringUtil.trim(num).equals("")) {
                                     //清理数据库
                                     //加载对话框
                                     final MaterialDialog dialog1 = new MaterialDialog.Builder(getContext())

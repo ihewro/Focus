@@ -41,8 +41,9 @@
 
                 <TextView
                     android:id="@+id/post_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
                     android:text="狗十三》——我们都是不合格的父母而已"
                     android:textStyle="bold"
                     android:textSize="28sp"

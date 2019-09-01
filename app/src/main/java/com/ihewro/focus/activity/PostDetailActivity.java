@@ -72,6 +72,11 @@ public class PostDetailActivity extends BackActivity {
     ViewPager viewPager;
 
 
+    private boolean currentItemReady = false;
+    private boolean starItemReady = false;
+    private boolean starIconReady = false;
+
+
     private List<View> viewList = new ArrayList<>();
     private List<Integer> readList = new ArrayList<>();
 
@@ -165,6 +170,7 @@ public class PostDetailActivity extends BackActivity {
 
     public void initData() {
         currentFeedItem = feedItemList.get(mIndex);
+        this.currentItemReady = true;
 
     }
 
@@ -221,6 +227,7 @@ public class PostDetailActivity extends BackActivity {
                                 ALog.d("onPageSelected");
                                 mIndex = i;
                                 //UI修改
+                                starIconReady = false;
                                 initData();
                                 setLikeButton();
                                 //修改顶部导航栏的收藏状态
@@ -347,8 +354,9 @@ public class PostDetailActivity extends BackActivity {
         }
 
         starItem = menu.findItem(R.id.action_star);
-        showStarActionView(starItem);
+        this. starItemReady = true;
 
+        setLikeButton();
         initToolbarColor();
 
 
@@ -574,15 +582,19 @@ public class PostDetailActivity extends BackActivity {
 
     private void setLikeButton() {
         //设置收藏状态
-
-        if (currentFeedItem.isFavorite()) {
-            starItem.setIcon(R.drawable.star_on);
-        } else {
-            if (SkinPreference.getInstance().getSkinName().equals("night")) {
-                starItem.setIcon(R.drawable.star_off_night);
+        if (currentItemReady && starItemReady && !starIconReady && starItem!=null && currentFeedItem!=null){
+            ALog.d("设置收藏状态");
+            if (currentFeedItem.isFavorite()) {
+                starItem.setIcon(R.drawable.star_on);
             } else {
-                starItem.setIcon(R.drawable.star_off);
+                if (SkinPreference.getInstance().getSkinName().equals("night")) {
+                    starItem.setIcon(R.drawable.star_off_night);
+                } else {
+                    starItem.setIcon(R.drawable.star_off);
+                }
             }
+
+            starIconReady = true;
         }
     }
 

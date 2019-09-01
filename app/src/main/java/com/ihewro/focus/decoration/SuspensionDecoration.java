@@ -76,9 +76,8 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
-    public SuspensionDecoration setmDatas(List<? extends ISuspensionInterface> mDatas) {
+    public void setmDatas(List<? extends ISuspensionInterface> mDatas) {
         this.mDatas = mDatas;
-        return this;
     }
 
     public int getHeaderViewCount() {
@@ -103,11 +102,11 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
             int position = params.getViewLayoutPosition();
             position -= getHeaderViewCount();
             //pos为1，size为1，1>0? true
-            if (mDatas == null || mDatas.isEmpty() || position > mDatas.size() - 1 || position < 0 || !mDatas.get(position).isShowSuspension()) {
-                continue;//越界
-            }
-            //我记得Rv的item position在重置时可能为-1.保险点判断一下吧
-            if (position > -1) {
+            if (position < mDatas.size() && mDatas.size() > 0){//保证不越界
+                if (mDatas == null || position > mDatas.size() - 1 || position < 0 || !mDatas.get(position).isShowSuspension()) {
+                    continue;//越界
+                }
+                //我记得Rv的item position在重置时可能为-1.保险点判断一下吧
                 if (position == 0) {//等于0肯定要有title的
                     drawTitleArea(c, left, right, child, params, position);
 
@@ -120,6 +119,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
                     }
                 }
             }
+
         }
     }
 
@@ -217,4 +217,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
+    public List<? extends ISuspensionInterface> getmDatas() {
+        return mDatas;
+    }
 }

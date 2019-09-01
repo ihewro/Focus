@@ -81,6 +81,14 @@ public class CollectionFolderListAdapter extends BaseQuickAdapter<CollectionFold
         }
     }
 
+    public void setData(List<CollectionFolder> data) {
+        this.data = data;
+    }
+
+    public void setSelectFolderIds(List<Integer> selectFolderIds) {
+        this.selectFolderIds = selectFolderIds;
+    }
+
     public List<Integer> getSelectFolderIds() {
         return selectFolderIds;
     }
