@@ -37,22 +37,22 @@ public interface HttpInterface {
     Call<String> getRSSDataWith(@Url String with);
 
 
-    @GET("?action=webcategory")
+    @GET("webcategory")
     Call<List<WebsiteCategory>> getCategoryList();
 
-    @GET("?action=weblist")
+    @GET("weblist")
     Call<List<Website>> getWebsiteListByCategory(@Query("name") String name);
 
-    @GET("?action=feedlist")
+    @GET("feedlist")
     Call<List<Feed>> getFeedListByWebsite(@Query("name") String name);
 
-    @GET("?action=feedRequireList")
+    @GET("feedRequireList")
     Call<List<FeedRequire>> getFeedRequireListByWebsite(@Query("id") String id);
 
-    @GET("?action=searchFeedListByName")
+    @GET("searchFeedListByName")
     Call<List<Feed>> searchFeedListByName(@Query("name") String name);
 
-    @GET("?action=searchWebsiteByName")
+    @GET("searchWebsiteByName")
     Call<List<Website>> searchWebsiteByName(@Query("name") String name);
 
 }

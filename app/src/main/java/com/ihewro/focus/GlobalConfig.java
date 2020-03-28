@@ -19,7 +19,8 @@ import java.util.List;
  * </pre>
  */
 public class GlobalConfig {
-    public static final String serverUrl = "https://cloud.bmob.cn/f3d283d6ac358cd2/focus/";
+//    public static final String serverUrl = "https://cloud.bmob.cn/f3d283d6ac358cd2/focus/";
+    public static final String serverUrl = "https://auth.ihewro.com/focus/";
 
 
     public static final String storageFolderName = "focus";//所有表情包都在此目录下建立子目录
