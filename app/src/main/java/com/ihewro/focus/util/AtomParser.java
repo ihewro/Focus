@@ -44,16 +44,13 @@ public class AtomParser {
     private static final String PUBLISHED = "published";
 
 
-
-
     /**
-     *
      * @param parser
      * @return
      * @throws XmlPullParserException
      * @throws IOException
      */
-    public static Feed readFeedForFeed(XmlPullParser parser,String url) throws XmlPullParserException, IOException {
+    public static Feed readFeedForFeed(XmlPullParser parser, String url) throws XmlPullParserException, IOException {
         Feed feed = new Feed();
         feed.setUrl(url);
         List<FeedItem> feedItems = new ArrayList<>();
@@ -72,9 +69,9 @@ public class AtomParser {
                     break;
                 case LINK:
                     Message message = readFeedLink(parser);
-                    if (message.isFlag()){//是真正的link信息
+                    if (message.isFlag()) {//是真正的link信息
                         feed.setLink(message.getData());
-                    }else {
+                    } else {
                         skip(parser);
                     }
                     break;
@@ -87,8 +84,8 @@ public class AtomParser {
                 case ENTRY:
                     //获取当前feed最新的文章列表
                     FeedItem feedItem = readEntryForFeedItem(parser);
-                    if (feedItem.isNotHaveExtractTime()){
-                        feedItem.setDate(feedItem.getDate() - feedItems.size() *1000);//越往后的时间越小，保证前面的时间大，后面的时间小
+                    if (feedItem.isNotHaveExtractTime()) {
+                        feedItem.setDate(feedItem.getDate() - feedItems.size() * 1000);//越往后的时间越小，保证前面的时间大，后面的时间小
                     }
                     feedItems.add(feedItem);
                     break;
@@ -98,7 +95,7 @@ public class AtomParser {
             }
         }
 
-        if(UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME,"0").equals("1")){//自动通过网络设置名字
+        if (UserPreference.queryValueByKey(UserPreference.AUTO_SET_FEED_NAME, "0").equals("1")) {//自动通过网络设置名字
             feed.setName(netFeedName);//因为在线请求的时候没有拉取Titile这个字段
         }
         feed.setFeedItemList(feedItems);
@@ -108,6 +105,7 @@ public class AtomParser {
 
     /**
      * 从XmlPullParser 解析出feedItem
+     *
      * @param parser
      * @return
      * @throws IOException
@@ -161,7 +159,7 @@ public class AtomParser {
 
 
     private static String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
-        return Jsoup.parse(readTagByTagName(parser,TITLE)).text();
+        return Jsoup.parse(readTagByTagName(parser, TITLE)).text();
     }
 
 
@@ -179,15 +177,15 @@ public class AtomParser {
                     is_false = true;
                     break;
             }
-            if (is_false){
+            if (is_false) {
                 break;
             }
         }
-        if (is_false){
+        if (is_false) {
             return new Message(false);
-        }else {
+        } else {
             parser.next();
-            return new Message(true,url);
+            return new Message(true, url);
         }
     }
 
@@ -203,19 +201,22 @@ public class AtomParser {
                     isHaveTargetValue = true;
                     break;
             }
-            if (isHaveTargetValue){
+            if (isHaveTargetValue) {
                 break; //退出
             }
         }
         parser.next();
+        if (parser.next() == XmlPullParser.END_TAG) {
+            parser.next();
+        }
         return url;
     }
 
     private static String readPubDate(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String pubData = readTagByTagName(parser,PUBLISHED);
-        if (pubData==null){
+        String pubData = readTagByTagName(parser, PUBLISHED);
+        if (pubData == null) {
             ALog.d("？？？null");
-            pubData ="Tue, 02 Apr 2019 07:43:34 +0000";
+            pubData = "Tue, 02 Apr 2019 07:43:34 +0000";
         }
         ALog.d(pubData);
         return pubData;
@@ -227,22 +228,21 @@ public class AtomParser {
     }
 
     private static String readSubtitle(XmlPullParser parser) throws IOException, XmlPullParserException {
-        return readTagByTagName(parser,SUBTITLE);
+        return readTagByTagName(parser, SUBTITLE);
     }
+
     private static String readDesc(XmlPullParser parser) throws IOException, XmlPullParserException {
-        return readTagByTagName(parser,SUMMARY);
+        return readTagByTagName(parser, SUMMARY);
     }
 
     private static String readContent(XmlPullParser parser) throws IOException, XmlPullParserException {
-        return readTagByTagName(parser,CONTENT);
+        return readTagByTagName(parser, CONTENT);
     }
 
     private static Long readLastBuildDate(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String dateStr = readTagByTagName(parser,UPDATED);
+        String dateStr = readTagByTagName(parser, UPDATED);
         return DateUtil.date2TimeStamp(dateStr);
     }
-
-
 
 
 }
