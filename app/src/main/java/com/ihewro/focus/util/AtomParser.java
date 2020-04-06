@@ -118,6 +118,7 @@ public class AtomParser {
         String title = null;
         String link = null;
         String pubDate = null;
+        String updateDate = null;
         String description = null;
         String content = null;
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -135,6 +136,9 @@ public class AtomParser {
                 case PUBLISHED:
                     pubDate = readPubDate(parser);
                     break;
+                case UPDATED:
+                    updateDate = readUpdateDate(parser);
+                    break;
                 case SUMMARY:
                     description = readDesc(parser);
                     break;
@@ -147,8 +151,9 @@ public class AtomParser {
             }
         }
         ALog.d("item名称：" + title + "时间为" + pubDate + "地址为" + link);
-        FeedItem  feedItem = new FeedItem(title, DateUtil.date2TimeStamp(pubDate),description,content,link, false, false);
-        if (pubDate == null){
+        pubDate = pubDate == null ? updateDate : pubDate;
+        FeedItem feedItem = new FeedItem(title, DateUtil.date2TimeStamp(pubDate), description, content, link, false, false);
+        if (pubDate == null) {
             feedItem.setNotHaveExtractTime(true);
         }
         return feedItem;
@@ -214,6 +219,11 @@ public class AtomParser {
         }
         ALog.d(pubData);
         return pubData;
+    }
+
+    private static String readUpdateDate(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String dateStr = readTagByTagName(parser, UPDATED);
+        return dateStr;
     }
 
     private static String readSubtitle(XmlPullParser parser) throws IOException, XmlPullParserException {
