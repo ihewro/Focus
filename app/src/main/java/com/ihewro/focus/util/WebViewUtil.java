@@ -64,6 +64,7 @@ public class WebViewUtil {
 
         //对文章中的图片进一步处理
         //使用loading一开始进行占位
+        html=html==null?"":html;
         Document doc = Jsoup.parse(html);
         //清洗所有文字的背景颜色，样式
         Elements ps = doc.select("p");
