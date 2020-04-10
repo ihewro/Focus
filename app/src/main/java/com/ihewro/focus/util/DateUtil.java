@@ -69,7 +69,7 @@ public class DateUtil {
      */
     static long date2TimeStamp(String date_str){
         //RFC3339
-        String[] dateFormats = {"yyyy-MM-dd","EEE, dd MMM yyyy HH:mm:ss Z","yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"};
+        String[] dateFormats = {"EEE, dd MMM yyyy HH:mm:ss Z","yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd"};
 
         long timeStamp = 0L;
 
