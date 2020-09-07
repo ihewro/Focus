@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Focus.iml" filepath="$PROJECT_DIR$/.idea/modules/Focus.iml" group="Focus" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Focus-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Focus-app.iml" group="Focus/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/focus.iml" filepath="$PROJECT_DIR$/focus.iml" />
     </modules>

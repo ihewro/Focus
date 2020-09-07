@@ -52,7 +52,7 @@
                             android:orientation="horizontal">
                             <TextView
                                 android:id="@+id/toolbar_title"
-                                android:text="测试"
+                                android:text="@string/main_feed_source_placeholder"
                                 android:textColor="@color/text_unread"
                                 android:textSize="16sp"
                                 android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
                                 android:layout_height="wrap_content"/>
 
                             <ImageView
-                                android:layout_toRightOf="@id/toolbar_title"
+                                android:layout_toEndOf="@id/toolbar_title"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_centerVertical="true"
@@ -70,7 +70,7 @@
 
                         <TextView
                             android:id="@+id/subtitle"
-                            android:text="无未读文章"
+                            android:text="@string/main_no_unread_article"
                             android:maxLines="1"
                             android:textColor="@color/text_read"
                             android:textSize="14sp"

@@ -119,6 +119,10 @@ public class HttpUtil {
         }else if (type.equals("bean")){
             factory = JacksonConverterFactory.create();
         }
+        //如果未指明协议，则默认使用https
+        if(!(requestUrl.startsWith("http://")&&requestUrl.startsWith("https://"))){
+            requestUrl="https://"+requestUrl;
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(requestUrl)

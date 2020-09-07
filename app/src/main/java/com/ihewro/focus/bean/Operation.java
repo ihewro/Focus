@@ -5,9 +5,6 @@ import android.graphics.drawable.Drawable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.ihewro.focus.callback.OperationCallback;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * <pre>

@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         // The Fabric Gradle plugin uses an open ended version to react
         // quickly to Android tooling updates
-        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.16'
+        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.18'
     }
 }
 
@@ -46,7 +46,7 @@ andResGuard {
             "*.gif",
     ]
     sevenzip {
-        artifact = 'com.tencent.mm:SevenZip:1.2.16'
+        artifact = 'com.tencent.mm:SevenZip:1.2.18'
         //path = "/usr/local/bin/7za"
     }
 
@@ -63,11 +63,11 @@ andResGuard {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.ihewro.focus"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 31
         versionName "2.17"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -75,6 +75,7 @@ android {
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
+        ndkVersion '21.3.6528147'
 
     }
     buildTypes {

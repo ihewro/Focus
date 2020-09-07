@@ -70,6 +70,9 @@ public class FeedParser {
         if (Strings.isNullOrEmpty(xmlStr)) {
             return null;
         }
+        if(xmlStr.length()<100){
+            return null;
+        }
 
         //获取xml文件的编码
         String encode = "UTF-8";//默认编码
