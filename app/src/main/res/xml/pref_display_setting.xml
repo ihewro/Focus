@@ -12,4 +12,9 @@
         android:title="@string/pref_title_not_image_in_list"
         android:summary="@string/pref_summary_not_image_in_list"/>
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_key_use_browser"
+        android:title="@string/pref_title_use_browser"
+        android:summary="@string/pref_summary_use_browser"/>
+
 </android.support.v7.preference.PreferenceScreen>

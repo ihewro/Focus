@@ -120,7 +120,7 @@ public class HttpUtil {
             factory = JacksonConverterFactory.create();
         }
         //如果未指明协议，则默认使用https
-        if(!(requestUrl.startsWith("http://")&&requestUrl.startsWith("https://"))){
+        if(!(requestUrl.startsWith("http://")||requestUrl.startsWith("https://"))){
             requestUrl="https://"+requestUrl;
         }
 

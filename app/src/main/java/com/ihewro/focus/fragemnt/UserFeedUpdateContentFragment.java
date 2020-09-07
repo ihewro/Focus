@@ -454,7 +454,7 @@ public class UserFeedUpdateContentFragment extends Fragment {
                     public void run() {
                         if (subView!=null){
                             if (notReadNum == 0){
-                                ((TextView)subView).setText("无未读文章");
+                                ((TextView)subView).setText(R.string.main_no_unread_article);
                             }else {
                                 ((TextView)subView).setText("共有"+notReadNum+"篇未读");
                             }

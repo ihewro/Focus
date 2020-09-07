@@ -125,5 +125,8 @@
     <string name="pref_title_not_use_chrome">浏览器不使用Chrome内核</string>
     <string name="pref_summary_not_use_chrome">如果你的手机内有Chrome内核的浏览器，文章内链接优先默认调用Chrome内核，你可以关闭该选项</string>
 
+    <string name="pref_key_use_browser">pref_key_use_browser</string>
+    <string name="pref_title_use_browser">默认使用浏览器打开</string>
+    <string name="pref_summary_use_browser">使用浏览器打开，会失去许多小功能，比如左右滑动切换文章</string>
 
 </resources>

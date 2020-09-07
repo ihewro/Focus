@@ -30,6 +30,7 @@ import com.ihewro.focus.util.DateUtil;
 import com.ihewro.focus.util.ImageLoaderManager;
 import com.ihewro.focus.util.RSSUtil;
 import com.ihewro.focus.util.StringUtil;
+import com.ihewro.focus.util.WebViewUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -38,10 +39,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 import skin.support.utils.SkinPreference;
+
+import static com.ihewro.focus.activity.PostDetailActivity.ORIGIN_MAIN;
+import static com.ihewro.focus.activity.PostDetailActivity.ORIGIN_SEARCH;
 
 /**
  * <pre>
@@ -273,11 +279,11 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
                     for (FeedItem feedItem: feedItemList){
                         list.add(feedItem.getId());
                     }
-                    //如果当前正在请求数据，则来源变成ORIGIN_SEARCH，否则使用ORIGIN_MAIN，用于更新首页已读样式不同
-                    if (isRequesting){
-                        PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_SEARCH);
+                    if(UserPreference.queryValueByKey(UserPreference.use_browser,"0").equals("0")) {
+                        //如果当前正在请求数据，则来源变成ORIGIN_SEARCH，否则使用ORIGIN_MAIN，用于更新首页已读样式不同
+                        PostDetailActivity.activityStart(activity, helper.getAdapterPosition(), feedItemList, isRequesting ? PostDetailActivity.ORIGIN_SEARCH : PostDetailActivity.ORIGIN_MAIN);
                     }else {
-                        PostDetailActivity.activityStart(activity,helper.getAdapterPosition(),feedItemList,PostDetailActivity.ORIGIN_MAIN);
+                        openItemWithWebView(helper.getAdapterPosition());
                     }
                 }
             }
@@ -394,5 +400,27 @@ public class UserFeedPostsVerticalAdapter extends BaseItemDraggableAdapter<FeedI
         this.simpleItemTouchHelperCallback = simpleItemTouchHelperCallback;
     }
 
+    private void openItemWithWebView(final int mIndex){
+        final FeedItem currentFeedItem = feedItemList.get(mIndex);
+        WebViewUtil.openLink(currentFeedItem.getUrl(),activity);
+        if (!currentFeedItem.isRead()) {
+            currentFeedItem.setRead(true);
+            currentFeedItem.saveAsync().listen(new SaveCallback() {
+                @Override
+                public void onFinish(boolean success) {
+                    List<Integer> readList;
+                    if (isRequesting) {//isRequesting 为false表示不是首页进来的
+                        readList= Collections.singletonList(currentFeedItem.getId());
+                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_ID_LIST, readList));
+                    } else {
+//                                    readList.add(helper.getAdapterPosition());
+                        readList= Collections.singletonList(mIndex);
+                        EventBus.getDefault().post(new EventMessage(EventMessage.MAKE_READ_STATUS_BY_INDEX_LIST, readList));
+                    }
+                    EventBus.getDefault().post(new EventMessage(EventMessage.MAIN_READ_NUM_EDIT, mIndex));
+                }
+            });
+        }
+    }
 
 }

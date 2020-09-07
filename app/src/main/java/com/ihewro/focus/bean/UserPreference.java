@@ -39,7 +39,7 @@ public class UserPreference extends LitePalSupport {
     public static final String notWifi = "notWifi";//仅仅wifi下请求
     public static final String notUseChrome = "notUseChrome";//不使用Chrome内核
     public static final String READ_BACKGROUND = "READ_BACKGROUND";//阅读背景
-
+    public static final String use_browser="use_browser";
 
 
 
